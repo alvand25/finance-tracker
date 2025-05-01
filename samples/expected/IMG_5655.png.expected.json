@@ -1,0 +1,23 @@
+{
+  "store": "Costco",
+  "items": [
+    {
+      "description": "KIRKLAND PAPER TOWELS",
+      "price": 19.99
+    },
+    {
+      "description": "BANANAS ORGANIC",
+      "price": 5.99
+    },
+    {
+      "description": "MILK 2% 3-PACK",
+      "price": 8.99
+    }
+  ],
+  "subtotal": 34.97,
+  "tax": 2.80,
+  "total": 37.77,
+  "payment_method": "VISA",
+  "timestamp": "2024-04-10T14:32:00",
+  "check_items_exactly": true
+}

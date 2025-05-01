@@ -1,0 +1,15 @@
+{
+  "image_path": "samples/images/IMG_5655.png",
+  "store": "h_mart",
+  "store_confidence": 0.95,
+  "handler": "GenericHandler",
+  "item_count": 1,
+  "items_sample": [
+    ". MasterCard"
+  ],
+  "subtotal": 60.44,
+  "tax": null,
+  "total": 60.44,
+  "overall_confidence": 0.6999999999999998,
+  "extraction_quality": 0.7
+}

@@ -1,0 +1,93 @@
+[
+  {
+    "file": "IMG_5655.png",
+    "store": null,
+    "items_found": 0,
+    "total": null,
+    "confidence": 0.7,
+    "status": "partial",
+    "errors": [
+      "Unknown store type",
+      "No items or total extracted"
+    ],
+    "processed_at": "2025-04-24T15:37:25.780351"
+  },
+  {
+    "file": "IMG_5656.png",
+    "store": null,
+    "items_found": 0,
+    "total": null,
+    "confidence": 0.0,
+    "status": "partial",
+    "errors": [
+      "Unknown store type",
+      "No items or total extracted"
+    ],
+    "processed_at": "2025-04-24T15:38:00.374702"
+  },
+  {
+    "file": "IMG_5657.png",
+    "store": null,
+    "items_found": 0,
+    "total": null,
+    "confidence": 0.7,
+    "status": "partial",
+    "errors": [
+      "Unknown store type",
+      "No items or total extracted"
+    ],
+    "processed_at": "2025-04-24T15:38:41.000644"
+  },
+  {
+    "file": "IMG_5658.png",
+    "store": null,
+    "items_found": 0,
+    "total": null,
+    "confidence": 0.7,
+    "status": "partial",
+    "errors": [
+      "Unknown store type",
+      "No items or total extracted"
+    ],
+    "processed_at": "2025-04-24T15:39:16.222462"
+  },
+  {
+    "file": "IMG_5659.png",
+    "store": null,
+    "items_found": 0,
+    "total": null,
+    "confidence": 0.7,
+    "status": "partial",
+    "errors": [
+      "Unknown store type",
+      "No items or total extracted"
+    ],
+    "processed_at": "2025-04-24T15:39:50.947211"
+  },
+  {
+    "file": "IMG_5660.png",
+    "store": null,
+    "items_found": 0,
+    "total": null,
+    "confidence": 0.7,
+    "status": "partial",
+    "errors": [
+      "Unknown store type",
+      "No items or total extracted"
+    ],
+    "processed_at": "2025-04-24T15:40:32.846289"
+  },
+  {
+    "file": "IMG_5661.png",
+    "store": null,
+    "items_found": 0,
+    "total": null,
+    "confidence": 0.7,
+    "status": "partial",
+    "errors": [
+      "Unknown store type",
+      "No items or total extracted"
+    ],
+    "processed_at": "2025-04-24T15:41:09.471426"
+  }
+]

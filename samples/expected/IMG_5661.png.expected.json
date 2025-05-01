@@ -1,0 +1,63 @@
+{
+    "store": "H_Mart",
+    "items": [
+        {
+            "description": "ROTISSERIE CHICKEN",
+            "price": 5.99
+        },
+        {
+            "description": "JIN RAMEN MILD BOX",
+            "price": 16.99
+        },
+        {
+            "description": "SNOW ICE/COOKIE&CRM",
+            "price": 8.99
+        },
+        {
+            "description": "MINI CUCUMBERS",
+            "price": 1.49
+        },
+        {
+            "description": "MILK TEA LATTE",
+            "price": 2.99
+        },
+        {
+            "description": "CAFE AMERICANO",
+            "price": 1.99
+        },
+        {
+            "description": "MASAMAN CURRY PASTE",
+            "price": 1.99
+        },
+        {
+            "description": "BEEF GYOZA",
+            "price": 5.99
+        },
+        {
+            "description": "SAMANCO CHOCOLATE",
+            "price": 4.99
+        },
+        {
+            "description": "GREEN SEEDLESS GRAPES",
+            "price": 5.56
+        },
+        {
+            "description": "GROCERY",
+            "price": 3.75
+        },
+        {
+            "description": "PAPER BAG",
+            "price": 0.05
+        },
+        {
+            "description": "PAPER BAG",
+            "price": 0.05
+        }
+    ],
+    "subtotal": 60.82,
+    "tax": 0.72,
+    "total": 61.54,
+    "payment_method": "VISA",
+    "timestamp": "2024-04-13T15:20:00",
+    "check_items_exactly": true
+}

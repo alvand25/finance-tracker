@@ -1,0 +1,75 @@
+{
+  "timestamp": "2025-04-24T19:26:08.822978",
+  "image_path": "samples/images/IMG_5656.png",
+  "original": {
+    "results": {
+      "items": [],
+      "subtotal": null,
+      "tax": null,
+      "total": null,
+      "store": "cvs",
+      "date": null,
+      "payment_method": null,
+      "currency": "USD",
+      "confidence": {
+        "items": 0.0,
+        "totals": 0.0,
+        "metadata": 0.0,
+        "overall": 0.0
+      },
+      "store_confidence": 0.95,
+      "handler": "GenericHandler",
+      "processing_time": 1903.9851999282837,
+      "process_id": "898e637a-b30b-41b3-a187-959e1a257ad7",
+      "extraction_quality": 0.25
+    },
+    "metrics": {
+      "item_count": 0,
+      "has_total": false,
+      "has_subtotal": false,
+      "has_tax": false,
+      "store_confidence": 0.95,
+      "overall_confidence": 0.0,
+      "extraction_quality": 0.25,
+      "completeness": 0.0
+    }
+  },
+  "improved": {
+    "results": {
+      "items": [],
+      "subtotal": null,
+      "tax": null,
+      "total": null,
+      "store": "cvs",
+      "date": null,
+      "payment_method": null,
+      "currency": "USD",
+      "confidence": {
+        "items": 0.0,
+        "totals": 0.0,
+        "metadata": 0.0,
+        "overall": 0.0
+      },
+      "store_confidence": 0.95,
+      "handler": "GenericHandler",
+      "processing_time": 1859.1440200805664,
+      "process_id": "ad380ce6-1108-4c7c-976d-100840ef5063",
+      "extraction_quality": 0.25
+    },
+    "metrics": {
+      "item_count": 0,
+      "has_total": false,
+      "has_subtotal": false,
+      "has_tax": false,
+      "store_confidence": 0.95,
+      "overall_confidence": 0.0,
+      "extraction_quality": 0.25,
+      "completeness": 0.0
+    }
+  },
+  "improvements": {
+    "confidence": null,
+    "items": 0.0,
+    "text_similarity": null
+  }
+}

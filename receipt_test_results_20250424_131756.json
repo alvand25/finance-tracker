@@ -1,0 +1,202 @@
+{
+  "timestamp": "2025-04-24T13:17:56.622728",
+  "total_receipts": 15,
+  "successful": 0,
+  "failed": 15,
+  "by_store": {
+    "Unknown": {
+      "total": 15,
+      "successful": 0,
+      "items_extracted": 45
+    }
+  },
+  "by_handler": {
+    "generic": {
+      "total": 15,
+      "successful": 0,
+      "items_extracted": 45
+    }
+  },
+  "results": [
+    {
+      "image_path": "uploads/receipts/74dfb63c-0d81-4f6a-9a24-42b2312d23c1.jpg",
+      "store_name": "Unknown",
+      "handler": "generic",
+      "items_count": 3,
+      "subtotal": null,
+      "tax": null,
+      "total": null,
+      "confidence": 0.2,
+      "success": false,
+      "filename": "74dfb63c-0d81-4f6a-9a24-42b2312d23c1.jpg"
+    },
+    {
+      "image_path": "uploads/receipts/3ae00654-62ea-4a0b-9e0a-396e2ffb880f.jpg",
+      "store_name": "Unknown",
+      "handler": "generic",
+      "items_count": 3,
+      "subtotal": null,
+      "tax": null,
+      "total": null,
+      "confidence": 0.2,
+      "success": false,
+      "filename": "3ae00654-62ea-4a0b-9e0a-396e2ffb880f.jpg"
+    },
+    {
+      "image_path": "uploads/receipts/86b4c9ae-3f80-494c-b449-0ea0bd345db8.jpg",
+      "store_name": "Unknown",
+      "handler": "generic",
+      "items_count": 3,
+      "subtotal": null,
+      "tax": null,
+      "total": null,
+      "confidence": 0.2,
+      "success": false,
+      "filename": "86b4c9ae-3f80-494c-b449-0ea0bd345db8.jpg"
+    },
+    {
+      "image_path": "uploads/receipts/5381a811-03e0-4a14-97c5-c8dec056032f.jpg",
+      "store_name": "Unknown",
+      "handler": "generic",
+      "items_count": 3,
+      "subtotal": null,
+      "tax": null,
+      "total": null,
+      "confidence": 0.2,
+      "success": false,
+      "filename": "5381a811-03e0-4a14-97c5-c8dec056032f.jpg"
+    },
+    {
+      "image_path": "uploads/receipts/b5e16b64-5742-43a5-aac8-759f3274e9be.jpg",
+      "store_name": "Unknown",
+      "handler": "generic",
+      "items_count": 3,
+      "subtotal": null,
+      "tax": null,
+      "total": null,
+      "confidence": 0.2,
+      "success": false,
+      "filename": "b5e16b64-5742-43a5-aac8-759f3274e9be.jpg"
+    },
+    {
+      "image_path": "uploads/receipts/ff47a350-19c4-4694-90ba-a98af4027eae.jpg",
+      "store_name": "Unknown",
+      "handler": "generic",
+      "items_count": 3,
+      "subtotal": null,
+      "tax": null,
+      "total": null,
+      "confidence": 0.2,
+      "success": false,
+      "filename": "ff47a350-19c4-4694-90ba-a98af4027eae.jpg"
+    },
+    {
+      "image_path": "uploads/receipts/a1f9eadc-8b02-4474-b5c5-25349b48f96e.jpg",
+      "store_name": "Unknown",
+      "handler": "generic",
+      "items_count": 3,
+      "subtotal": null,
+      "tax": null,
+      "total": null,
+      "confidence": 0.2,
+      "success": false,
+      "filename": "a1f9eadc-8b02-4474-b5c5-25349b48f96e.jpg"
+    },
+    {
+      "image_path": "uploads/receipts/124c7717-1243-4409-a61a-3b1fb54d6982.jpg",
+      "store_name": "Unknown",
+      "handler": "generic",
+      "items_count": 3,
+      "subtotal": null,
+      "tax": null,
+      "total": null,
+      "confidence": 0.2,
+      "success": false,
+      "filename": "124c7717-1243-4409-a61a-3b1fb54d6982.jpg"
+    },
+    {
+      "image_path": "uploads/receipts/077e8470-b990-4c95-9088-98aff1974391.jpg",
+      "store_name": "Unknown",
+      "handler": "generic",
+      "items_count": 3,
+      "subtotal": null,
+      "tax": null,
+      "total": null,
+      "confidence": 0.2,
+      "success": false,
+      "filename": "077e8470-b990-4c95-9088-98aff1974391.jpg"
+    },
+    {
+      "image_path": "uploads/receipts/10177a86-481d-42cd-8491-f2520f971768.jpg",
+      "store_name": "Unknown",
+      "handler": "generic",
+      "items_count": 3,
+      "subtotal": null,
+      "tax": null,
+      "total": null,
+      "confidence": 0.2,
+      "success": false,
+      "filename": "10177a86-481d-42cd-8491-f2520f971768.jpg"
+    },
+    {
+      "image_path": "uploads/receipts/32726dcb-a167-4e51-a044-7da8276a2430.jpg",
+      "store_name": "Unknown",
+      "handler": "generic",
+      "items_count": 3,
+      "subtotal": null,
+      "tax": null,
+      "total": null,
+      "confidence": 0.2,
+      "success": false,
+      "filename": "32726dcb-a167-4e51-a044-7da8276a2430.jpg"
+    },
+    {
+      "image_path": "uploads/receipts/5ba838de-6ad9-40eb-9213-0fe99fc11af4.jpg",
+      "store_name": "Unknown",
+      "handler": "generic",
+      "items_count": 3,
+      "subtotal": null,
+      "tax": null,
+      "total": null,
+      "confidence": 0.2,
+      "success": false,
+      "filename": "5ba838de-6ad9-40eb-9213-0fe99fc11af4.jpg"
+    },
+    {
+      "image_path": "uploads/receipts/848427e6-b8e2-4be9-8b36-667a7214ff03.jpg",
+      "store_name": "Unknown",
+      "handler": "generic",
+      "items_count": 3,
+      "subtotal": null,
+      "tax": null,
+      "total": null,
+      "confidence": 0.2,
+      "success": false,
+      "filename": "848427e6-b8e2-4be9-8b36-667a7214ff03.jpg"
+    },
+    {
+      "image_path": "uploads/receipts/f6c2f901-1200-4086-85e1-69a1fc0d9c4e.jpg",
+      "store_name": "Unknown",
+      "handler": "generic",
+      "items_count": 3,
+      "subtotal": null,
+      "tax": null,
+      "total": null,
+      "confidence": 0.2,
+      "success": false,
+      "filename": "f6c2f901-1200-4086-85e1-69a1fc0d9c4e.jpg"
+    },
+    {
+      "image_path": "uploads/receipts/cfcb0563-295d-41b6-9315-9ba7ca666f55.jpg",
+      "store_name": "Unknown",
+      "handler": "generic",
+      "items_count": 3,
+      "subtotal": null,
+      "tax": null,
+      "total": null,
+      "confidence": 0.2,
+      "success": false,
+      "filename": "cfcb0563-295d-41b6-9315-9ba7ca666f55.jpg"
+    }
+  ]
+}

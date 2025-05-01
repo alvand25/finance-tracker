@@ -1,0 +1,114 @@
+{
+  "timestamp": "2025-04-24T12:49:17.987135",
+  "total_tests": 1,
+  "passed_tests": 1,
+  "failed_tests": 0,
+  "no_expected_tests": 0,
+  "pass_rate": "100.0%",
+  "tests": [
+    {
+      "image_path": "samples/images/IMG_5658.png",
+      "results": {
+        "image_path": "samples/images/IMG_5658.png",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 15,
+        "items": [
+          {
+            "description": "1854948 GAP 5HORT",
+            "price": 14.99,
+            "quantity": 1
+          },
+          {
+            "description": "1583270 NIKECLUBCREW",
+            "price": 32.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021 GERRY 5HORT",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021",
+            "price": 3.0,
+            "quantity": 1
+          },
+          {
+            "description": "E 818073 K5 TORTELLON",
+            "price": 11.29,
+            "quantity": 1
+          },
+          {
+            "description": "COFF",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "CGOKIEMOU55E",
+            "price": 10.99,
+            "quantity": 1
+          },
+          {
+            "description": "ALB ENVY",
+            "price": 8.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 174876Y K5 BRKF5T5ND",
+            "price": 16.49,
+            "quantity": 1
+          },
+          {
+            "description": "MADELEINE5",
+            "price": 8.49,
+            "quantity": 1
+          },
+          {
+            "description": "76910 52DTANK3PACK",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "POM JUICE",
+            "price": 10.39,
+            "quantity": 1
+          },
+          {
+            "description": "BAGEL5",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "ALMON",
+            "price": 18.99,
+            "quantity": 1
+          },
+          {
+            "description": "H VTY",
+            "price": 9.99,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    }
+  ],
+  "vendor_results": {
+    "Other": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "no_expected": 0
+    }
+  }
+}

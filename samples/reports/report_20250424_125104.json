@@ -1,0 +1,1860 @@
+{
+  "timestamp": "2025-04-24T12:51:04.440753",
+  "total_tests": 22,
+  "passed_tests": 22,
+  "failed_tests": 0,
+  "no_expected_tests": 0,
+  "pass_rate": "100.0%",
+  "tests": [
+    {
+      "image_path": "samples/images/74dfb63c-0d81-4f6a-9a24-42b2312d23c1.jpg",
+      "results": {
+        "image_path": "samples/images/74dfb63c-0d81-4f6a-9a24-42b2312d23c1.jpg",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 15,
+        "items": [
+          {
+            "description": "1854948 GAP 5HORT",
+            "price": 14.99,
+            "quantity": 1
+          },
+          {
+            "description": "1583270 NIKECLUBCREW",
+            "price": 32.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021 GERRY 5HORT",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021",
+            "price": 3.0,
+            "quantity": 1
+          },
+          {
+            "description": "E 818073 K5 TORTELLON",
+            "price": 11.29,
+            "quantity": 1
+          },
+          {
+            "description": "7 OE 549797 BI5COFF",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1853333 CGOKIEMOU55E",
+            "price": 10.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 3741 ALB ENVY",
+            "price": 8.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 174876Y K5 BRKF5T5ND",
+            "price": 16.49,
+            "quantity": 1
+          },
+          {
+            "description": "E 399969 MADELEINE5",
+            "price": 8.49,
+            "quantity": 1
+          },
+          {
+            "description": "76910 52DTANK3PACK",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1792879 POM JUICE",
+            "price": 10.39,
+            "quantity": 1
+          },
+          {
+            "description": "E 135089 BAGEL5",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 890181 K5 WLD5ALMON",
+            "price": 18.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 1312509 MU5H VTY",
+            "price": 9.99,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/3ae00654-62ea-4a0b-9e0a-396e2ffb880f.jpg",
+      "results": {
+        "image_path": "samples/images/3ae00654-62ea-4a0b-9e0a-396e2ffb880f.jpg",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 15,
+        "items": [
+          {
+            "description": "1854948 GAP 5HORT",
+            "price": 14.99,
+            "quantity": 1
+          },
+          {
+            "description": "1583270 NIKECLUBCREW",
+            "price": 32.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021 GERRY 5HORT",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021",
+            "price": 3.0,
+            "quantity": 1
+          },
+          {
+            "description": "E 818073 K5 TORTELLON",
+            "price": 11.29,
+            "quantity": 1
+          },
+          {
+            "description": "7 OE 549797 BI5COFF",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1853333 CGOKIEMOU55E",
+            "price": 10.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 3741 ALB ENVY",
+            "price": 8.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 174876Y K5 BRKF5T5ND",
+            "price": 16.49,
+            "quantity": 1
+          },
+          {
+            "description": "E 399969 MADELEINE5",
+            "price": 8.49,
+            "quantity": 1
+          },
+          {
+            "description": "76910 52DTANK3PACK",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1792879 POM JUICE",
+            "price": 10.39,
+            "quantity": 1
+          },
+          {
+            "description": "E 135089 BAGEL5",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 890181 K5 WLD5ALMON",
+            "price": 18.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 1312509 MU5H VTY",
+            "price": 9.99,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/86b4c9ae-3f80-494c-b449-0ea0bd345db8.jpg",
+      "results": {
+        "image_path": "samples/images/86b4c9ae-3f80-494c-b449-0ea0bd345db8.jpg",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 15,
+        "items": [
+          {
+            "description": "1854948 GAP 5HORT",
+            "price": 14.99,
+            "quantity": 1
+          },
+          {
+            "description": "1583270 NIKECLUBCREW",
+            "price": 32.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021 GERRY 5HORT",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021",
+            "price": 3.0,
+            "quantity": 1
+          },
+          {
+            "description": "E 818073 K5 TORTELLON",
+            "price": 11.29,
+            "quantity": 1
+          },
+          {
+            "description": "7 OE 549797 BI5COFF",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1853333 CGOKIEMOU55E",
+            "price": 10.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 3741 ALB ENVY",
+            "price": 8.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 174876Y K5 BRKF5T5ND",
+            "price": 16.49,
+            "quantity": 1
+          },
+          {
+            "description": "E 399969 MADELEINE5",
+            "price": 8.49,
+            "quantity": 1
+          },
+          {
+            "description": "76910 52DTANK3PACK",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1792879 POM JUICE",
+            "price": 10.39,
+            "quantity": 1
+          },
+          {
+            "description": "E 135089 BAGEL5",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 890181 K5 WLD5ALMON",
+            "price": 18.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 1312509 MU5H VTY",
+            "price": 9.99,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/IMG_5655.png",
+      "results": {
+        "image_path": "samples/images/IMG_5655.png",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 11,
+        "items": [
+          {
+            "description": "i PRODUCE",
+            "price": 3.36,
+            "quantity": 1
+          },
+          {
+            "description": "j MILK PAN BREAD",
+            "price": 5.95,
+            "quantity": 1
+          },
+          {
+            "description": "120z",
+            "price": 1.99,
+            "quantity": 1
+          },
+          {
+            "description": "ORG BEECH MU5HROCM",
+            "price": 3.99,
+            "quantity": 1
+          },
+          {
+            "description": "MA5AMAN CURRY PA5T",
+            "price": 1.99,
+            "quantity": 1
+          },
+          {
+            "description": "GREEN CURRY PA5TE",
+            "price": 1.99,
+            "quantity": 1
+          },
+          {
+            "description": "H5 PICKLED RADI5H",
+            "price": 1.49,
+            "quantity": 1
+          },
+          {
+            "description": "LIME",
+            "price": 0.5,
+            "quantity": 1
+          },
+          {
+            "description": "MRN BF RIBEYE ROLL",
+            "price": 8.9,
+            "quantity": 1
+          },
+          {
+            "description": "RAMA FRE5H RICE 5T",
+            "price": 2.99,
+            "quantity": 1
+          },
+          {
+            "description": "F2 BF TOP BLADE",
+            "price": 16.79,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/5381a811-03e0-4a14-97c5-c8dec056032f.jpg",
+      "results": {
+        "image_path": "samples/images/5381a811-03e0-4a14-97c5-c8dec056032f.jpg",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 15,
+        "items": [
+          {
+            "description": "1854948 GAP 5HORT",
+            "price": 14.99,
+            "quantity": 1
+          },
+          {
+            "description": "1583270 NIKECLUBCREW",
+            "price": 32.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021 GERRY 5HORT",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021",
+            "price": 3.0,
+            "quantity": 1
+          },
+          {
+            "description": "E 818073 K5 TORTELLON",
+            "price": 11.29,
+            "quantity": 1
+          },
+          {
+            "description": "7 OE 549797 BI5COFF",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1853333 CGOKIEMOU55E",
+            "price": 10.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 3741 ALB ENVY",
+            "price": 8.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 174876Y K5 BRKF5T5ND",
+            "price": 16.49,
+            "quantity": 1
+          },
+          {
+            "description": "E 399969 MADELEINE5",
+            "price": 8.49,
+            "quantity": 1
+          },
+          {
+            "description": "76910 52DTANK3PACK",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1792879 POM JUICE",
+            "price": 10.39,
+            "quantity": 1
+          },
+          {
+            "description": "E 135089 BAGEL5",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 890181 K5 WLD5ALMON",
+            "price": 18.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 1312509 MU5H VTY",
+            "price": 9.99,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/b5e16b64-5742-43a5-aac8-759f3274e9be.jpg",
+      "results": {
+        "image_path": "samples/images/b5e16b64-5742-43a5-aac8-759f3274e9be.jpg",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 15,
+        "items": [
+          {
+            "description": "1854948 GAP 5HORT",
+            "price": 14.99,
+            "quantity": 1
+          },
+          {
+            "description": "1583270 NIKECLUBCREW",
+            "price": 32.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021 GERRY 5HORT",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021",
+            "price": 3.0,
+            "quantity": 1
+          },
+          {
+            "description": "E 818073 K5 TORTELLON",
+            "price": 11.29,
+            "quantity": 1
+          },
+          {
+            "description": "7 OE 549797 BI5COFF",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1853333 CGOKIEMOU55E",
+            "price": 10.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 3741 ALB ENVY",
+            "price": 8.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 174876Y K5 BRKF5T5ND",
+            "price": 16.49,
+            "quantity": 1
+          },
+          {
+            "description": "E 399969 MADELEINE5",
+            "price": 8.49,
+            "quantity": 1
+          },
+          {
+            "description": "76910 52DTANK3PACK",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1792879 POM JUICE",
+            "price": 10.39,
+            "quantity": 1
+          },
+          {
+            "description": "E 135089 BAGEL5",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 890181 K5 WLD5ALMON",
+            "price": 18.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 1312509 MU5H VTY",
+            "price": 9.99,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/ff47a350-19c4-4694-90ba-a98af4027eae.jpg",
+      "results": {
+        "image_path": "samples/images/ff47a350-19c4-4694-90ba-a98af4027eae.jpg",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 15,
+        "items": [
+          {
+            "description": "1854948 GAP 5HORT",
+            "price": 14.99,
+            "quantity": 1
+          },
+          {
+            "description": "1583270 NIKECLUBCREW",
+            "price": 32.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021 GERRY 5HORT",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021",
+            "price": 3.0,
+            "quantity": 1
+          },
+          {
+            "description": "E 818073 K5 TORTELLON",
+            "price": 11.29,
+            "quantity": 1
+          },
+          {
+            "description": "7 OE 549797 BI5COFF",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1853333 CGOKIEMOU55E",
+            "price": 10.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 3741 ALB ENVY",
+            "price": 8.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 174876Y K5 BRKF5T5ND",
+            "price": 16.49,
+            "quantity": 1
+          },
+          {
+            "description": "E 399969 MADELEINE5",
+            "price": 8.49,
+            "quantity": 1
+          },
+          {
+            "description": "76910 52DTANK3PACK",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1792879 POM JUICE",
+            "price": 10.39,
+            "quantity": 1
+          },
+          {
+            "description": "E 135089 BAGEL5",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 890181 K5 WLD5ALMON",
+            "price": 18.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 1312509 MU5H VTY",
+            "price": 9.99,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/IMG_5656.png",
+      "results": {
+        "image_path": "samples/images/IMG_5656.png",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 2,
+        "items": [
+          {
+            "description": "CILANTRO MACHO",
+            "price": 2.49,
+            "quantity": 1
+          },
+          {
+            "description": "BA5IL",
+            "price": 2.5,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/a1f9eadc-8b02-4474-b5c5-25349b48f96e.jpg",
+      "results": {
+        "image_path": "samples/images/a1f9eadc-8b02-4474-b5c5-25349b48f96e.jpg",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 15,
+        "items": [
+          {
+            "description": "1854948 GAP 5HORT",
+            "price": 14.99,
+            "quantity": 1
+          },
+          {
+            "description": "1583270 NIKECLUBCREW",
+            "price": 32.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021 GERRY 5HORT",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021",
+            "price": 3.0,
+            "quantity": 1
+          },
+          {
+            "description": "E 818073 K5 TORTELLON",
+            "price": 11.29,
+            "quantity": 1
+          },
+          {
+            "description": "7 OE 549797 BI5COFF",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1853333 CGOKIEMOU55E",
+            "price": 10.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 3741 ALB ENVY",
+            "price": 8.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 174876Y K5 BRKF5T5ND",
+            "price": 16.49,
+            "quantity": 1
+          },
+          {
+            "description": "E 399969 MADELEINE5",
+            "price": 8.49,
+            "quantity": 1
+          },
+          {
+            "description": "76910 52DTANK3PACK",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1792879 POM JUICE",
+            "price": 10.39,
+            "quantity": 1
+          },
+          {
+            "description": "E 135089 BAGEL5",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 890181 K5 WLD5ALMON",
+            "price": 18.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 1312509 MU5H VTY",
+            "price": 9.99,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/IMG_5657.png",
+      "results": {
+        "image_path": "samples/images/IMG_5657.png",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 2,
+        "items": [
+          {
+            "description": "CELERY BUNCH",
+            "price": 1.99,
+            "quantity": 1
+          },
+          {
+            "description": "VI5A",
+            "price": 1.99,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/124c7717-1243-4409-a61a-3b1fb54d6982.jpg",
+      "results": {
+        "image_path": "samples/images/124c7717-1243-4409-a61a-3b1fb54d6982.jpg",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 15,
+        "items": [
+          {
+            "description": "1854948 GAP 5HORT",
+            "price": 14.99,
+            "quantity": 1
+          },
+          {
+            "description": "1583270 NIKECLUBCREW",
+            "price": 32.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021 GERRY 5HORT",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021",
+            "price": 3.0,
+            "quantity": 1
+          },
+          {
+            "description": "E 818073 K5 TORTELLON",
+            "price": 11.29,
+            "quantity": 1
+          },
+          {
+            "description": "7 OE 549797 BI5COFF",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1853333 CGOKIEMOU55E",
+            "price": 10.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 3741 ALB ENVY",
+            "price": 8.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 174876Y K5 BRKF5T5ND",
+            "price": 16.49,
+            "quantity": 1
+          },
+          {
+            "description": "E 399969 MADELEINE5",
+            "price": 8.49,
+            "quantity": 1
+          },
+          {
+            "description": "76910 52DTANK3PACK",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1792879 POM JUICE",
+            "price": 10.39,
+            "quantity": 1
+          },
+          {
+            "description": "E 135089 BAGEL5",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 890181 K5 WLD5ALMON",
+            "price": 18.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 1312509 MU5H VTY",
+            "price": 9.99,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/077e8470-b990-4c95-9088-98aff1974391.jpg",
+      "results": {
+        "image_path": "samples/images/077e8470-b990-4c95-9088-98aff1974391.jpg",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 15,
+        "items": [
+          {
+            "description": "1854948 GAP 5HORT",
+            "price": 14.99,
+            "quantity": 1
+          },
+          {
+            "description": "1583270 NIKECLUBCREW",
+            "price": 32.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021 GERRY 5HORT",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021",
+            "price": 3.0,
+            "quantity": 1
+          },
+          {
+            "description": "E 818073 K5 TORTELLON",
+            "price": 11.29,
+            "quantity": 1
+          },
+          {
+            "description": "7 OE 549797 BI5COFF",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1853333 CGOKIEMOU55E",
+            "price": 10.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 3741 ALB ENVY",
+            "price": 8.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 174876Y K5 BRKF5T5ND",
+            "price": 16.49,
+            "quantity": 1
+          },
+          {
+            "description": "E 399969 MADELEINE5",
+            "price": 8.49,
+            "quantity": 1
+          },
+          {
+            "description": "76910 52DTANK3PACK",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1792879 POM JUICE",
+            "price": 10.39,
+            "quantity": 1
+          },
+          {
+            "description": "E 135089 BAGEL5",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 890181 K5 WLD5ALMON",
+            "price": 18.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 1312509 MU5H VTY",
+            "price": 9.99,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/IMG_5660.png",
+      "results": {
+        "image_path": "samples/images/IMG_5660.png",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "cash",
+        "items_count": 13,
+        "items": [
+          {
+            "description": "ROTI55ERIE CHICKEN",
+            "price": 5.99,
+            "quantity": 1
+          },
+          {
+            "description": "JIN RAMEN HILB BOX",
+            "price": 16.99,
+            "quantity": 1
+          },
+          {
+            "description": "COOKI&CRM",
+            "price": 8.99,
+            "quantity": 1
+          },
+          {
+            "description": "MINI CUCUMBER5",
+            "price": 1.49,
+            "quantity": 1
+          },
+          {
+            "description": "MRYM LATTE",
+            "price": 2.99,
+            "quantity": 1
+          },
+          {
+            "description": "ICECAFE AMERICANG",
+            "price": 1.99,
+            "quantity": 1
+          },
+          {
+            "description": "MA5AMAN CURRY PA5T",
+            "price": 1.99,
+            "quantity": 1
+          },
+          {
+            "description": "5RKK GYOZA- BEEF",
+            "price": 5.99,
+            "quantity": 1
+          },
+          {
+            "description": "BGR 5AMANCO CHOCO",
+            "price": 4.99,
+            "quantity": 1
+          },
+          {
+            "description": "1.86 Ib 0",
+            "price": 2.99,
+            "quantity": 1
+          },
+          {
+            "description": "WT GRN 5EEDLE55 GRAPE",
+            "price": 5.56,
+            "quantity": 1
+          },
+          {
+            "description": "GROCERY",
+            "price": 3.75,
+            "quantity": 1
+          },
+          {
+            "description": "TAK",
+            "price": 0.72,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/10177a86-481d-42cd-8491-f2520f971768.jpg",
+      "results": {
+        "image_path": "samples/images/10177a86-481d-42cd-8491-f2520f971768.jpg",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 15,
+        "items": [
+          {
+            "description": "1854948 GAP 5HORT",
+            "price": 14.99,
+            "quantity": 1
+          },
+          {
+            "description": "1583270 NIKECLUBCREW",
+            "price": 32.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021 GERRY 5HORT",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021",
+            "price": 3.0,
+            "quantity": 1
+          },
+          {
+            "description": "E 818073 K5 TORTELLON",
+            "price": 11.29,
+            "quantity": 1
+          },
+          {
+            "description": "7 OE 549797 BI5COFF",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1853333 CGOKIEMOU55E",
+            "price": 10.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 3741 ALB ENVY",
+            "price": 8.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 174876Y K5 BRKF5T5ND",
+            "price": 16.49,
+            "quantity": 1
+          },
+          {
+            "description": "E 399969 MADELEINE5",
+            "price": 8.49,
+            "quantity": 1
+          },
+          {
+            "description": "76910 52DTANK3PACK",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1792879 POM JUICE",
+            "price": 10.39,
+            "quantity": 1
+          },
+          {
+            "description": "E 135089 BAGEL5",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 890181 K5 WLD5ALMON",
+            "price": 18.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 1312509 MU5H VTY",
+            "price": 9.99,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/IMG_5661.png",
+      "results": {
+        "image_path": "samples/images/IMG_5661.png",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 6,
+        "items": [
+          {
+            "description": "4 WIT MOTHER EARTH ORG C",
+            "price": 1.4,
+            "quantity": 1
+          },
+          {
+            "description": "CARROT BUNCH",
+            "price": 2.69,
+            "quantity": 1
+          },
+          {
+            "description": "5CALLION5",
+            "price": 0.99,
+            "quantity": 1
+          },
+          {
+            "description": "THAI KITE FI5H 5AU",
+            "price": 5.09,
+            "quantity": 1
+          },
+          {
+            "description": "WT ONION5 5PANI5H",
+            "price": 0.93,
+            "quantity": 1
+          },
+          {
+            "description": "WT YUKON POTATOE5",
+            "price": 2.55,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/32726dcb-a167-4e51-a044-7da8276a2430.jpg",
+      "results": {
+        "image_path": "samples/images/32726dcb-a167-4e51-a044-7da8276a2430.jpg",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 15,
+        "items": [
+          {
+            "description": "1854948 GAP 5HORT",
+            "price": 14.99,
+            "quantity": 1
+          },
+          {
+            "description": "1583270 NIKECLUBCREW",
+            "price": 32.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021 GERRY 5HORT",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021",
+            "price": 3.0,
+            "quantity": 1
+          },
+          {
+            "description": "E 818073 K5 TORTELLON",
+            "price": 11.29,
+            "quantity": 1
+          },
+          {
+            "description": "7 OE 549797 BI5COFF",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1853333 CGOKIEMOU55E",
+            "price": 10.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 3741 ALB ENVY",
+            "price": 8.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 174876Y K5 BRKF5T5ND",
+            "price": 16.49,
+            "quantity": 1
+          },
+          {
+            "description": "E 399969 MADELEINE5",
+            "price": 8.49,
+            "quantity": 1
+          },
+          {
+            "description": "76910 52DTANK3PACK",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1792879 POM JUICE",
+            "price": 10.39,
+            "quantity": 1
+          },
+          {
+            "description": "E 135089 BAGEL5",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 890181 K5 WLD5ALMON",
+            "price": 18.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 1312509 MU5H VTY",
+            "price": 9.99,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/5ba838de-6ad9-40eb-9213-0fe99fc11af4.jpg",
+      "results": {
+        "image_path": "samples/images/5ba838de-6ad9-40eb-9213-0fe99fc11af4.jpg",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 15,
+        "items": [
+          {
+            "description": "1854948 GAP 5HORT",
+            "price": 14.99,
+            "quantity": 1
+          },
+          {
+            "description": "1583270 NIKECLUBCREW",
+            "price": 32.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021 GERRY 5HORT",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021",
+            "price": 3.0,
+            "quantity": 1
+          },
+          {
+            "description": "E 818073 K5 TORTELLON",
+            "price": 11.29,
+            "quantity": 1
+          },
+          {
+            "description": "7 OE 549797 BI5COFF",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1853333 CGOKIEMOU55E",
+            "price": 10.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 3741 ALB ENVY",
+            "price": 8.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 174876Y K5 BRKF5T5ND",
+            "price": 16.49,
+            "quantity": 1
+          },
+          {
+            "description": "E 399969 MADELEINE5",
+            "price": 8.49,
+            "quantity": 1
+          },
+          {
+            "description": "76910 52DTANK3PACK",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1792879 POM JUICE",
+            "price": 10.39,
+            "quantity": 1
+          },
+          {
+            "description": "E 135089 BAGEL5",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 890181 K5 WLD5ALMON",
+            "price": 18.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 1312509 MU5H VTY",
+            "price": 9.99,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/848427e6-b8e2-4be9-8b36-667a7214ff03.jpg",
+      "results": {
+        "image_path": "samples/images/848427e6-b8e2-4be9-8b36-667a7214ff03.jpg",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 15,
+        "items": [
+          {
+            "description": "1854948 GAP 5HORT",
+            "price": 14.99,
+            "quantity": 1
+          },
+          {
+            "description": "1583270 NIKECLUBCREW",
+            "price": 32.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021 GERRY 5HORT",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021",
+            "price": 3.0,
+            "quantity": 1
+          },
+          {
+            "description": "E 818073 K5 TORTELLON",
+            "price": 11.29,
+            "quantity": 1
+          },
+          {
+            "description": "7 OE 549797 BI5COFF",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1853333 CGOKIEMOU55E",
+            "price": 10.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 3741 ALB ENVY",
+            "price": 8.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 174876Y K5 BRKF5T5ND",
+            "price": 16.49,
+            "quantity": 1
+          },
+          {
+            "description": "E 399969 MADELEINE5",
+            "price": 8.49,
+            "quantity": 1
+          },
+          {
+            "description": "76910 52DTANK3PACK",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1792879 POM JUICE",
+            "price": 10.39,
+            "quantity": 1
+          },
+          {
+            "description": "E 135089 BAGEL5",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 890181 K5 WLD5ALMON",
+            "price": 18.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 1312509 MU5H VTY",
+            "price": 9.99,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/IMG_5659.png",
+      "results": {
+        "image_path": "samples/images/IMG_5659.png",
+        "processing_status": "failed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": null,
+        "items_count": 2,
+        "items": [
+          {
+            "description": "Org FLOTE CORN CHIP5",
+            "price": 2.59,
+            "quantity": 1
+          },
+          {
+            "description": "CREAM CHEE5E BRICK",
+            "price": 3.98,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/IMG_5658.png",
+      "results": {
+        "image_path": "samples/images/IMG_5658.png",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 15,
+        "items": [
+          {
+            "description": "1854948 GAP 5HORT",
+            "price": 14.99,
+            "quantity": 1
+          },
+          {
+            "description": "1583270 NIKECLUBCREW",
+            "price": 32.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021 GERRY 5HORT",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021",
+            "price": 3.0,
+            "quantity": 1
+          },
+          {
+            "description": "E 818073 K5 TORTELLON",
+            "price": 11.29,
+            "quantity": 1
+          },
+          {
+            "description": "7 OE 549797 BI5COFF",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1853333 CGOKIEMOU55E",
+            "price": 10.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 3741 ALB ENVY",
+            "price": 8.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 174876Y K5 BRKF5T5ND",
+            "price": 16.49,
+            "quantity": 1
+          },
+          {
+            "description": "E 399969 MADELEINE5",
+            "price": 8.49,
+            "quantity": 1
+          },
+          {
+            "description": "76910 52DTANK3PACK",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1792879 POM JUICE",
+            "price": 10.39,
+            "quantity": 1
+          },
+          {
+            "description": "E 135089 BAGEL5",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 890181 K5 WLD5ALMON",
+            "price": 18.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 1312509 MU5H VTY",
+            "price": 9.99,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/f6c2f901-1200-4086-85e1-69a1fc0d9c4e.jpg",
+      "results": {
+        "image_path": "samples/images/f6c2f901-1200-4086-85e1-69a1fc0d9c4e.jpg",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 15,
+        "items": [
+          {
+            "description": "1854948 GAP 5HORT",
+            "price": 14.99,
+            "quantity": 1
+          },
+          {
+            "description": "1583270 NIKECLUBCREW",
+            "price": 32.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021 GERRY 5HORT",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021",
+            "price": 3.0,
+            "quantity": 1
+          },
+          {
+            "description": "E 818073 K5 TORTELLON",
+            "price": 11.29,
+            "quantity": 1
+          },
+          {
+            "description": "7 OE 549797 BI5COFF",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1853333 CGOKIEMOU55E",
+            "price": 10.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 3741 ALB ENVY",
+            "price": 8.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 174876Y K5 BRKF5T5ND",
+            "price": 16.49,
+            "quantity": 1
+          },
+          {
+            "description": "E 399969 MADELEINE5",
+            "price": 8.49,
+            "quantity": 1
+          },
+          {
+            "description": "76910 52DTANK3PACK",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1792879 POM JUICE",
+            "price": 10.39,
+            "quantity": 1
+          },
+          {
+            "description": "E 135089 BAGEL5",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 890181 K5 WLD5ALMON",
+            "price": 18.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 1312509 MU5H VTY",
+            "price": 9.99,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    },
+    {
+      "image_path": "samples/images/cfcb0563-295d-41b6-9315-9ba7ca666f55.jpg",
+      "results": {
+        "image_path": "samples/images/cfcb0563-295d-41b6-9315-9ba7ca666f55.jpg",
+        "processing_status": "processed",
+        "store_name": "Unknown Store",
+        "date": null,
+        "currency": null,
+        "subtotal": null,
+        "tax": null,
+        "total": null,
+        "payment_method": "credit card",
+        "items_count": 15,
+        "items": [
+          {
+            "description": "1854948 GAP 5HORT",
+            "price": 14.99,
+            "quantity": 1
+          },
+          {
+            "description": "1583270 NIKECLUBCREW",
+            "price": 32.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021 GERRY 5HORT",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "1841021",
+            "price": 3.0,
+            "quantity": 1
+          },
+          {
+            "description": "E 818073 K5 TORTELLON",
+            "price": 11.29,
+            "quantity": 1
+          },
+          {
+            "description": "7 OE 549797 BI5COFF",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1853333 CGOKIEMOU55E",
+            "price": 10.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 3741 ALB ENVY",
+            "price": 8.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 174876Y K5 BRKF5T5ND",
+            "price": 16.49,
+            "quantity": 1
+          },
+          {
+            "description": "E 399969 MADELEINE5",
+            "price": 8.49,
+            "quantity": 1
+          },
+          {
+            "description": "76910 52DTANK3PACK",
+            "price": 12.99,
+            "quantity": 1
+          },
+          {
+            "description": "E 1792879 POM JUICE",
+            "price": 10.39,
+            "quantity": 1
+          },
+          {
+            "description": "E 135089 BAGEL5",
+            "price": 7.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 890181 K5 WLD5ALMON",
+            "price": 18.99,
+            "quantity": 1
+          },
+          {
+            "description": "OE 1312509 MU5H VTY",
+            "price": 9.99,
+            "quantity": 1
+          }
+        ]
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    }
+  ],
+  "vendor_results": {
+    "Other": {
+      "total": 22,
+      "passed": 22,
+      "failed": 0,
+      "no_expected": 0
+    }
+  }
+}

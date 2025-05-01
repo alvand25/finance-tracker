@@ -1,0 +1,13 @@
+# Raw OCR Output
+================================================================================
+MART http7www.hmart.com 48-18NorthernBlvd LonsIslandCity.NY.11101 TEL718489-8680 YourCashierwasSYLVIAKIM PRODUCE 3.36F MILKPANBREAD 6.96F BEANSPROUTS1202 1.99F ORGBEECHMUSHROOM 3.99F 2 MASAMANCURRYPAST 1.99F- GREENCURRYPASTE 1.99F - HSPICKLEDRADISH 1.49F 18471.99 LIME 0.50F 1841.99 LIME 0.50F MRNBFRIBEYEROLL 8.90F RegularPrice9.99Yousaved0.99. RAMAFRESHRICEST 4.99 F F2BFTOPBLADE 16479F . TAX 0.00 wweeBALANCE 60.44 - MasterCard Credit -H ACCOUNTNUMBER448444e2835 -APPROVALCODE08458P SEQUENCENUMBER6717 TOTALAMOUNT$60.44 RESPONSECODEAPPROVED . 0411250426pm1266 . MasterCard 60.44 CHANGE 0.00 . TOTALNUMBEROFITEMSSOLD Ae
+================================================================================
+
+
+# OCR Statistics
+--------------------------------------------------------------------------------
+word_count: 60
+average_confidence: 21.77%
+low_confidence_words: 48
+low_confidence_ratio: 80.00%
+tesseract_config: --psm 6 --oem 3 -c tessedit_char_whitelist="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-$"

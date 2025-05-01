@@ -1,0 +1,32 @@
+{
+  "store": "Aldi",
+  "items": [
+    {
+      "description": "ORGANIC BANANAS",
+      "price": 1.39
+    },
+    {
+      "description": "ORGANIC WHOLE MILK",
+      "price": 3.89
+    },
+    {
+      "description": "FRESH BREAD",
+      "price": 2.49
+    },
+    {
+      "description": "EGGS 12CT",
+      "price": 2.99
+    },
+    {
+      "description": "COFFEE BEANS",
+      "price": 4.99
+    }
+  ],
+  "subtotal": 15.75,
+  "tax": 0.42,
+  "total": 16.17,
+  "payment_method": "VISA",
+  "timestamp": "2024-04-20T10:15:00",
+  "check_items_exactly": true,
+  "notes": "Example Aldi receipt for demonstrating test framework extensibility"
+} 

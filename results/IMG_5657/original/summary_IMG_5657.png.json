@@ -1,0 +1,13 @@
+{
+  "image_path": "samples/images/IMG_5657.png",
+  "store": "sa oe fo e oe. be eee cs a cal",
+  "store_confidence": 0.5,
+  "handler": "GenericHandler",
+  "item_count": 0,
+  "items_sample": [],
+  "subtotal": null,
+  "tax": null,
+  "total": null,
+  "overall_confidence": 0.0,
+  "extraction_quality": 0.25
+}

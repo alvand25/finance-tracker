@@ -1,0 +1,51 @@
+{
+  "store": "H_Mart",
+  "items": [
+    {
+      "description": "PRODUCE",
+      "price": 3.36
+    },
+    {
+      "description": "MILK PAN BREAD",
+      "price": 6.95
+    },
+    {
+      "description": "BEAN SPROUTS/12oz",
+      "price": 1.99
+    },
+    {
+      "description": "ORG BEECH MUSHROOM",
+      "price": 3.99
+    },
+    {
+      "description": "MASAMAN CURRY PASTE",
+      "price": 1.99
+    },
+    {
+      "description": "GREEN CURRY PASTE",
+      "price": 1.99
+    },
+    {
+      "description": "HS PICKLED RADISH",
+      "price": 1.49
+    },
+    {
+      "description": "LIME",
+      "price": 0.50
+    },
+    {
+      "description": "PREMIUM BEEF RIBEYE",
+      "price": 8.90
+    },
+    {
+      "description": "RICE STICK NOODLES",
+      "price": 2.99
+    }
+  ],
+  "subtotal": 34.15,
+  "tax": 0.0,
+  "total": 34.15,
+  "payment_method": "MasterCard",
+  "timestamp": "2024-04-12T18:45:00",
+  "check_items_exactly": true
+}

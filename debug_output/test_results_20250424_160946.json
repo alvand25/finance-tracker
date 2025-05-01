@@ -1,0 +1,163 @@
+[
+  {
+    "items": [
+      {
+        "description": ". MasterCard",
+        "price": 60.44,
+        "quantity": 1,
+        "confidence": 0.7
+      }
+    ],
+    "subtotal": 60.44,
+    "tax": null,
+    "total": 60.44,
+    "store": "h_mart",
+    "date": "1999-04-01 00:00:00",
+    "payment_method": "credit",
+    "currency": "USD",
+    "confidence": {
+      "items": 0.7,
+      "totals": 0.7,
+      "metadata": 0.7,
+      "overall": 0.6999999999999998
+    },
+    "store_confidence": 0.95,
+    "handler": "GenericHandler",
+    "processing_time": 2.0855658054351807,
+    "process_id": "46a6ec15-2ba1-4911-bb3e-4eff2530aa22",
+    "extraction_quality": 0.7,
+    "image_path": "samples/images/IMG_5655.png"
+  },
+  {
+    "items": [],
+    "subtotal": null,
+    "tax": null,
+    "total": null,
+    "store": "3t e a",
+    "date": null,
+    "payment_method": null,
+    "currency": "GBP",
+    "confidence": {
+      "items": 0.0,
+      "totals": 0.0,
+      "metadata": 0.7,
+      "overall": 0.7
+    },
+    "store_confidence": 0.4,
+    "handler": "GenericHandler",
+    "processing_time": 2.528491973876953,
+    "process_id": "61a6e180-f662-4ad3-8904-4799b57d4c19",
+    "extraction_quality": 0.6,
+    "image_path": "samples/images/IMG_5656.png"
+  },
+  {
+    "items": [],
+    "subtotal": null,
+    "tax": null,
+    "total": null,
+    "store": "*K aK",
+    "date": null,
+    "payment_method": null,
+    "currency": "EUR",
+    "confidence": {
+      "items": 0.0,
+      "totals": 0.0,
+      "metadata": 0.7,
+      "overall": 0.7
+    },
+    "store_confidence": 0.4,
+    "handler": "GenericHandler",
+    "processing_time": 2.3616538047790527,
+    "process_id": "dd27f37f-b359-459c-8912-0a50c30ba679",
+    "extraction_quality": 0.6,
+    "image_path": "samples/images/IMG_5657.png"
+  },
+  {
+    "items": [],
+    "subtotal": null,
+    "tax": null,
+    "total": null,
+    "store": "unknown",
+    "date": null,
+    "payment_method": null,
+    "currency": "GBP",
+    "confidence": {
+      "items": 0.0,
+      "totals": 0.0,
+      "metadata": 0.7,
+      "overall": 0.7
+    },
+    "store_confidence": 0.0,
+    "handler": "GenericHandler",
+    "processing_time": 2.542318105697632,
+    "process_id": "8880fec4-525e-43b2-82d1-b8dba183ca43",
+    "extraction_quality": 0.6,
+    "image_path": "samples/images/IMG_5660.png"
+  },
+  {
+    "items": [],
+    "subtotal": null,
+    "tax": null,
+    "total": null,
+    "store": "unknown",
+    "date": null,
+    "payment_method": null,
+    "currency": "EUR",
+    "confidence": {
+      "items": 0.0,
+      "totals": 0.0,
+      "metadata": 0.0,
+      "overall": 0.0
+    },
+    "store_confidence": 0.0,
+    "handler": "GenericHandler",
+    "processing_time": 2.1911518573760986,
+    "process_id": "a1d7afb1-5233-45bc-a0bb-c52051764625",
+    "extraction_quality": 0.25,
+    "image_path": "samples/images/IMG_5661.png"
+  },
+  {
+    "items": [],
+    "subtotal": null,
+    "tax": null,
+    "total": null,
+    "store": "* wo",
+    "date": null,
+    "payment_method": null,
+    "currency": "GBP",
+    "confidence": {
+      "items": 0.0,
+      "totals": 0.0,
+      "metadata": 0.7,
+      "overall": 0.7
+    },
+    "store_confidence": 0.4,
+    "handler": "GenericHandler",
+    "processing_time": 2.122342109680176,
+    "process_id": "b1145e2b-f474-4138-b71b-fbb8c3a964b0",
+    "extraction_quality": 0.6,
+    "image_path": "samples/images/IMG_5659.png"
+  },
+  {
+    "items": [],
+    "subtotal": null,
+    "tax": null,
+    "total": null,
+    "store": "ae Li",
+    "date": null,
+    "payment_method": null,
+    "currency": "GBP",
+    "confidence": {
+      "items": 0.0,
+      "totals": 0.0,
+      "metadata": 0.7,
+      "overall": 0.7
+    },
+    "store_confidence": 0.4,
+    "handler": "GenericHandler",
+    "processing_time": 2.28639817237854,
+    "process_id": "b8479f71-f969-4112-861d-da96f51c0d93",
+    "extraction_quality": 0.6,
+    "image_path": "samples/images/IMG_5658.png"
+  }
+]

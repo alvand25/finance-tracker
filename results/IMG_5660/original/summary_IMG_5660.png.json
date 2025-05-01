@@ -1,0 +1,13 @@
+{
+  "image_path": "samples/images/IMG_5660.png",
+  "store": "trader_joes",
+  "store_confidence": 0.95,
+  "handler": "GenericHandler",
+  "item_count": 0,
+  "items_sample": [],
+  "subtotal": null,
+  "tax": null,
+  "total": 5.0,
+  "overall_confidence": 0.7,
+  "extraction_quality": 0.6499999999999999
+}

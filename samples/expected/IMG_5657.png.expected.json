@@ -1,0 +1,19 @@
+{
+    "store": "Key_Food",
+    "items": [
+        {
+            "description": "CILANTRO MACHO",
+            "price": 2.49
+        },
+        {
+            "description": "BASIL",
+            "price": 2.50
+        }
+    ],
+    "subtotal": 4.99,
+    "tax": 0.0,
+    "total": 4.99,
+    "payment_method": "CASH",
+    "timestamp": "2024-04-11T16:49:00",
+    "check_items_exactly": true
+}

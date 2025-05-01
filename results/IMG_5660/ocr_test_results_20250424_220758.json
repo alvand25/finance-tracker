@@ -1,0 +1,75 @@
+{
+  "timestamp": "2025-04-24T22:07:58.399726",
+  "image_path": "samples/images/IMG_5660.png",
+  "original": {
+    "results": {
+      "items": [],
+      "subtotal": null,
+      "tax": null,
+      "total": 5.0,
+      "store": "trader_joes",
+      "date": null,
+      "payment_method": null,
+      "currency": "USD",
+      "confidence": {
+        "items": 0.0,
+        "totals": 0.7,
+        "metadata": 0.0,
+        "overall": 0.7
+      },
+      "store_confidence": 0.95,
+      "handler": "GenericHandler",
+      "processing_time": 2958.5508091449738,
+      "process_id": "61b94453-cc3a-4013-bb8e-5ed25049fba6",
+      "extraction_quality": 0.6499999999999999
+    },
+    "metrics": {
+      "item_count": 0,
+      "has_total": true,
+      "has_subtotal": false,
+      "has_tax": false,
+      "store_confidence": 0.95,
+      "overall_confidence": 0.7,
+      "extraction_quality": 0.6499999999999999,
+      "completeness": 0.4
+    }
+  },
+  "improved": {
+    "results": {
+      "items": [],
+      "subtotal": null,
+      "tax": null,
+      "total": 5.0,
+      "store": "trader_joes",
+      "date": null,
+      "payment_method": null,
+      "currency": "USD",
+      "confidence": {
+        "items": 0.0,
+        "totals": 0.7,
+        "metadata": 0.0,
+        "overall": 0.7
+      },
+      "store_confidence": 0.95,
+      "handler": "GenericHandler",
+      "processing_time": 2821.9865539073944,
+      "process_id": "cb76f520-247d-49b5-b29a-119ff66941b2",
+      "extraction_quality": 0.6499999999999999
+    },
+    "metrics": {
+      "item_count": 0,
+      "has_total": true,
+      "has_subtotal": false,
+      "has_tax": false,
+      "store_confidence": 0.95,
+      "overall_confidence": 0.7,
+      "extraction_quality": 0.6499999999999999,
+      "completeness": 0.4
+    }
+  },
+  "improvements": {
+    "confidence": 0.0,
+    "items": 0.0,
+    "text_similarity": null
+  }
+}

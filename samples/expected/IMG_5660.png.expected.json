@@ -1,0 +1,23 @@
+{
+    "store": "Trader_Joes",
+    "items": [
+        {
+            "description": "SPICY CHAI TEA LATTE MIX",
+            "price": 4.99
+        },
+        {
+            "description": "ORG ELOTE CORN CHIPS",
+            "price": 2.99
+        },
+        {
+            "description": "CREAM CHEESE BRICK",
+            "price": 3.98
+        }
+    ],
+    "subtotal": 11.96,
+    "tax": 0.0,
+    "total": 11.96,
+    "payment_method": "MasterCard",
+    "timestamp": "2024-04-14T11:35:00",
+    "check_items_exactly": true
+}

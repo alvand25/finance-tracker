@@ -1,0 +1,25 @@
+GROCERY STORE
+123 Main Street
+City, State 12345
+Tel: (123) 456-7890
+
+RECEIPT
+
+Date: 05/15/2023
+Time: 14:32
+Transaction #: 12345
+
+ITEMS:
+Apple           $1.99
+Banana          $0.89
+Milk            $3.49
+Bread           $2.99
+Eggs            $4.29
+Coffee          $8.99
+
+Subtotal:       $22.64
+Tax (8%):       $1.81
+Total:          $24.45
+
+Payment Method: VISA xxxx-1234
+Thank you for shopping with us! 

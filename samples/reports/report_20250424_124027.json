@@ -1,0 +1,282 @@
+{
+  "timestamp": "2025-04-24T12:40:27.993244",
+  "total_tests": 22,
+  "passed_tests": 0,
+  "failed_tests": 22,
+  "no_expected_tests": 0,
+  "pass_rate": "0.0%",
+  "tests": [
+    {
+      "image_path": "samples/images/74dfb63c-0d81-4f6a-9a24-42b2312d23c1.jpg",
+      "results": {
+        "image_path": "samples/images/74dfb63c-0d81-4f6a-9a24-42b2312d23c1.jpg",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/3ae00654-62ea-4a0b-9e0a-396e2ffb880f.jpg",
+      "results": {
+        "image_path": "samples/images/3ae00654-62ea-4a0b-9e0a-396e2ffb880f.jpg",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/86b4c9ae-3f80-494c-b449-0ea0bd345db8.jpg",
+      "results": {
+        "image_path": "samples/images/86b4c9ae-3f80-494c-b449-0ea0bd345db8.jpg",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/IMG_5655.png",
+      "results": {
+        "image_path": "samples/images/IMG_5655.png",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/5381a811-03e0-4a14-97c5-c8dec056032f.jpg",
+      "results": {
+        "image_path": "samples/images/5381a811-03e0-4a14-97c5-c8dec056032f.jpg",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/b5e16b64-5742-43a5-aac8-759f3274e9be.jpg",
+      "results": {
+        "image_path": "samples/images/b5e16b64-5742-43a5-aac8-759f3274e9be.jpg",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/ff47a350-19c4-4694-90ba-a98af4027eae.jpg",
+      "results": {
+        "image_path": "samples/images/ff47a350-19c4-4694-90ba-a98af4027eae.jpg",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/IMG_5656.png",
+      "results": {
+        "image_path": "samples/images/IMG_5656.png",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/a1f9eadc-8b02-4474-b5c5-25349b48f96e.jpg",
+      "results": {
+        "image_path": "samples/images/a1f9eadc-8b02-4474-b5c5-25349b48f96e.jpg",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/IMG_5657.png",
+      "results": {
+        "image_path": "samples/images/IMG_5657.png",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/124c7717-1243-4409-a61a-3b1fb54d6982.jpg",
+      "results": {
+        "image_path": "samples/images/124c7717-1243-4409-a61a-3b1fb54d6982.jpg",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/077e8470-b990-4c95-9088-98aff1974391.jpg",
+      "results": {
+        "image_path": "samples/images/077e8470-b990-4c95-9088-98aff1974391.jpg",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/IMG_5660.png",
+      "results": {
+        "image_path": "samples/images/IMG_5660.png",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/10177a86-481d-42cd-8491-f2520f971768.jpg",
+      "results": {
+        "image_path": "samples/images/10177a86-481d-42cd-8491-f2520f971768.jpg",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/IMG_5661.png",
+      "results": {
+        "image_path": "samples/images/IMG_5661.png",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/32726dcb-a167-4e51-a044-7da8276a2430.jpg",
+      "results": {
+        "image_path": "samples/images/32726dcb-a167-4e51-a044-7da8276a2430.jpg",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/5ba838de-6ad9-40eb-9213-0fe99fc11af4.jpg",
+      "results": {
+        "image_path": "samples/images/5ba838de-6ad9-40eb-9213-0fe99fc11af4.jpg",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/848427e6-b8e2-4be9-8b36-667a7214ff03.jpg",
+      "results": {
+        "image_path": "samples/images/848427e6-b8e2-4be9-8b36-667a7214ff03.jpg",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/IMG_5659.png",
+      "results": {
+        "image_path": "samples/images/IMG_5659.png",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/IMG_5658.png",
+      "results": {
+        "image_path": "samples/images/IMG_5658.png",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/f6c2f901-1200-4086-85e1-69a1fc0d9c4e.jpg",
+      "results": {
+        "image_path": "samples/images/f6c2f901-1200-4086-85e1-69a1fc0d9c4e.jpg",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    },
+    {
+      "image_path": "samples/images/cfcb0563-295d-41b6-9315-9ba7ca666f55.jpg",
+      "results": {
+        "image_path": "samples/images/cfcb0563-295d-41b6-9315-9ba7ca666f55.jpg",
+        "processing_status": "error",
+        "error": "\"Receipt\" object has no field \"error_message\"",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 154, in process_receipt\n    print(f\"Found matching template: {matched_template.name}\")\n                                      ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'tuple' object has no attribute 'name'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 130, in process_receipt_image\n    receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/services/receipt_service.py\", line 225, in process_receipt\n    receipt.error_message = str(e)\n    ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/venv_new/lib/python3.11/site-packages/pydantic/main.py\", line 774, in __setattr__\n    raise ValueError(f'\"{self.__class__.__name__}\" object has no field \"{name}\"')\nValueError: \"Receipt\" object has no field \"error_message\"\n"
+      },
+      "comparison": {
+        "status": "expected_generated"
+      }
+    }
+  ],
+  "vendor_results": {
+    "Other": {
+      "total": 22,
+      "passed": 0,
+      "failed": 22,
+      "no_expected": 0
+    }
+  }
+}

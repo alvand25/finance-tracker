@@ -1,0 +1,27 @@
+{
+    "store": "Trader_Joes",
+    "items": [
+        {
+            "description": "ORGANIC BANANAS",
+            "price": 1.99
+        },
+        {
+            "description": "ORANGE CHICKEN",
+            "price": 4.99
+        },
+        {
+            "description": "SPARKLING WATER 6PK",
+            "price": 3.49
+        },
+        {
+            "description": "ALMOND BUTTER",
+            "price": 5.99
+        }
+    ],
+    "subtotal": 16.46,
+    "tax": 0.40,
+    "total": 16.86,
+    "payment_method": "CREDIT",
+    "timestamp": "2024-04-09T13:22:00",
+    "check_items_exactly": true
+} 

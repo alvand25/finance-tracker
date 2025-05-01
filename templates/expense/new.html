@@ -1,0 +1,351 @@
+<div class="receipt-upload-section">
+    <h3>Upload Receipt</h3>
+    <div class="receipt-drop-area">
+        <input type="file" id="receiptUpload" accept="image/*" style="display: none;">
+        <button type="button" id="receiptButton" class="btn btn-outline-secondary">
+            <i class="bi bi-upload"></i> Upload Receipt
+        </button>
+        <div id="receipt-preview" class="receipt-preview" style="display: none;">
+            <img id="receipt-image" src="" alt="Receipt Preview">
+            <button type="button" id="removeReceipt" class="btn btn-sm btn-danger remove-receipt">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Debug Options (Hidden by Default) -->
+    <div class="debug-options mt-3" id="debug-options" style="display: none; border: 1px dashed #ccc; padding: 10px; background: #f8f9fa;">
+        <div class="form-check mb-2">
+            <input type="checkbox" class="form-check-input" id="debug-mode" name="debug">
+            <label class="form-check-label" for="debug-mode">Debug Mode</label>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="store-override">Force Store Name</label>
+                    <input type="text" class="form-control" id="store-override" name="store" placeholder="e.g., Costco">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="currency-override">Force Currency</label>
+                    <select class="form-control" id="currency-override" name="currency">
+                        <option value="">Auto Detect</option>
+                        <option value="USD">USD ($)</option>
+                        <option value="GBP">GBP (£)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="CAD">CAD (C$)</option>
+                        <option value="AUD">AUD (A$)</option>
+                        <option value="JPY">JPY (¥)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-6">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="disable-deskew" name="disable_deskew">
+                    <label class="form-check-label" for="disable-deskew">Disable Deskew</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="disable-enhancements" name="disable_enhancements">
+                    <label class="form-check-label" for="disable-enhancements">Disable Enhancements</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toggle for Debug Options -->
+    <div class="mt-2">
+        <button type="button" id="toggle-debug" class="btn btn-sm btn-link">Show Debug Options</button>
+    </div>
+</div>
+
+<script>
+    // ... existing code ...
+    
+    // Receipt Upload Handling
+    document.getElementById('receiptButton').addEventListener('click', function() {
+        document.getElementById('receiptUpload').click();
+    });
+    
+    document.getElementById('toggle-debug').addEventListener('click', function() {
+        const debugOptions = document.getElementById('debug-options');
+        const toggleButton = document.getElementById('toggle-debug');
+        
+        if (debugOptions.style.display === 'none') {
+            debugOptions.style.display = 'block';
+            toggleButton.textContent = 'Hide Debug Options';
+        } else {
+            debugOptions.style.display = 'none';
+            toggleButton.textContent = 'Show Debug Options';
+        }
+    });
+    
+    document.getElementById('receiptUpload').addEventListener('change', function(e) {
+        if (e.target.files.length > 0) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                document.getElementById('receipt-image').src = e.target.result;
+                document.getElementById('receipt-preview').style.display = 'block';
+                
+                // Reset receipt data in form
+                document.getElementById('receipt_id').value = '';
+                document.getElementById('receipt_data').value = '';
+                
+                // Upload the receipt for processing
+                uploadReceipt(file);
+            };
+            
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    document.getElementById('removeReceipt').addEventListener('click', function() {
+        document.getElementById('receipt-preview').style.display = 'none';
+        document.getElementById('receipt-image').src = '';
+        document.getElementById('receiptUpload').value = '';
+        document.getElementById('receipt_id').value = '';
+        document.getElementById('receipt_data').value = '';
+        
+        // Clear receipt items
+        document.getElementById('receipt-items-container').innerHTML = '';
+        document.getElementById('receipt-items-section').style.display = 'none';
+    });
+    
+    function uploadReceipt(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        // Add debug options if enabled
+        if (document.getElementById('debug-mode').checked) {
+            formData.append('debug', 'true');
+            
+            const storeOverride = document.getElementById('store-override').value;
+            if (storeOverride) {
+                formData.append('store', storeOverride);
+            }
+            
+            const currencyOverride = document.getElementById('currency-override').value;
+            if (currencyOverride) {
+                formData.append('currency', currencyOverride);
+            }
+            
+            if (document.getElementById('disable-deskew').checked) {
+                formData.append('disable_deskew', 'true');
+            }
+            
+            if (document.getElementById('disable-enhancements').checked) {
+                formData.append('disable_enhancements', 'true');
+            }
+        }
+        
+        // Show loading indicator
+        document.getElementById('receipt-items-container').innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2">Processing receipt...</p></div>';
+        document.getElementById('receipt-items-section').style.display = 'block';
+        
+        fetch('/api/receipts/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Receipt upload response:', data);
+            
+            if (data.error) {
+                document.getElementById('receipt-items-container').innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>Error processing receipt:</strong> ${data.error}
+                    </div>
+                `;
+                return;
+            }
+            
+            // Store receipt ID in form
+            document.getElementById('receipt_id').value = data.id;
+            document.getElementById('receipt_data').value = JSON.stringify(data);
+            
+            // Update form fields with receipt data
+            if (data.store_name) {
+                const vendorField = document.getElementById('vendor');
+                if (!vendorField.value) {
+                    vendorField.value = data.store_name;
+                }
+            }
+            
+            if (data.total_amount) {
+                const amountField = document.getElementById('amount');
+                if (!amountField.value) {
+                    amountField.value = data.total_amount;
+                }
+            }
+            
+            // Display receipt items
+            displayReceiptItems(data);
+            
+            // Display debug info if available
+            if (data.debug) {
+                displayDebugInfo(data.debug);
+            }
+        })
+        .catch(error => {
+            console.error('Error uploading receipt:', error);
+            document.getElementById('receipt-items-container').innerHTML = `
+                <div class="alert alert-danger">
+                    <strong>Error processing receipt:</strong> ${error.message || 'Unknown error'}
+                </div>
+            `;
+        });
+    }
+    
+    function displayReceiptItems(receiptData) {
+        const container = document.getElementById('receipt-items-container');
+        const itemsSection = document.getElementById('receipt-items-section');
+        
+        let html = '';
+        
+        // Add receipt summary
+        html += `<div class="receipt-summary mb-3">`;
+        
+        if (receiptData.processing_status !== 'completed') {
+            html += `
+                <div class="alert alert-warning">
+                    <strong>Receipt processing status:</strong> ${receiptData.processing_status}
+                    ${receiptData.processing_error ? `<p class="mt-2 mb-0">Error: ${receiptData.processing_error}</p>` : ''}
+                </div>
+            `;
+        }
+        
+        html += `
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Receipt Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Store:</strong> ${receiptData.store_name || 'Unknown'}</p>
+                            <p><strong>Date:</strong> ${receiptData.transaction_date ? new Date(receiptData.transaction_date).toLocaleDateString() : 'Unknown'}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Subtotal:</strong> ${formatCurrency(receiptData.subtotal_amount, receiptData.currency_type)}</p>
+                            <p><strong>Tax:</strong> ${formatCurrency(receiptData.tax_amount, receiptData.currency_type)}</p>
+                            <p><strong>Total:</strong> ${formatCurrency(receiptData.total_amount, receiptData.currency_type)}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Add items table if items exist
+        if (receiptData.items && receiptData.items.length > 0) {
+            html += `
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Receipt Items</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Description</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+            `;
+            
+            receiptData.items.forEach(item => {
+                html += `
+                    <tr>
+                        <td>${item.description}</td>
+                        <td>${formatCurrency(item.amount, receiptData.currency_type)}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            html += `
+                <div class="alert alert-info mt-3">
+                    <strong>No items extracted</strong> from the receipt.
+                </div>
+            `;
+        }
+        
+        html += `</div>`;
+        
+        container.innerHTML = html;
+        itemsSection.style.display = 'block';
+    }
+    
+    function displayDebugInfo(debugData) {
+        const container = document.getElementById('receipt-items-container');
+        
+        let html = `
+            <div class="debug-info mt-4">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">Debug Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Processing Options:</h6>
+                                <ul>
+                                    <li>Store Override: ${debugData.store_override || 'None'}</li>
+                                    <li>Currency Override: ${debugData.currency_override || 'None'}</li>
+                                    <li>Deskew Disabled: ${debugData.disable_deskew ? 'Yes' : 'No'}</li>
+                                    <li>Enhancements Disabled: ${debugData.disable_enhancements ? 'Yes' : 'No'}</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Processed Images:</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p>Original:</p>
+                                        <img src="${debugData.original_image_url}" class="img-fluid img-thumbnail" alt="Original Image">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p>Processed:</p>
+                                        <img src="${debugData.processed_image_url}" class="img-fluid img-thumbnail" alt="Processed Image">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        container.innerHTML += html;
+    }
+    
+    function formatCurrency(amount, currency) {
+        if (amount === null || amount === undefined) return 'N/A';
+        
+        const currencySymbol = {
+            'USD': '$',
+            'GBP': '£',
+            'EUR': '€',
+            'CAD': 'C$',
+            'AUD': 'A$',
+            'JPY': '¥'
+        }[currency] || '$';
+        
+        return `${currencySymbol}${parseFloat(amount).toFixed(2)}`;
+    }
+    
+    // ... existing code ...
+</script> 

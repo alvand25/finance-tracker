@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Receipt Expected Result",
+  "description": "Schema for receipt expected result files used in testing",
+  "type": "object",
+  "required": ["store", "items", "total"],
+  "properties": {
+    "store": {
+      "type": "string",
+      "description": "Name of the store (e.g., 'Costco', 'H_Mart')"
+    },
+    "items": {
+      "type": "array",
+      "description": "List of items in the receipt",
+      "items": {
+        "type": "object",
+        "required": ["description", "price"],
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Description of the item"
+          },
+          "price": {
+            "type": ["number", "null"],
+            "description": "Price of the item"
+          },
+          "quantity": {
+            "type": ["number", "null"],
+            "description": "Quantity of the item (optional)"
+          }
+        }
+      }
+    },
+    "subtotal": {
+      "type": ["number", "null"],
+      "description": "Subtotal amount before tax (optional)"
+    },
+    "tax": {
+      "type": ["number", "null"],
+      "description": "Tax amount (optional)"
+    },
+    "total": {
+      "type": ["number", "null"],
+      "description": "Total amount including tax"
+    },
+    "payment_method": {
+      "type": ["string", "null"],
+      "description": "Payment method used (optional)"
+    },
+    "timestamp": {
+      "type": ["string", "null"],
+      "description": "Timestamp of the receipt in ISO 8601 format (optional)"
+    },
+    "check_items_exactly": {
+      "type": "boolean",
+      "description": "Whether to check item descriptions exactly (case-insensitive)",
+      "default": false
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "description": "Additional notes about the receipt (optional)"
+    }
+  },
+  "additionalProperties": true
+} 

@@ -1,0 +1,31 @@
+{
+  "timestamp": "2025-04-24T12:47:52.665877",
+  "total_tests": 1,
+  "passed_tests": 1,
+  "failed_tests": 0,
+  "no_expected_tests": 0,
+  "pass_rate": "100.0%",
+  "tests": [
+    {
+      "image_path": "samples/images/IMG_5658.png",
+      "results": {
+        "image_path": "samples/images/IMG_5658.png",
+        "processing_status": "error",
+        "error": "'property' object has no attribute 'isoformat'",
+        "traceback": "Traceback (most recent call last):\n  File \"/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_test_runner.py\", line 137, in process_receipt_image\n    \"date\": receipt.date.isoformat() if receipt.date else None,\n            ^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'property' object has no attribute 'isoformat'\n"
+      },
+      "comparison": {
+        "status": "pass",
+        "differences": []
+      }
+    }
+  ],
+  "vendor_results": {
+    "Other": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "no_expected": 0
+    }
+  }
+}

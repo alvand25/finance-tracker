@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}All Months - Finance Tracker{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1>All Months</h1>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">Month History</h5>
+    </div>
+    <div class="card-body">
+        {% if months %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Total Expenses</th>
+                            <th>Number of Expenses</th>
+                            <th>Balance</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for month_data in months|sort(attribute='month', reverse=true) %}
+                            <tr>
+                                <td>{{ month_data.month|month_name }}</td>
+                                <td>${{ "%.2f"|format(month_data.total_expenses) }}</td>
+                                <td>{{ month_data.expense_count }}</td>
+                                <td>
+                                    {% if month_data.balance > 0 %}
+                                        <span class="balance-positive">${{ "%.2f"|format(month_data.balance) }}</span>
+                                    {% elif month_data.balance < 0 %}
+                                        <span class="balance-negative">${{ "%.2f"|format(abs(month_data.balance)) }}</span>
+                                    {% else %}
+                                        <span class="balance-zero">$0.00</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ month_data.owed_statement }}</td>
+                                <td>
+                                    <a href="{{ url_for('month_detail', month=month_data.month) }}" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <p class="mb-0">No expense data found for any month. <a href="{{ url_for('new_expense') }}">Add your first expense</a>.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header bg-info text-white">
+        <h5 class="card-title mb-0">Monthly Statistics</h5>
+    </div>
+    <div class="card-body">
+        {% if months %}
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Total Spent</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <tbody>
+                                {% set total_alvand = namespace(value=0) %}
+                                {% set total_roni = namespace(value=0) %}
+                                {% set total_shared = namespace(value=0) %}
+                                
+                                {% for month_data in months %}
+                                    {% if month_data.balance > 0 %}
+                                        {% set total_alvand.value = total_alvand.value + month_data.total_expenses - (month_data.total_expenses - month_data.balance) %}
+                                        {% set total_roni.value = total_roni.value + (month_data.total_expenses - month_data.balance) %}
+                                    {% else %}
+                                        {% set total_alvand.value = total_alvand.value + (month_data.total_expenses - abs(month_data.balance)) %}
+                                        {% set total_roni.value = total_roni.value + month_data.total_expenses - (month_data.total_expenses - abs(month_data.balance)) %}
+                                    {% endif %}
+                                    {% set total_shared.value = total_shared.value + month_data.total_expenses %}
+                                {% endfor %}
+                                
+                                <tr>
+                                    <th>Alvand:</th>
+                                    <td>${{ "%.2f"|format(total_alvand.value) }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Roni:</th>
+                                    <td>${{ "%.2f"|format(total_roni.value) }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Combined Total:</th>
+                                    <td>${{ "%.2f"|format(total_shared.value) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Expense Frequency</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <tbody>
+                                <tr>
+                                    <th>Total Months:</th>
+                                    <td>{{ months|length }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Total Expenses:</th>
+                                    <td>{{ months|map(attribute='expense_count')|sum }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Average Expenses/Month:</th>
+                                    <td>
+                                        {{ "%.1f"|format(months|map(attribute='expense_count')|sum / months|length) if months|length > 0 else "0.0" }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p>No data available to show statistics.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

@@ -1,13 +1,19 @@
 {
   "image_path": "samples/images/IMG_5656.png",
-  "store": "3t e a",
-  "store_confidence": 0.4,
+  "store": "key_food",
+  "store_confidence": 0.95,
   "handler": "GenericHandler",
-  "item_count": 0,
-  "items_sample": [],
-  "subtotal": null,
+  "item_count": 5,
+  "items_sample": [
+    "CILANTRO MACHO",
+    "2.49 F",
+    "BASIL",
+    "0.00",
+    "041125 0449pm 110 3"
+  ],
+  "subtotal": 17.46,
   "tax": null,
   "total": null,
-  "overall_confidence": 0.7,
-  "extraction_quality": 0.6
+  "overall_confidence": 0.4600000000000001,
+  "extraction_quality": 0.605
 }

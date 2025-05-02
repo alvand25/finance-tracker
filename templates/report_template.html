@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Receipt Processing Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .receipt {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .receipt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .store-info {
+            flex-grow: 1;
+        }
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .confidence-section {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .confidence-bar {
+            height: 20px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin: 5px 0;
+            overflow: hidden;
+        }
+        .confidence-fill {
+            height: 100%;
+            background-color: #28a745;
+            transition: width 0.3s ease;
+        }
+        .confidence-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        .items-section {
+            margin-top: 20px;
+        }
+        .item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .totals-section {
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 2px solid #eee;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+        .metadata-section {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        .warning {
+            color: #856404;
+            background-color: #fff3cd;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .error {
+            color: #721c24;
+            background-color: #f8d7da;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Receipt Processing Report</h1>
+    {% for result in results %}
+    <div class="receipt">
+        <div class="receipt-header">
+            <div class="store-info">
+                <h2>{{ result.store.name or 'Unknown Store' }}</h2>
+                <p>Handler: {{ result.store.handler_used or 'Generic' }}</p>
+            </div>
+            <div class="status-badge {% if result.status.success %}status-success{% elif result.status.fallback_used %}status-warning{% else %}status-error{% endif %}">
+                {% if result.status.success %}Success{% elif result.status.fallback_used %}Fallback{% else %}Error{% endif %}
+            </div>
+        </div>
+
+        <!-- Confidence Breakdown -->
+        <div class="confidence-section">
+            <h3>Confidence Scores</h3>
+            <div class="confidence-label">
+                <span>Overall</span>
+                <span>{{ "%.2f"|format(result.confidence.overall) }}</span>
+            </div>
+            <div class="confidence-bar">
+                <div class="confidence-fill" style="width: {{ result.confidence.overall * 100 }}%"></div>
+            </div>
+            
+            <div class="confidence-label">
+                <span>Items</span>
+                <span>{{ "%.2f"|format(result.confidence.items) }}</span>
+            </div>
+            <div class="confidence-bar">
+                <div class="confidence-fill" style="width: {{ result.confidence.items * 100 }}%"></div>
+            </div>
+            
+            <div class="confidence-label">
+                <span>Totals</span>
+                <span>{{ "%.2f"|format(result.confidence.totals) }}</span>
+            </div>
+            <div class="confidence-bar">
+                <div class="confidence-fill" style="width: {{ result.confidence.totals * 100 }}%"></div>
+            </div>
+            
+            <div class="confidence-label">
+                <span>Store</span>
+                <span>{{ "%.2f"|format(result.confidence.store) }}</span>
+            </div>
+            <div class="confidence-bar">
+                <div class="confidence-fill" style="width: {{ result.confidence.store * 100 }}%"></div>
+            </div>
+            
+            <div class="confidence-label">
+                <span>OCR</span>
+                <span>{{ "%.2f"|format(result.confidence.ocr) }}</span>
+            </div>
+            <div class="confidence-bar">
+                <div class="confidence-fill" style="width: {{ result.confidence.ocr * 100 }}%"></div>
+            </div>
+        </div>
+
+        <!-- Items Section -->
+        <div class="items-section">
+            <h3>Items</h3>
+            {% for item in result.items %}
+            <div class="item">
+                <div>
+                    {{ item.description }}
+                    {% if item.quantity > 1 %}
+                    <br><small>{{ item.quantity }} @ ${{ "%.2f"|format(item.unit_price) }}</small>
+                    {% endif %}
+                </div>
+                <div>${{ "%.2f"|format(item.price) }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Totals Section -->
+        <div class="totals-section">
+            {% if result.totals.subtotal is not none %}
+            <div class="total-row">
+                <span>Subtotal:</span>
+                <span>${{ "%.2f"|format(result.totals.subtotal) }}</span>
+            </div>
+            {% endif %}
+            {% if result.totals.tax is not none %}
+            <div class="total-row">
+                <span>Tax:</span>
+                <span>${{ "%.2f"|format(result.totals.tax) }}</span>
+            </div>
+            {% endif %}
+            {% if result.totals.total is not none %}
+            <div class="total-row">
+                <strong>Total:</strong>
+                <strong>${{ "%.2f"|format(result.totals.total) }}</strong>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Metadata Section -->
+        <div class="metadata-section">
+            <p>Date: {{ result.metadata.date or 'Unknown' }}</p>
+            <p>Time: {{ result.metadata.time or 'Unknown' }}</p>
+            {% if result.metadata.store_id %}
+            <p>Store ID: {{ result.metadata.store_id }}</p>
+            {% endif %}
+            {% if result.metadata.transaction_id %}
+            <p>Transaction: {{ result.metadata.transaction_id }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Warnings and Errors -->
+        {% for warning in result.status.warnings %}
+        <div class="warning">⚠️ {{ warning }}</div>
+        {% endfor %}
+        {% for error in result.status.errors %}
+        <div class="error">❌ {{ error }}</div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</body>
+</html> 

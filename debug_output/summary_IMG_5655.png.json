@@ -3,13 +3,17 @@
   "store": "h_mart",
   "store_confidence": 0.95,
   "handler": "GenericHandler",
-  "item_count": 1,
+  "item_count": 15,
   "items_sample": [
-    ". MasterCard"
+    "PRODUCE",
+    "3.36 F",
+    "GREEN CURRY PASTE",
+    "5.95 F",
+    "1.99 F"
   ],
-  "subtotal": 60.44,
+  "subtotal": 113.63999999999999,
   "tax": null,
-  "total": 60.44,
-  "overall_confidence": 0.6999999999999998,
-  "extraction_quality": 0.7
+  "total": null,
+  "overall_confidence": 0.4600000000000001,
+  "extraction_quality": 0.605
 }

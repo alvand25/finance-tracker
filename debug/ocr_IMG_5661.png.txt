@@ -1,0 +1,50 @@
+# Raw OCR Output
+================================================================================
+Key Food
+FRESH
+46-02 Queens Blvd
+Sunnyside, NY 1110
+(718) 706-6563
+0.20 lb @ 6.99 /lb
+WT
+MOTHER EARTH ORG C
+1.40 F
+CARROT“ BUNCH
+Regular Price 2.99" You Saved 0:30
+69
+SCALLIONS
+0.99 F
+THAI KITC FISH SAL
+5.09 F
+35 lb @ 0.69 Alb
+WT
+✓ ONIONS SPANISH
+0.93 F
+1.71 lb @ 1.49/
+WT
+YUKON POTAS
+TAX
+2.55 F
+0.00
+**** BALANCE
+13.65
+EMW CARD - C
+KEY FOOD
+46-02 QUEENS BLVD
+SUNNYSIDE, NY 11104
+Payment Type: CHASE ISA
+Card: *** *******9430*
+Payment And $13.65 Pun
+Cashback Amt: $0.00
+Authorizat04004D
+Sequence#: 386
+Terminal ID
+3
+================================================================================
+
+
+# OCR Statistics
+--------------------------------------------------------------------------------
+engine: GoogleVisionOCR
+confidence: 0.9131202772259712
+processing_time: 0.5490841865539551

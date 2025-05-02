@@ -8,6 +8,10 @@ from datetime import datetime
 import re
 import logging
 import traceback
+import json
+from PIL import Image
+from werkzeug.utils import secure_filename
+import uuid
 
 # Make SQLAlchemy optional
 try:
@@ -23,276 +27,291 @@ from models.receipt_template import ReceiptTemplate
 from utils.receipt_analyzer import ReceiptAnalyzer
 from storage.json_storage import JSONStorage
 from services.template_registry import TemplateRegistry
+from utils.image_preprocessor import ImagePreprocessor
+from ocr.google_vision_ocr import GoogleVisionOCR
+from ocr.tesseract_ocr import TesseractOCR
+from config.google_vision_config import GoogleVisionConfig
+from utils.module_utils import stub_missing_module
 
+# Try to import StorageManager, create stub if not found
+try:
+    from storage.storage_manager import StorageManager
+except ModuleNotFoundError:
+    logger.warning("StorageManager not found, creating stub")
+    stub_missing_module("storage", "storage_manager")
+    from storage.storage_manager import StorageManager
+
+logger = logging.getLogger(__name__)
 
 class ReceiptService:
-    """Service for handling receipt operations, including OCR processing."""
+    """
+    Service for processing receipts using OCR and analysis.
+    """
     
-    def __init__(self, storage: JSONStorage, upload_dir: str = "uploads/receipts"):
+    def __init__(self,
+                 storage: Optional[StorageManager] = None,
+                 debug_mode: bool = False,
+                 debug_output_dir: str = 'debug_output',
+                 debug_ocr_output: bool = False,
+                 ocr_engine: Optional[str] = None,
+                 upload_dir: str = 'uploads'):
         """
-        Initialize ReceiptService.
+        Initialize the receipt service.
         
         Args:
-            storage: JSON storage instance for receipts
-            upload_dir: Directory to store uploaded receipt images
+            storage: Storage manager instance
+            debug_mode: Enable debug output
+            debug_output_dir: Directory for debug output
+            debug_ocr_output: Save OCR output to files
+            ocr_engine: Force specific OCR engine ('google_vision' or 'tesseract')
+            upload_dir: Directory path for storing uploaded receipt images
         """
-        self.storage = storage
+        self.storage = storage or StorageManager()
+        self.debug_mode = debug_mode
+        self.debug_output_dir = debug_output_dir
+        self.debug_ocr_output = debug_ocr_output
         self.upload_dir = upload_dir
-        self._ensure_upload_dir()
+        os.makedirs(upload_dir, exist_ok=True)
         
+        # Set up OCR engine
+        self.ocr = self._setup_ocr(ocr_engine)
+        
+        # Create preprocessor and analyzer
+        self.preprocessor = ImagePreprocessor(
+            debug_mode=debug_mode,
+            debug_output_dir=debug_output_dir
+        )
+        self.analyzer = ReceiptAnalyzer()
+        
+        # Create debug directory if needed
+        if debug_mode and not os.path.exists(debug_output_dir):
+            os.makedirs(debug_output_dir)
+            
         # Initialize template registry
         self.template_registry = TemplateRegistry(storage_path="data/templates", create_built_in=True)
         
         # Cache for processed receipts
         self.processing_cache = {}
     
+    def _setup_ocr(self, preferred_engine: Optional[str] = None) -> Any:
+        """Set up OCR engine based on configuration and preference."""
+        if preferred_engine == 'tesseract':
+            logger.info("Using Tesseract OCR as preferred engine")
+            try:
+                return TesseractOCR()
+            except Exception as e:
+                logger.error(f"Failed to initialize Tesseract OCR: {str(e)}")
+                return None
+                
+        # Try Google Cloud Vision first (unless Tesseract was explicitly requested)
+        if preferred_engine != 'tesseract':
+            try:
+                config = GoogleVisionConfig()
+                if config.is_configured:
+                    logger.info("Using Google Cloud Vision OCR")
+                    config.validate()
+                    return GoogleVisionOCR(credentials_path=config.credentials_path)
+            except Exception as e:
+                logger.error(f"Failed to initialize Google Cloud Vision OCR: {str(e)}")
+                
+        # Fall back to Tesseract if Google Vision not available
+        if not preferred_engine:  # Only fall back if no specific engine was requested
+            logger.info("Falling back to Tesseract OCR")
+            try:
+                return TesseractOCR()
+            except Exception as e:
+                logger.error(f"Failed to initialize Tesseract OCR: {str(e)}")
+                
+        return None
+        
     def _ensure_upload_dir(self) -> None:
         """Ensure the upload directory exists."""
         if not os.path.exists(self.upload_dir):
             os.makedirs(self.upload_dir)
             
-    def _save_receipt_image(self, receipt_id: UUID, image_data: bytes) -> str:
-        """Save the receipt image to disk and return the file path."""
-        # Create a unique filename
-        filename = f"{receipt_id}.jpg"
-        filepath = os.path.join(self.upload_dir, filename)
+    def _save_receipt_image(self, image_file) -> str:
+        """Save the receipt image and return the file path."""
+        filename = secure_filename(image_file.filename)
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        unique_filename = f"{timestamp}_{str(uuid.uuid4())[:8]}_{filename}"
+        filepath = os.path.join(self.upload_dir, unique_filename)
         
-        # Save the image
-        with open(filepath, 'wb') as f:
-            f.write(image_data)
-            
+        image_file.save(filepath)
         return filepath
     
-    def process_receipt(self, file_path: str, user_id: str = None, db_session: Session = None, analyzer: Optional[ReceiptAnalyzer] = None) -> Dict:
-        """Process a receipt image file to extract information.
-
-        Args:
-            file_path (str): Path to the receipt image file
-            user_id (str, optional): User ID for associating the receipt. Defaults to None.
-            db_session (Session, optional): Database session. Defaults to None.
-            analyzer (ReceiptAnalyzer, optional): Receipt analyzer instance. Defaults to None.
-
-        Returns:
-            Dict: Receipt data extracted from the image
+    def process_receipt(self, image_path: str, options: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
-        logger.info(f"Processing receipt: {file_path}")
-        receipt_data = {}
-            
-        # Create an analyzer if one wasn't provided
-        if analyzer is None:
-            analyzer = ReceiptAnalyzer()
+        Process a receipt image.
         
+        Args:
+            image_path: Path to receipt image
+            options: Processing options
+                - store_hint: Expected store name
+                - ocr_engine: Override OCR engine
+                
+        Returns:
+            Dictionary containing extracted receipt information
+        """
         try:
+            # Override OCR engine if specified in options
+            if options and 'ocr_engine' in options:
+                ocr = options['ocr_engine']
+            else:
+                ocr = self.ocr
+                
+            # Preprocess image
+            processed_image = self.preprocessor.preprocess(image_path)
+            
             # Extract text using OCR
-            receipt_text = analyzer.extract_text(file_path)
-            
-            # Try to identify the store from the receipt text
-            store_name = analyzer._extract_store_name(receipt_text)
-            logger.info(f"Detected store name: {store_name}")
-            
-            # Check if this is a Costco receipt
-            if store_name and "costco" in store_name.lower():
-                logger.info("Using specialized Costco receipt handler")
-                parsed_data = analyzer.handle_costco_receipt(receipt_text, file_path)
-                if parsed_data and parsed_data.get('items'):
-                    logger.info(f"Costco handler extracted {len(parsed_data.get('items', []))} items")
-                    receipt_data = parsed_data
-            # Check if this is a Trader Joe's receipt
-            elif store_name and "trader" in store_name.lower() and "joe" in store_name.lower():
-                logger.info("Using specialized Trader Joe's receipt handler")
-                parsed_data = analyzer.handle_trader_joes_receipt(receipt_text, file_path)
-                if parsed_data and parsed_data.get('items'):
-                    logger.info(f"Trader Joe's handler extracted {len(parsed_data.get('items', []))} items")
-                    receipt_data = parsed_data
-            # Check if this is an H Mart receipt
-            elif store_name and ("h mart" in store_name.lower() or "hmart" in store_name.lower()):
-                logger.info("Using specialized H Mart receipt handler")
-                parsed_data = analyzer.handle_hmart_receipt(receipt_text, file_path)
-                if parsed_data and parsed_data.get('items'):
-                    logger.info(f"H Mart handler extracted {len(parsed_data.get('items', []))} items")
-                    receipt_data = parsed_data
-            # Check if this is a Key Food receipt
-            elif store_name and "key food" in store_name.lower():
-                logger.info("Using specialized Key Food receipt handler")
-                parsed_data = analyzer.handle_key_food_receipt(receipt_text, file_path)
-                if parsed_data and parsed_data.get('items'):
-                    logger.info(f"Key Food handler extracted {len(parsed_data.get('items', []))} items")
-                    receipt_data = parsed_data
-            
-            # If no specialized handler matched or they failed, try template matching
-            if not receipt_data:
-                # Use template registry to find matching template
-                template_registry = TemplateRegistry()
-                template = template_registry.find_matching_template(receipt_text)
+            if ocr is not None:
+                logger.info("Using configured OCR engine")
+                ocr_result = ocr.extract_text(processed_image)
+                text = ocr_result["text"]
+                confidence = ocr_result["confidence"]
+                text_blocks = ocr_result.get("text_blocks", [])
+            else:
+                logger.info("No OCR engine available")
+                return {
+                    'error': 'No OCR engine available',
+                    'image_path': image_path
+                }
                 
-                if template:
-                    logger.info(f"Using template: {template.__class__.__name__}")
-                    parsed_data = template.parse(receipt_text)
-                    if parsed_data:
-                        receipt_data = parsed_data
-                else:
-                    # Fall back to generic receipt analysis
-                    logger.info("No template matched, using generic analyzer")
-                    parsed_data = analyzer.analyze_receipt(receipt_text, file_path)
-                    if parsed_data:
-                        receipt_data = parsed_data
-            
-            # Create receipt object and save to database if user_id and db_session provided
-            if receipt_data and user_id and db_session:
-                receipt = Receipt(
-                    user_id=user_id,
-                    store_name=receipt_data.get('store', ''),
-                    date=receipt_data.get('date'),
-                    total=receipt_data.get('total'),
-                    subtotal=receipt_data.get('subtotal'),
-                    tax=receipt_data.get('tax'),
-                    currency=receipt_data.get('currency', 'USD'),
-                    payment_method=receipt_data.get('payment_method', ''),
-                    image_path=file_path,
-                    processing_status="processed" if receipt_data.get('confidence', {}).get('overall', 0) > 0.5 else "needs_review"
+            # Save OCR text for debugging
+            if self.debug_ocr_output:
+                debug_text_path = os.path.join(
+                    self.debug_output_dir,
+                    f'ocr_{os.path.basename(image_path)}.txt'
                 )
+                with open(debug_text_path, 'w') as f:
+                    f.write(text)
+                logger.info(f"Saved OCR text to {debug_text_path}")
                 
-                # Add receipt to database
-                db_session.add(receipt)
-                db_session.flush()  # Get the receipt ID
-                
-                # Create receipt items
-                for item_data in receipt_data.get('items', []):
-                    item = ReceiptItem(
-                        receipt_id=receipt.id,
-                        description=item_data.get('description', ''),
-                        quantity=item_data.get('quantity', 1),
-                        price=item_data.get('price', 0),
-                        category=item_data.get('category', '')
-                    )
-                    db_session.add(item)
-                
-                db_session.commit()
+            # Analyze receipt
+            store_hint = options.get('store_hint') if options else None
+            results = self.analyzer.analyze_receipt(text, image_path, store_hint=store_hint)
             
-            return receipt_data
-        
+            # Add OCR metadata
+            results['ocr_metadata'] = {
+                'engine': 'google_vision' if isinstance(ocr, GoogleVisionOCR) else 'tesseract',
+                'confidence': confidence,
+                'text_blocks': text_blocks,
+                'processing_time': getattr(ocr, 'last_processing_time', 0)
+            }
+            
+            return results
+            
         except Exception as e:
-            logger.error(f"Error processing receipt: {str(e)}")
-            if db_session:
-                db_session.rollback()
-            receipt_data = {
+            logger.error(f"Error processing receipt {image_path}: {str(e)}")
+            return {
                 'error': str(e),
-                'processing_status': 'failed'
-            }
-            return receipt_data
-    
-    def process_receipt_progressive(self, receipt: Receipt, image_data: bytes) -> Tuple[Receipt, bool]:
-        """
-        Process a receipt with progressive enhancement.
-        
-        This approach gives quick initial results and then improves them with more detailed analysis.
-        
-        Args:
-            receipt: Receipt object to update
-            image_data: Raw receipt image data
-            
-        Returns:
-            Tuple of (updated receipt, is_complete)
-        """
-        # Quick phase: Fast initial processing
-        try:
-            # Record the start time
-            start_time = time.time()
-            
-            # Save the image if needed
-            if not receipt.image_url or not os.path.exists(receipt.image_url):
-                filepath = self._save_receipt_image(receipt.id, image_data)
-                receipt.image_url = filepath
-            
-            # Set status to quick processing
-            receipt.processing_status = "processing_quick"
-            
-            # Save to storage
-            self.storage.save_receipt(receipt)
-            
-            # Quick OCR with basic features
-            processed_image = ReceiptAnalyzer.preprocess_image(image_data)
-            text = ReceiptAnalyzer.extract_text(processed_image)
-            
-            # Quick parsing
-            totals = ReceiptAnalyzer.extract_receipt_totals(text)
-            
-            # Set basic information
-            receipt.raw_text = text
-            receipt.total_amount = totals.get('total')
-            receipt.store_name = totals.get('store_name')
-            receipt.transaction_date = totals.get('date')
-            receipt.processing_status = "partial"
-            receipt.processing_time = time.time() - start_time
-            
-            # Save partial results
-            self.storage.save_receipt(receipt)
-            
-            # Add to processing cache for detailed analysis
-            self.processing_cache[str(receipt.id)] = {
-                'image_data': image_data,
-                'start_time': start_time
+                'image_path': image_path
             }
             
-            return receipt, False
-        
-        except Exception as e:
-            receipt.mark_processing_failed(f"Fast processing failed: {str(e)}")
-            self.storage.save_receipt(receipt)
-            return receipt, True
-    
-    def complete_progressive_processing(self, receipt_id: UUID) -> Optional[Receipt]:
+    def process_receipt_progressive(self, image_path: str, task_id: str, options: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
-        Complete the detailed phase of progressive processing.
+        Start progressive processing of a receipt.
         
         Args:
-            receipt_id: ID of the receipt to complete processing
+            image_path: Path to receipt image
+            task_id: Unique task identifier
+            options: Processing options
             
         Returns:
-            Fully processed receipt or None if not found
+            Initial results and task ID
         """
-        receipt = self.get_receipt(receipt_id)
-        if not receipt:
-            return None
-            
-        # Check if we have the image data in cache
-        cache_key = str(receipt_id)
-        if cache_key not in self.processing_cache:
-            # Try to load the image from disk
-            try:
-                with open(receipt.image_url, 'rb') as f:
-                    image_data = f.read()
-            except Exception:
-                receipt.mark_processing_failed("Cannot find receipt image for detailed processing")
-                self.storage.save_receipt(receipt)
-                return receipt
-        else:
-            image_data = self.processing_cache[cache_key]['image_data']
-            
-        # Full detailed processing
         try:
-            receipt.processing_status = "processing_detailed"
-            self.storage.save_receipt(receipt)
+            # Create task data
+            task_data = {
+                'id': task_id,
+                'image_path': image_path,
+                'status': 'processing',
+                'created_at': datetime.now().isoformat(),
+                'options': options or {}
+            }
             
-            # Analyze with all features enabled
-            items, totals, raw_text = ReceiptAnalyzer.analyze_receipt(image_data, use_layout=True)
-            
-            # Update receipt with complete analysis
-            receipt.update_from_analysis(items, totals, raw_text)
-            
-            # Remove from cache
-            if cache_key in self.processing_cache:
-                del self.processing_cache[cache_key]
+            # Save task data
+            task_file = os.path.join(self.debug_output_dir, f'task_{task_id}.json')
+            with open(task_file, 'w') as f:
+                json.dump(task_data, f, indent=2)
                 
-            # Save the fully processed receipt
-            self.storage.save_receipt(receipt)
-            return receipt
+            # Start processing
+            logger.info(f"Starting progressive processing for task {task_id}")
+            results = self.process_receipt(image_path, options)
+            
+            # Update task data
+            task_data.update({
+                'status': 'completed' if 'error' not in results else 'error',
+                'results': results,
+                'completed_at': datetime.now().isoformat()
+            })
+            
+            # Save updated task data
+            with open(task_file, 'w') as f:
+                json.dump(task_data, f, indent=2)
+                
+            return {
+                'task_id': task_id,
+                'status': task_data['status'],
+                'initial_results': results
+            }
             
         except Exception as e:
-            receipt.mark_processing_failed(f"Detailed processing failed: {str(e)}")
-            self.storage.save_receipt(receipt)
-            return receipt
+            logger.error(f"Error starting progressive processing for {image_path}: {str(e)}")
+            return {
+                'task_id': task_id,
+                'status': 'error',
+                'error': str(e)
+            }
             
+    def complete_progressive_processing(self, task_id: str) -> Dict[str, Any]:
+        """
+        Complete progressive processing of a receipt.
+        
+        Args:
+            task_id: Task identifier
+            
+        Returns:
+            Final processing results
+        """
+        try:
+            # Load task data
+            task_file = os.path.join(self.debug_output_dir, f'task_{task_id}.json')
+            if not os.path.exists(task_file):
+                raise ValueError(f"Task {task_id} not found")
+                
+            with open(task_file, 'r') as f:
+                task_data = json.load(f)
+                
+            # Check if task is already completed
+            if task_data.get('status') == 'completed':
+                return task_data.get('results', {})
+                
+            # Get initial results
+            results = task_data.get('results', {})
+            
+            # Perform additional processing if needed
+            # (e.g., enhanced analysis, validation, etc.)
+            
+            # Update task data
+            task_data.update({
+                'status': 'completed',
+                'results': results,
+                'completed_at': datetime.now().isoformat()
+            })
+            
+            # Save final task data
+            with open(task_file, 'w') as f:
+                json.dump(task_data, f, indent=2)
+                
+            return results
+            
+        except Exception as e:
+            logger.error(f"Error completing progressive processing for task {task_id}: {str(e)}")
+            return {
+                'error': str(e),
+                'task_id': task_id
+            }
+    
     def process_uploaded_file(self, file_storage, progressive: bool = False) -> Tuple[Receipt, bool]:
         """
         Process an uploaded file object (typically from Flask's request.files).
@@ -314,7 +333,7 @@ class ReceiptService:
             
             # Process the receipt
             if progressive:
-                receipt, is_complete = self.process_receipt_progressive(receipt, image_data)
+                receipt, is_complete = self.process_receipt_progressive(receipt, filename, image_data)
                 return receipt, not is_complete  # Return True if processing is continuing
             else:
                 processed_receipt = self.process_receipt(receipt, image_data)
@@ -327,7 +346,7 @@ class ReceiptService:
                 processing_status="failed",
                 processing_error=str(e)
             )
-            self.storage.save_receipt(receipt)
+            self.json_storage.save_receipt(receipt)
             return receipt, False
     
     def _extract_raw_text(self, image_data: bytes) -> str:
@@ -367,7 +386,7 @@ class ReceiptService:
             
             # Process the receipt
             if progressive:
-                receipt, is_complete = self.process_receipt_progressive(receipt, image_data)
+                receipt, is_complete = self.process_receipt_progressive(receipt, url, image_data)
                 return receipt, not is_complete  # Return True if processing is continuing
             else:
                 processed_receipt = self.process_receipt(receipt, image_data)
@@ -380,12 +399,12 @@ class ReceiptService:
                 processing_status="failed",
                 processing_error=str(e)
             )
-            self.storage.save_receipt(receipt)
+            self.json_storage.save_receipt(receipt)
             return receipt, False
             
     def get_receipt(self, receipt_id: UUID) -> Optional[Receipt]:
         """Get a receipt by ID."""
-        return self.storage.get_receipt(receipt_id)
+        return self.json_storage.get_receipt(receipt_id)
     
     def get_receipt_templates(self) -> List[Dict[str, Any]]:
         """Get all receipt templates."""
@@ -413,7 +432,7 @@ class ReceiptService:
                 pass  # Continue even if file deletion fails
                 
         # Delete from storage
-        self.storage.delete_receipt(receipt_id)
+        self.json_storage.delete_receipt(receipt_id)
         return True
     
     def delete_template(self, template_id: UUID) -> bool:
@@ -462,7 +481,7 @@ class ReceiptService:
                 options['template_id'] = receipt.template_id
             
             # Process the receipt using our enhanced method
-            processed_receipt = self.process_receipt_image(image_path, options)
+            processed_receipt = self.process_receipt(image_path, options)
             
             # Update the database receipt with processed data
             receipt.store_name = processed_receipt.merchant_name
@@ -491,7 +510,7 @@ class ReceiptService:
                 receipt.metadata['error'] = processed_receipt.processing_error
             
             # Save the updated receipt
-            self.storage.save_receipt(receipt)
+            self.json_storage.save_receipt(receipt)
             
             # Prepare response
             return {
@@ -513,441 +532,130 @@ class ReceiptService:
                         'error': str(e),
                         'processing_time': datetime.now().isoformat()
                     }
-                    self.storage.save_receipt(receipt)
+                    self.json_storage.save_receipt(receipt)
             except Exception as update_err:
                 logging.error(f"Failed to update receipt status: {str(update_err)}")
             
-            return {'status': 'error', 'message': str(e)}
+            return {'status': 'error', 'message': str(e)} 
 
-    def process_receipt_image(self, image_path: str, options: Dict[str, Any] = None) -> Receipt:
+    def save_receipt_image(self, file) -> str:
         """
-        Process a receipt image to extract items and total amounts.
+        Save an uploaded receipt image.
         
         Args:
-            image_path: Path to the receipt image
-            options: Optional processing options:
-                - force_currency: Override detected currency
-                - store_type_hint: Hint for the store type
-                - use_fallback: Whether to use fallback methods if standard methods fail
-                - template_id: Use a specific template for parsing
-                
+            file: File object from request.files
+            
         Returns:
-            A Receipt object containing the extracted data
+            str: Path to the saved image file
         """
-        # Initialize options with defaults if not provided
-        if options is None:
-            options = {}
-            
-        # Set up logging
-        logging.info(f"Processing receipt image: {image_path}")
-        logging.info(f"Processing options: {options}")
+        filename = secure_filename(file.filename)
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        unique_filename = f"{timestamp}_{str(uuid.uuid4())[:8]}_{filename}"
+        file_path = os.path.join(self.upload_dir, unique_filename)
+        file.save(file_path)
+        return file_path
+
+    def create_receipt(self, data: Dict[str, Any], image_path: Optional[str] = None) -> str:
+        """
+        Create a new receipt record.
         
-        analyzer = ReceiptAnalyzer()
+        Args:
+            data: Receipt data dictionary
+            image_path: Optional path to the receipt image file
+            
+        Returns:
+            str: ID of the created receipt
+        """
+        receipt_id = str(uuid.uuid4())
+        receipt_data = {
+            'receipt_id': receipt_id,
+            'created_at': datetime.now().isoformat(),
+            'image_path': image_path,
+            **data
+        }
+        self.storage.save(receipt_id, receipt_data)
+        return receipt_id
+
+    def get_receipt(self, receipt_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Get a receipt by its ID.
         
-        # Create a Receipt object
-        receipt = Receipt()
-        receipt.processing_status = "processing"
-        receipt.image_path = image_path
+        Args:
+            receipt_id: ID of the receipt to retrieve
+            
+        Returns:
+            Optional[Dict[str, Any]]: Receipt data if found, None otherwise
+        """
+        return self.storage.get(receipt_id)
+
+    def list_receipts(self) -> List[Dict[str, Any]]:
+        """
+        Get a list of all receipts.
         
-        try:
-            # Extract text from the image
-            receipt_text = analyzer.extract_text(image_path)
-            if not receipt_text:
-                receipt.mark_processing_failed("Failed to extract text from receipt image")
-                return receipt
-                
-            receipt.raw_text = receipt_text
-            
-            # Extract store name
-            store_name = analyzer._extract_store_name(receipt_text)
-            receipt.merchant_name = store_name
-            
-            # Check if we should handle this as a Costco receipt
-            is_costco = analyzer.is_costco_receipt(receipt_text) or \
-                        (store_name and 'costco' in store_name.lower()) or \
-                        options.get('store_type_hint') == 'costco'
-            
-            if is_costco:
-                logging.info("Detected Costco receipt, using specialized handler")
-                costco_result = analyzer.handle_costco_receipt(receipt_text, image_path)
-                
-                if costco_result and costco_result.get('items'):
-                    logging.info(f"Costco handler extracted {len(costco_result.get('items', []))} items")
-                    
-                    # Convert the items to ReceiptItem objects
-                    items = []
-                    for item_data in costco_result.get('items', []):
-                        item = ReceiptItem(
-                            description=item_data.get('description', ''),
-                            amount=item_data.get('price', 0),
-                            quantity=item_data.get('quantity', 1),
-                            confidence_score=0.8,
-                            item_type="product"
-                        )
-                        items.append(item)
-                    
-                    receipt.items = items
-                    receipt.subtotal_amount = costco_result.get('subtotal')
-                    receipt.tax_amount = costco_result.get('tax')
-                    receipt.total_amount = costco_result.get('total')
-                    receipt.currency_type = costco_result.get('currency', 'USD')
-                    receipt.payment_method = costco_result.get('payment_method')
-                    
-                    # Update confidence scores
-                    confidence = costco_result.get('confidence', {})
-                    receipt.confidence_scores = {
-                        'store': confidence.get('store', 0.8),
-                        'currency': confidence.get('currency', 0.8),
-                        'items': confidence.get('items', 0.7),
-                        'subtotal': confidence.get('subtotal', 0.7) if receipt.subtotal_amount else 0,
-                        'tax': confidence.get('tax', 0.7) if receipt.tax_amount else 0,
-                        'total': confidence.get('total', 0.7) if receipt.total_amount else 0
-                    }
-                    
-                    # Calculate overall confidence
-                    if receipt.confidence_scores:
-                        receipt.confidence_score = sum(receipt.confidence_scores.values()) / len(receipt.confidence_scores)
-                    
-                    # Update processing status
-                    if receipt.items and receipt.total_amount:
-                        receipt.processing_status = "completed"
-                    elif receipt.total_amount:
-                        receipt.processing_status = "partial"
-                    else:
-                        receipt.processing_status = "failed"
-                        receipt.processing_error = "Failed to extract essential receipt data"
-                        
-                    return receipt
-            
-            # Check if we should handle this as a Trader Joe's receipt
-            is_trader_joes = (store_name and ('trader' in store_name.lower() and 'joe' in store_name.lower())) or \
-                           options.get('store_type_hint') == 'trader_joes'
-            
-            if is_trader_joes:
-                logging.info("Detected Trader Joe's receipt, using specialized handler")
-                trader_joes_result = analyzer.handle_trader_joes_receipt(receipt_text, image_path)
-                
-                if trader_joes_result and trader_joes_result.get('items'):
-                    logging.info(f"Trader Joe's handler extracted {len(trader_joes_result.get('items', []))} items")
-                    
-                    # Convert the items to ReceiptItem objects
-                    items = []
-                    for item_data in trader_joes_result.get('items', []):
-                        item = ReceiptItem(
-                            description=item_data.get('description', ''),
-                            amount=item_data.get('price', 0),
-                            quantity=item_data.get('quantity', 1),
-                            confidence_score=0.8,
-                            item_type="product"
-                        )
-                        items.append(item)
-                    
-                    receipt.items = items
-                    receipt.subtotal_amount = trader_joes_result.get('subtotal')
-                    receipt.tax_amount = trader_joes_result.get('tax')
-                    receipt.total_amount = trader_joes_result.get('total')
-                    receipt.currency_type = trader_joes_result.get('currency', 'USD')
-                    receipt.payment_method = trader_joes_result.get('payment_method')
-                    receipt.transaction_date = trader_joes_result.get('date')
-                    
-                    # Update confidence scores
-                    confidence = 0.8  # Default confidence
-                    if isinstance(trader_joes_result.get('confidence'), dict):
-                        confidence_dict = trader_joes_result.get('confidence', {})
-                        receipt.confidence_scores = {
-                            'store': confidence_dict.get('store', 0.8),
-                            'currency': confidence_dict.get('currency', 0.8),
-                            'items': confidence_dict.get('items', 0.7),
-                            'subtotal': confidence_dict.get('subtotal', 0.7) if receipt.subtotal_amount else 0,
-                            'tax': confidence_dict.get('tax', 0.7) if receipt.tax_amount else 0,
-                            'total': confidence_dict.get('total', 0.7) if receipt.total_amount else 0
-                        }
-                        # Calculate overall confidence
-                        if receipt.confidence_scores:
-                            receipt.confidence_score = sum(receipt.confidence_scores.values()) / len(receipt.confidence_scores)
-                    else:
-                        # If confidence is a single value
-                        receipt.confidence_score = trader_joes_result.get('confidence', 0.7)
-                    
-                    # Update processing status
-                    if receipt.items and receipt.total_amount:
-                        receipt.processing_status = "completed"
-                    elif receipt.total_amount:
-                        receipt.processing_status = "partial"
-                    else:
-                        receipt.processing_status = "failed"
-                        receipt.processing_error = "Failed to extract essential receipt data"
-                        
-                    return receipt
-            
-            # Check if we should handle this as an H Mart receipt
-            is_hmart = (store_name and ('h mart' in store_name.lower() or 'hmart' in store_name.lower())) or \
-                      options.get('store_type_hint') == 'hmart'
-            
-            if is_hmart:
-                logging.info("Detected H Mart receipt, using specialized handler")
-                hmart_result = analyzer.handle_hmart_receipt(receipt_text, image_path)
-                
-                if hmart_result and hmart_result.get('items'):
-                    logging.info(f"H Mart handler extracted {len(hmart_result.get('items', []))} items")
-                    
-                    # Convert the items to ReceiptItem objects
-                    items = []
-                    for item_data in hmart_result.get('items', []):
-                        item = ReceiptItem(
-                            description=item_data.get('description', ''),
-                            amount=item_data.get('price', 0),
-                            quantity=item_data.get('quantity', 1),
-                            confidence_score=0.8,
-                            item_type="product"
-                        )
-                        items.append(item)
-                    
-                    receipt.items = items
-                    receipt.subtotal_amount = hmart_result.get('subtotal')
-                    receipt.tax_amount = hmart_result.get('tax')
-                    receipt.total_amount = hmart_result.get('total')
-                    receipt.currency_type = hmart_result.get('currency', 'USD')
-                    receipt.payment_method = hmart_result.get('payment_method')
-                    
-                    # Update confidence scores
-                    confidence = hmart_result.get('confidence', {})
-                    receipt.confidence_scores = {
-                        'store': confidence.get('store', 0.8),
-                        'currency': confidence.get('currency', 0.8),
-                        'items': confidence.get('items', 0.7),
-                        'subtotal': confidence.get('subtotal', 0.7) if receipt.subtotal_amount else 0,
-                        'tax': confidence.get('tax', 0.7) if receipt.tax_amount else 0,
-                        'total': confidence.get('total', 0.7) if receipt.total_amount else 0
-                    }
-                    
-                    # Calculate overall confidence
-                    if receipt.confidence_scores:
-                        receipt.confidence_score = sum(receipt.confidence_scores.values()) / len(receipt.confidence_scores)
-                    
-                    # Update processing status
-                    if receipt.items and receipt.total_amount:
-                        receipt.processing_status = "completed"
-                    elif receipt.total_amount:
-                        receipt.processing_status = "partial"
-                    else:
-                        receipt.processing_status = "failed"
-                        receipt.processing_error = "Failed to extract essential receipt data"
-                        
-                    return receipt
-            
-            # Check if we should handle this as a Key Food receipt
-            is_key_food = (store_name and 'key food' in store_name.lower()) or \
-                      options.get('store_type_hint') == 'key_food'
-            
-            if is_key_food:
-                logging.info("Detected Key Food receipt, using specialized handler")
-                key_food_result = analyzer.handle_key_food_receipt(receipt_text, image_path)
-                
-                if key_food_result and key_food_result.get('items'):
-                    logging.info(f"Key Food handler extracted {len(key_food_result.get('items', []))} items")
-                    
-                    # Convert the items to ReceiptItem objects
-                    items = []
-                    for item_data in key_food_result.get('items', []):
-                        item = ReceiptItem(
-                            description=item_data.get('description', ''),
-                            amount=item_data.get('price', 0),
-                            quantity=item_data.get('quantity', 1),
-                            confidence_score=0.8,
-                            item_type="product"
-                        )
-                        items.append(item)
-                    
-                    receipt.items = items
-                    receipt.subtotal_amount = key_food_result.get('subtotal')
-                    receipt.tax_amount = key_food_result.get('tax')
-                    receipt.total_amount = key_food_result.get('total')
-                    receipt.currency_type = key_food_result.get('currency', 'USD')
-                    receipt.payment_method = key_food_result.get('payment_method')
-                    
-                    # Update confidence scores
-                    confidence = key_food_result.get('confidence', {})
-                    receipt.confidence_scores = {
-                        'store': confidence.get('store', 0.8),
-                        'currency': confidence.get('currency', 0.8),
-                        'items': confidence.get('items', 0.7),
-                        'subtotal': confidence.get('subtotal', 0.7) if receipt.subtotal_amount else 0,
-                        'tax': confidence.get('tax', 0.7) if receipt.tax_amount else 0,
-                        'total': confidence.get('total', 0.7) if receipt.total_amount else 0
-                    }
-                    
-                    # Calculate overall confidence
-                    if receipt.confidence_scores:
-                        receipt.confidence_score = sum(receipt.confidence_scores.values()) / len(receipt.confidence_scores)
-                    
-                    # Update processing status
-                    if receipt.items and receipt.total_amount:
-                        receipt.processing_status = "completed"
-                    elif receipt.total_amount:
-                        receipt.processing_status = "partial"
-                    else:
-                        receipt.processing_status = "failed"
-                        receipt.processing_error = "Failed to extract essential receipt data"
-                        
-                    return receipt
-            
-            # Check if a specific template was requested
-            if options.get('template_id'):
-                template_id = options['template_id']
-                logging.info(f"Using template with ID: {template_id}")
-                
-                try:
-                    # Try to get the template from the registry
-                    template = self.template_registry.get_template(template_id)
-                    
-                    if template:
-                        # Apply the template for parsing
-                        parsed_data = template.parse(receipt_text)
-                        
-                        if parsed_data:
-                            # Update receipt with parsed data
-                            receipt.items = parsed_data.get('items', [])
-                            receipt.subtotal_amount = parsed_data.get('subtotal')
-                            receipt.tax_amount = parsed_data.get('tax')
-                            receipt.total_amount = parsed_data.get('total')
-                            receipt.currency_type = parsed_data.get('currency')
-                            receipt.confidence_score = parsed_data.get('confidence', 0.7)
-                            
-                            if receipt.items and receipt.total_amount:
-                                receipt.processing_status = "completed"
-                            elif receipt.total_amount:
-                                receipt.processing_status = "partial" 
-                            else:
-                                # Template failed, but we'll continue with other methods
-                                logging.warning(f"Template {template_id} failed to extract data")
-                        else:
-                            logging.warning(f"Template {template_id} returned no data")
-                    else:
-                        logging.warning(f"Template with ID {template_id} not found")
-                except Exception as e:
-                    logging.error(f"Error applying template: {str(e)}")
-            
-            # If we haven't successfully processed the receipt yet, try standard methods
-            if receipt.processing_status == "processing":
-                # Try to match with a template first
-                template_match_result = analyzer.match_template(receipt_text)
-                
-                if template_match_result and template_match_result.get('items'):
-                    # Template matched successfully
-                    logging.info(f"Template matched: {template_match_result.get('template_name')}")
-                    
-                    receipt.items = template_match_result.get('items', [])
-                    receipt.subtotal_amount = template_match_result.get('subtotal')
-                    receipt.tax_amount = template_match_result.get('tax')
-                    receipt.total_amount = template_match_result.get('total')
-                    receipt.currency_type = template_match_result.get('currency')
-                    receipt.confidence_score = template_match_result.get('confidence', 0.7)
-                    
-                    if receipt.items and receipt.total_amount:
-                        receipt.processing_status = "completed"
-                    elif receipt.total_amount:
-                        receipt.processing_status = "partial"
-                else:
-                    # No template matched, use generic analyzer
-                    logging.info("No template matched, using generic analyzer")
-                    
-                    # Check if user overrode currency
-                    force_currency = options.get('force_currency')
-                    
-                    # If user forced a currency, adjust the analyzer's behavior
-                    if force_currency:
-                        logging.info(f"Forcing currency to: {force_currency}")
-                        analyzed_data = analyzer.analyze_receipt(receipt_text, image_path, force_currency)
-                    else:
-                        analyzed_data = analyzer.analyze_receipt(receipt_text, image_path)
-                    
-                    # Update receipt with analyzed data
-                    receipt.items = analyzed_data.get('items', [])
-                    receipt.subtotal_amount = analyzed_data.get('subtotal')
-                    receipt.tax_amount = analyzed_data.get('tax')
-                    receipt.total_amount = analyzed_data.get('total')
-                    receipt.currency_type = analyzed_data.get('currency')
-                    
-                    # Handle confidence scores
-                    if 'confidence_scores' in analyzed_data:
-                        receipt.confidence_scores = analyzed_data['confidence_scores']
-                        if receipt.confidence_scores:
-                            receipt.confidence_score = sum(receipt.confidence_scores.values()) / len(receipt.confidence_scores)
-                    else:
-                        receipt.confidence_score = analyzed_data.get('confidence', 0.5)
-                    
-                    # Update processing status
-                    if receipt.items and receipt.total_amount:
-                        receipt.processing_status = "completed"
-                    elif receipt.total_amount:
-                        receipt.processing_status = "partial"
-                    else:
-                        # Try fallback methods if enabled
-                        if options.get('use_fallback', True):
-                            logging.info("Using fallback methods for extraction")
-                            
-                            # Try to extract items with fallback
-                            if not receipt.items:
-                                store_type = options.get('store_type_hint')
-                                fallback_items = analyzer.parse_items_fallback(receipt_text, store_type)
-                                
-                                if fallback_items:
-                                    logging.info(f"Fallback extracted {len(fallback_items)} items")
-                                    # Convert to ReceiptItem objects
-                                    items = []
-                                    for item_data in fallback_items:
-                                        item = ReceiptItem(
-                                            description=item_data.get('description', ''),
-                                            amount=item_data.get('price', 0),
-                                            quantity=item_data.get('quantity', 1),
-                                            confidence_score=0.6,
-                                            item_type="product"
-                                        )
-                                        items.append(item)
-                                    
-                                    receipt.items = items
-                            
-                            # Try to extract totals with fallback
-                            if not receipt.total_amount:
-                                fallback_totals = analyzer.extract_totals_fallback(
-                                    receipt_text, 
-                                    receipt.currency_type or options.get('force_currency'),
-                                    options.get('store_type_hint')
-                                )
-                                
-                                if fallback_totals:
-                                    logging.info("Fallback extracted totals")
-                                    receipt.subtotal_amount = fallback_totals.get('subtotal')
-                                    receipt.tax_amount = fallback_totals.get('tax')
-                                    receipt.total_amount = fallback_totals.get('total')
-                                    
-                                    # If currency was extracted and not already set
-                                    if fallback_totals.get('currency') and not receipt.currency_type:
-                                        receipt.currency_type = fallback_totals.get('currency')
-                            
-                            # Update processing status again after fallbacks
-                            if receipt.items and receipt.total_amount:
-                                receipt.processing_status = "completed"
-                                receipt.confidence_score = 0.6  # Lower confidence for fallback methods
-                            elif receipt.total_amount:
-                                receipt.processing_status = "partial"
-                                receipt.confidence_score = 0.5
-                            else:
-                                receipt.processing_status = "failed"
-                                receipt.processing_error = "Failed to extract essential receipt data"
-                        else:
-                            receipt.processing_status = "failed"
-                            receipt.processing_error = "Failed to extract essential receipt data"
+        Returns:
+            List[Dict[str, Any]]: List of receipt data dictionaries
+        """
+        return self.storage.list_all()
+
+    def update_receipt(self, receipt_id: str, data: Dict[str, Any]) -> bool:
+        """
+        Update a receipt's data.
         
-        except Exception as e:
-            logging.error(f"Error processing receipt: {str(e)}")
-            import traceback
-            logging.error(traceback.format_exc())
-            receipt.mark_processing_failed(str(e))
+        Args:
+            receipt_id: ID of the receipt to update
+            data: New receipt data
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        existing_data = self.get_receipt(receipt_id)
+        if not existing_data:
+            return False
         
-        logging.info(f"Receipt processing completed with status: {receipt.processing_status}")
-        if receipt.items:
-            logging.info(f"Extracted {len(receipt.items)} items")
+        updated_data = {**existing_data, **data}
+        self.storage.save(receipt_id, updated_data)
+        return True
+
+    def delete_receipt(self, receipt_id: str) -> bool:
+        """
+        Delete a receipt and its associated image.
         
-        return receipt 
+        Args:
+            receipt_id: ID of the receipt to delete
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        receipt_data = self.get_receipt(receipt_id)
+        if not receipt_data:
+            return False
+        
+        # Delete the image file if it exists
+        image_path = receipt_data.get('image_path')
+        if image_path and os.path.exists(image_path):
+            try:
+                os.remove(image_path)
+            except OSError as e:
+                print(f"Error deleting image file: {e}")
+        
+        return self.storage.delete(receipt_id)
+
+    def get_receipt_image_path(self, receipt_id: str) -> Optional[str]:
+        """
+        Get the path to a receipt's image file.
+        
+        Args:
+            receipt_id: ID of the receipt
+            
+        Returns:
+            Optional[str]: Path to the image file if it exists, None otherwise
+        """
+        receipt_data = self.get_receipt(receipt_id)
+        if not receipt_data:
+            return None
+        
+        image_path = receipt_data.get('image_path')
+        if not image_path or not os.path.exists(image_path):
+            return None
+            
+        return image_path 

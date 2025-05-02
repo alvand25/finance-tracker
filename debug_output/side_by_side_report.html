@@ -1,0 +1,1108 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Receipt OCR Results</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                .receipt { margin-bottom: 30px; border: 1px solid #ccc; padding: 15px; }
+                .receipt-header { background-color: #f5f5f5; padding: 10px; margin-bottom: 10px; }
+                .receipt-body { display: flex; }
+                .image-section { flex: 1; padding-right: 15px; }
+                .results-section { flex: 2; }
+                .image-section img { max-width: 300px; border: 1px solid #ddd; }
+                .success { color: green; }
+                .failure { color: red; }
+                table { border-collapse: collapse; width: 100%; }
+                table, th, td { border: 1px solid #ddd; }
+                th, td { padding: 8px; text-align: left; }
+                th { background-color: #f2f2f2; }
+                pre { white-space: pre-wrap; word-wrap: break-word; }
+            </style>
+        </head>
+        <body>
+            <h1>Receipt OCR Results</h1>
+            <p>Generated on: 2025-05-01 16:24:33</p>
+        
+            <div class="summary">
+                <h2>Summary</h2>
+                <p>Total receipts tested: 7</p>
+                <p>Successful extractions: 7 (100.0%)</p>
+                <p>Failed extractions: 0 (0.0%)</p>
+            </div>
+        
+                <div class="receipt">
+                    <div class="receipt-header">
+                        <h2>IMG_5655.png - <span class="success">SUCCESS</span></h2>
+                    </div>
+                    <div class="receipt-body">
+                        <div class="image-section">
+                            <h3>Image</h3>
+                            <img src="samples/images/IMG_5655.png" alt="IMG_5655.png" />
+                        </div>
+                        <div class="results-section">
+                            <h3>Results</h3>
+                            <table>
+                                <tr><th>Property</th><th>Value</th></tr>
+                                <tr><td>Store</td><td>h_mart (confidence: 0.95)</td></tr>
+                                <tr><td>Handler</td><td>GenericHandler</td></tr>
+                                <tr><td>Items Count</td><td>15</td></tr>
+                                <tr><td>Subtotal</td><td>113.63999999999999</td></tr>
+                                <tr><td>Tax</td><td>None</td></tr>
+                                <tr><td>Total</td><td>None</td></tr>
+                                <tr><td>Confidence</td><td>0.46</td></tr>
+                                <tr><td>OCR Engine</td><td>unknown</td></tr>
+                                <tr><td>OCR Confidence</td><td>0.00</td></tr>
+                            </table>
+            
+                            <h3>Items</h3>
+                            <table>
+                                <tr><th>Description</th><th>Price</th><th>Quantity</th></tr>
+                
+                                <tr>
+                                    <td>PRODUCE</td>
+                                    <td>3.36</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>3.36 F</td>
+                                    <td>3.36</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>GREEN CURRY PASTE</td>
+                                    <td>5.95</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>5.95 F</td>
+                                    <td>1.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>1.99 F</td>
+                                    <td>3.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>3.99 F</td>
+                                    <td>3.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>1.99 F</td>
+                                    <td>1.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>HS PICKLED RADISH</td>
+                                    <td>1.49</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>1.49 F</td>
+                                    <td>1.49</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>LIME</td>
+                                    <td>0.5</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>0.50 F</td>
+                                    <td>0.5</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>MRN BF RIBEYE ROLL</td>
+                                    <td>8.9</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>8.90 F</td>
+                                    <td>8.9</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>FZ BF TOP BLADE</td>
+                                    <td>16.79</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>041125 0426pm 125 6</td>
+                                    <td>50.44</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                            </table>
+                
+                            <h3>OCR Text</h3>
+                            <pre># Raw OCR Output
+================================================================================
+H
+MART
+http://www.hmart.com
+48-18 Northern Blvd
+&gt;Long Island City, NY, 111012
+TEL (718) 489-8580
+Your Cashier was SYLVIA KIM
+PRODUCE
+3.36 F
+MILK PAN BREAD
+BEAN SPROUTS/12oz
+ORG BEECH MUSHROOM
+MASAMAN CURRY PAST
+GREEN CURRY PASTE
+5.95 F
+1.99 F
+3.99 F
+1
+1.99 F
+1.99 F
+HS PICKLED RADISH
+1.49 F
+1 @ 4/1.99
+LIME
+0.50 F
+1 @ 4/1.99
+LIME
+0.50 F
+MRN BF RIBEYE ROLL
+8.90 F
+Regular Price 9.99, You saved
+99
+RAMA FRESH RICE ST
+99 F
+FZ BF TOP BLADE
+16.79 F
+TAX
+0.00
+會:
+**** BALANCE
+50.44
+MasterCard Credit - H
+ACCOUNT NUMBER: ************2835
+APPROVAL CODE: 08458P
+SEQUENCE NUMBER: 6717
+TOTAL AMOUNT: $50.44
+RESPONSE CODE: APPROVED
+04/11/25 04:26pm 125 6
+MasterCard
+50.44
+CHANGE
+0.00
+TOTAL NUMBER OF ITEMS SOLD
+12-
+================================================================================
+
+
+# OCR Statistics
+--------------------------------------------------------------------------------
+engine: GoogleVisionOCR
+confidence: 0.9418688693711924
+processing_time: 1.133749008178711
+</pre>
+                    
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="receipt">
+                    <div class="receipt-header">
+                        <h2>IMG_5656.png - <span class="success">SUCCESS</span></h2>
+                    </div>
+                    <div class="receipt-body">
+                        <div class="image-section">
+                            <h3>Image</h3>
+                            <img src="samples/images/IMG_5656.png" alt="IMG_5656.png" />
+                        </div>
+                        <div class="results-section">
+                            <h3>Results</h3>
+                            <table>
+                                <tr><th>Property</th><th>Value</th></tr>
+                                <tr><td>Store</td><td>key_food (confidence: 0.95)</td></tr>
+                                <tr><td>Handler</td><td>GenericHandler</td></tr>
+                                <tr><td>Items Count</td><td>5</td></tr>
+                                <tr><td>Subtotal</td><td>17.46</td></tr>
+                                <tr><td>Tax</td><td>None</td></tr>
+                                <tr><td>Total</td><td>None</td></tr>
+                                <tr><td>Confidence</td><td>0.46</td></tr>
+                                <tr><td>OCR Engine</td><td>unknown</td></tr>
+                                <tr><td>OCR Confidence</td><td>0.00</td></tr>
+                            </table>
+            
+                            <h3>Items</h3>
+                            <table>
+                                <tr><th>Description</th><th>Price</th><th>Quantity</th></tr>
+                
+                                <tr>
+                                    <td>CILANTRO MACHO</td>
+                                    <td>2.49</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>2.49 F</td>
+                                    <td>2.49</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>BASIL</td>
+                                    <td>2.5</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>0.00</td>
+                                    <td>4.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>041125 0449pm 110 3</td>
+                                    <td>4.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                            </table>
+                
+                            <h3>OCR Text</h3>
+                            <pre># Raw OCR Output
+================================================================================
+Key Food
+FRESH
+46-02 Queens Blvd.
+Sunnyside, NY 11104
+(718) 706-6563
+CILANTRO MACHO
+2.49 F
+BASIL
+2.50 F
+TAX
+0.00
+**** BALANCE
+4.99
+****
+MasterCard Card - CONTACTLESS
+ACCOUNT NUMBER: ************2835
+APPROVAL CODE: 81146P
+SEQUENCE NUMBER: 3310
+TERMINAL ID:
+TOTAL AMOUNT: $4.99 Purchase
+RESPONSE CODE: APPROVED
+04/11/25 04:49pm 110 3
+MasterCard
+4.99
+CHANGE
+0.00
+TOTAL NUMBER OF ITEMS SOLD
+04/11/25 04:49pm 1448 3 376
+Join the Savings Club for
+Additional Dollar Savings.
+Thank You for shopping with usl
+Your cashier was
+Facebook.com/FreshnsaveSunnyside
+*** Twitter.com/Freshnsave ***
+================================================================================
+
+
+# OCR Statistics
+--------------------------------------------------------------------------------
+engine: GoogleVisionOCR
+confidence: 0.9792500280198597
+processing_time: 0.5332400798797607
+</pre>
+                    
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="receipt">
+                    <div class="receipt-header">
+                        <h2>IMG_5657.png - <span class="success">SUCCESS</span></h2>
+                    </div>
+                    <div class="receipt-body">
+                        <div class="image-section">
+                            <h3>Image</h3>
+                            <img src="samples/images/IMG_5657.png" alt="IMG_5657.png" />
+                        </div>
+                        <div class="results-section">
+                            <h3>Results</h3>
+                            <table>
+                                <tr><th>Property</th><th>Value</th></tr>
+                                <tr><td>Store</td><td>key_food (confidence: 0.95)</td></tr>
+                                <tr><td>Handler</td><td>GenericHandler</td></tr>
+                                <tr><td>Items Count</td><td>3</td></tr>
+                                <tr><td>Subtotal</td><td>5.97</td></tr>
+                                <tr><td>Tax</td><td>None</td></tr>
+                                <tr><td>Total</td><td>None</td></tr>
+                                <tr><td>Confidence</td><td>0.46</td></tr>
+                                <tr><td>OCR Engine</td><td>unknown</td></tr>
+                                <tr><td>OCR Confidence</td><td>0.00</td></tr>
+                            </table>
+            
+                            <h3>Items</h3>
+                            <table>
+                                <tr><th>Description</th><th>Price</th><th>Quantity</th></tr>
+                
+                                <tr>
+                                    <td>CELERY BUNCH</td>
+                                    <td>1.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>1.99 F</td>
+                                    <td>1.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>0.00</td>
+                                    <td>1.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                            </table>
+                
+                            <h3>OCR Text</h3>
+                            <pre># Raw OCR Output
+================================================================================
+KeyFood
+FRESH
+46-02 Queen# Blvd.
+Sunnyside, NY 11104
+(718) 706-6563
+CELERY BUNCH
+1.99 F
+Regular Price 2.69 You Saved 0.70.
+TAX
+**** BALANCE
+VISA Card - CONTACTLESS
+ACCOUNT NUMBER: *****
+*7107
+APPROVAL CODE: 07289D
+SEQUENCE NUMBER: 3211
+TERMINAL ID:
+TOTAL AMOUNT: $1.99 Purchase
+RESPONSE CODE: APPROVED
+04/11/25 12:50pm 431 3
+VISA
+CHANGE
+0.00
+1.99
+****
+0.00
+1
+TOTAL NUMBER OF ITEMS SOLD =
+By Shopping at Kew Food you saved:
+on 11 Great Buy Items. 0¾×70
+================================================================================
+
+
+# OCR Statistics
+--------------------------------------------------------------------------------
+engine: GoogleVisionOCR
+confidence: 0.9381833473841349
+processing_time: 0.5813660621643066
+</pre>
+                    
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="receipt">
+                    <div class="receipt-header">
+                        <h2>IMG_5660.png - <span class="success">SUCCESS</span></h2>
+                    </div>
+                    <div class="receipt-body">
+                        <div class="image-section">
+                            <h3>Image</h3>
+                            <img src="samples/images/IMG_5660.png" alt="IMG_5660.png" />
+                        </div>
+                        <div class="results-section">
+                            <h3>Results</h3>
+                            <table>
+                                <tr><th>Property</th><th>Value</th></tr>
+                                <tr><td>Store</td><td>h_mart (confidence: 0.95)</td></tr>
+                                <tr><td>Handler</td><td>GenericHandler</td></tr>
+                                <tr><td>Items Count</td><td>15</td></tr>
+                                <tr><td>Subtotal</td><td>149.6</td></tr>
+                                <tr><td>Tax</td><td>None</td></tr>
+                                <tr><td>Total</td><td>61.54</td></tr>
+                                <tr><td>Confidence</td><td>0.70</td></tr>
+                                <tr><td>OCR Engine</td><td>unknown</td></tr>
+                                <tr><td>OCR Confidence</td><td>0.00</td></tr>
+                            </table>
+            
+                            <h3>Items</h3>
+                            <table>
+                                <tr><th>Description</th><th>Price</th><th>Quantity</th></tr>
+                
+                                <tr>
+                                    <td>JIN RAMEN MILD BOX</td>
+                                    <td>16.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>MINI CUCUMBERS</td>
+                                    <td>8.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>8.99 F</td>
+                                    <td>1.49</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>1.49 F</td>
+                                    <td>1.49</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>LATTE</td>
+                                    <td>2.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>MASAMAN CURRY PAST-</td>
+                                    <td>1.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>1.99 F</td>
+                                    <td>1.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>SRKK GYOZA- BEEF</td>
+                                    <td>5.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>5.99 F</td>
+                                    <td>2.0</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td> BGR SAMANCO CHOCO</td>
+                                    <td>4.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>4.99 F</td>
+                                    <td>4.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>-GRN SEEDLESS GRAPE</td>
+                                    <td>6.66</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>GROCERY</td>
+                                    <td>13.75</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>13.75 F</td>
+                                    <td>13.75</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>6 B</td>
+                                    <td>61.54</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                            </table>
+                
+                            <h3>OCR Text</h3>
+                            <pre># Raw OCR Output
+================================================================================
+H
+MART
+http://www.hmart.com
+48-18 Northern Blvd
+Long Island City, NY, 11101
+TEL (718) 489-8580
+Your Cashier was YUN JUNG JANG
+ROTISSERIE CHICKEN
+5.99 B
+Regular Price 7.99, You saved 2.00
+JIN RAMEN MILD BOX 16.99 F
+Regular Price 22.99, You saved 6.00
+SNOW ICE/COOKI&amp;CRM
+MINI CUCUMBERS
+$8.99 F
+1.49 F
+Regular Price 2.99, You saved 1.50
+MRYM
+LATTE
+2.99
+ICECAFE AMERICANO.
+1.99 B
+MASAMAN CURRY PAST-
+1.99 F
+SRKK GYOZA- BEEF
+5.99 F
+Regular Price 7.99, You saved
+2.00
+☐ BGR SAMANCO CHOCO
+Regular Price 7.99, You saved 3.00
+4.99 F
+1.86 lb @ 2.99 /lb
+WT
+-GRN SEEDLESS GRAPE
+6.66
+Regular Price 3.99, You saved 1.86
+GROCERY
+13.75 F
+PAPER CARRYOUT BAG
+05 B
+PAPER CARRYOUT BAG
+6 B
+TAX
+**** BALANCE
+61.54
+================================================================================
+
+
+# OCR Statistics
+--------------------------------------------------------------------------------
+engine: GoogleVisionOCR
+confidence: 0.9412310252318511
+processing_time: 0.7334539890289307
+</pre>
+                    
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="receipt">
+                    <div class="receipt-header">
+                        <h2>IMG_5661.png - <span class="success">SUCCESS</span></h2>
+                    </div>
+                    <div class="receipt-body">
+                        <div class="image-section">
+                            <h3>Image</h3>
+                            <img src="samples/images/IMG_5661.png" alt="IMG_5661.png" />
+                        </div>
+                        <div class="results-section">
+                            <h3>Results</h3>
+                            <table>
+                                <tr><th>Property</th><th>Value</th></tr>
+                                <tr><td>Store</td><td>key_food (confidence: 0.95)</td></tr>
+                                <tr><td>Handler</td><td>GenericHandler</td></tr>
+                                <tr><td>Items Count</td><td>10</td></tr>
+                                <tr><td>Subtotal</td><td>33.02</td></tr>
+                                <tr><td>Tax</td><td>2.55</td></tr>
+                                <tr><td>Total</td><td>None</td></tr>
+                                <tr><td>Confidence</td><td>0.38</td></tr>
+                                <tr><td>OCR Engine</td><td>unknown</td></tr>
+                                <tr><td>OCR Confidence</td><td>0.00</td></tr>
+                            </table>
+            
+                            <h3>Items</h3>
+                            <table>
+                                <tr><th>Description</th><th>Price</th><th>Quantity</th></tr>
+                
+                                <tr>
+                                    <td>MOTHER EARTH ORG C</td>
+                                    <td>1.4</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>1.40 F</td>
+                                    <td>1.4</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>SCALLIONS</td>
+                                    <td>0.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>0.99 F</td>
+                                    <td>0.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>THAI KITC FISH SAL</td>
+                                    <td>5.09</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>5.09 F</td>
+                                    <td>5.09</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td> ONIONS SPANISH</td>
+                                    <td>0.93</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>0.93 F</td>
+                                    <td>0.93</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>YUKON POTAS</td>
+                                    <td>2.55</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>0.00</td>
+                                    <td>13.65</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                            </table>
+                
+                            <h3>OCR Text</h3>
+                            <pre># Raw OCR Output
+================================================================================
+Key Food
+FRESH
+46-02 Queens Blvd
+Sunnyside, NY 1110
+(718) 706-6563
+0.20 lb @ 6.99 /lb
+WT
+MOTHER EARTH ORG C
+1.40 F
+CARROT“ BUNCH
+Regular Price 2.99&quot; You Saved 0:30
+69
+SCALLIONS
+0.99 F
+THAI KITC FISH SAL
+5.09 F
+35 lb @ 0.69 Alb
+WT
+✓ ONIONS SPANISH
+0.93 F
+1.71 lb @ 1.49/
+WT
+YUKON POTAS
+TAX
+2.55 F
+0.00
+**** BALANCE
+13.65
+EMW CARD - C
+KEY FOOD
+46-02 QUEENS BLVD
+SUNNYSIDE, NY 11104
+Payment Type: CHASE ISA
+Card: *** *******9430*
+Payment And $13.65 Pun
+Cashback Amt: $0.00
+Authorizat04004D
+Sequence#: 386
+Terminal ID
+3
+================================================================================
+
+
+# OCR Statistics
+--------------------------------------------------------------------------------
+engine: GoogleVisionOCR
+confidence: 0.9131202772259712
+processing_time: 0.5998332500457764
+</pre>
+                    
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="receipt">
+                    <div class="receipt-header">
+                        <h2>IMG_5659.png - <span class="success">SUCCESS</span></h2>
+                    </div>
+                    <div class="receipt-body">
+                        <div class="image-section">
+                            <h3>Image</h3>
+                            <img src="samples/images/IMG_5659.png" alt="IMG_5659.png" />
+                        </div>
+                        <div class="results-section">
+                            <h3>Results</h3>
+                            <table>
+                                <tr><th>Property</th><th>Value</th></tr>
+                                <tr><td>Store</td><td>trader_joes (confidence: 0.95)</td></tr>
+                                <tr><td>Handler</td><td>GenericHandler</td></tr>
+                                <tr><td>Items Count</td><td>7</td></tr>
+                                <tr><td>Subtotal</td><td>49.830000000000005</td></tr>
+                                <tr><td>Tax</td><td>None</td></tr>
+                                <tr><td>Total</td><td>None</td></tr>
+                                <tr><td>Confidence</td><td>0.42</td></tr>
+                                <tr><td>OCR Engine</td><td>unknown</td></tr>
+                                <tr><td>OCR Confidence</td><td>0.00</td></tr>
+                            </table>
+            
+                            <h3>Items</h3>
+                            <table>
+                                <tr><th>Description</th><th>Price</th><th>Quantity</th></tr>
+                
+                                <tr>
+                                    <td>SPICY CHAI TEA LATTE MIX</td>
+                                    <td>4.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>ORG ELOTE CORN CHIPS</td>
+                                    <td>2.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>CREAM CHEESE BRICK</td>
+                                    <td>3.98</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>2 </td>
+                                    <td>1.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>2  1.99</td>
+                                    <td>11.96</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>11.96</td>
+                                    <td>11.96</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>6000</td>
+                                    <td>11.96</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                            </table>
+                
+                            <h3>OCR Text</h3>
+                            <pre># Raw OCR Output
+================================================================================
+0
+E
+дв
+command
+option
+CEL
+نان
+TRADER JOE&#x27;S
+142 E. 14th St.
+New York, NY
+10003
+Store #0540 - 212-529-4612
+OPEN 8:00AM TO 9:00PM DAILY
+SALE TRANSACTION
+SPICY CHAI TEA LATTE MIX
+$4.99
+ORG ELOTE CORN CHIPS
+$2.99
+CREAM CHEESE BRICK
+$3.98
+2 @ $1.99
+Items in Transaction 4.
+Balance to pay
+$11.96
+MasterCard
+$11.96
+PAYMENT CARD PURCHASE TRANSACTION
+Mastercard
+CUSTOMER COPY
+*****2453
+Type: CONTACTLESS
+Auth Code:
+37233P
+MID: *******27013
+TID:
+****6000
+TOTAL PURCHASE
+$11.96
+No Cardholder Verification
+Please retain for your records
+G. Keely
+DATE
+================================================================================
+
+
+# OCR Statistics
+--------------------------------------------------------------------------------
+engine: GoogleVisionOCR
+confidence: 0.9470262483852666
+processing_time: 0.49002695083618164
+</pre>
+                    
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="receipt">
+                    <div class="receipt-header">
+                        <h2>IMG_5658.png - <span class="success">SUCCESS</span></h2>
+                    </div>
+                    <div class="receipt-body">
+                        <div class="image-section">
+                            <h3>Image</h3>
+                            <img src="samples/images/IMG_5658.png" alt="IMG_5658.png" />
+                        </div>
+                        <div class="results-section">
+                            <h3>Results</h3>
+                            <table>
+                                <tr><th>Property</th><th>Value</th></tr>
+                                <tr><td>Store</td><td>costco (confidence: 0.95)</td></tr>
+                                <tr><td>Handler</td><td>GenericHandler</td></tr>
+                                <tr><td>Items Count</td><td>18</td></tr>
+                                <tr><td>Subtotal</td><td>457.7800000000001</td></tr>
+                                <tr><td>Tax</td><td>None</td></tr>
+                                <tr><td>Total</td><td>None</td></tr>
+                                <tr><td>Confidence</td><td>0.42</td></tr>
+                                <tr><td>OCR Engine</td><td>unknown</td></tr>
+                                <tr><td>OCR Confidence</td><td>0.00</td></tr>
+                            </table>
+            
+                            <h3>Items</h3>
+                            <table>
+                                <tr><th>Description</th><th>Price</th><th>Quantity</th></tr>
+                
+                                <tr>
+                                    <td>4854948 GAP SHORT</td>
+                                    <td>14.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>14.99 F</td>
+                                    <td>14.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>1583270 NIKECLUBCREW</td>
+                                    <td>32.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>32.99 F</td>
+                                    <td>32.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>1841021 GERRY SHORT</td>
+                                    <td>12.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>12.99 F</td>
+                                    <td>12.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>1234809 SNAPPLEDIET</td>
+                                    <td>19.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>549797 BISCOFF</td>
+                                    <td>7.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>1853333 COOKIEMOUSSE</td>
+                                    <td>10.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>3741 ALB ENVY</td>
+                                    <td>8.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>1748763 KS BRKFSTSND</td>
+                                    <td>16.49</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>399989 MADELEINES</td>
+                                    <td>8.49</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>1780170 32DTANK3PACK</td>
+                                    <td>12.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>E 1792879 POM JUICE</td>
+                                    <td>10.39</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>E 1312509 MUSH VTY</td>
+                                    <td>7.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>7.99</td>
+                                    <td>18.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>18.99</td>
+                                    <td>9.99</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                                <tr>
+                                    <td>Tran ID 509700004646....</td>
+                                    <td>202.55</td>
+                                    <td>1</td>
+                                </tr>
+                    
+                            </table>
+                
+                            <h3>OCR Text</h3>
+                            <pre># Raw OCR Output
+================================================================================
+COSTCO
+WHOLESALE
+Queens #243
+32-50 Vernon Blvd
+Long Island, NY 11106,
+Member 112016559052
+1
+4854948 GAP SHORT
+14.99 F
+1583270 NIKECLUBCREW
+32.99 F
+1841021 GERRY SHORT
+12.99 F
+0000348310 / 1841021
+3:00-
+E
+E
+MMMMM
+E
+818073 KS TORTELLON
+11.29
+E
+1234809 SNAPPLEDIET*
+19.99
+E
+549797 BISCOFF
+7.99
+1853333 COOKIEMOUSSE
+10.99
+3741 ALB ENVY
+8.99
+E
+1748763 KS BRKFSTSND
+16.49
+E
+399989 MADELEINES
+8.49
+1780170 32DTANK3PACK
+12.99 F
+பய
+E 1792879 POM JUICE
+10.39
+E
+E 1335089 BAGELS
+890181 KS WLDSALMON
+E 1312509 MUSH VTY
+TOTAL NUMBER OF ITEMS SOLD - 15
+7.99
+18.99
+9.99
+SUBTOTAL
+TAX
+**** TOTAL
+XXXXXXXXXXXX9433
+Seq# 4646
+AID: A0000000031010
+App#: 09430D
+Visa Resp: APPROVED
+Tran ID#: 509700004646....
+202.55
+0.00
+================================================================================
+
+
+# OCR Statistics
+--------------------------------------------------------------------------------
+engine: GoogleVisionOCR
+confidence: 0.9571408382001912
+processing_time: 0.7320609092712402
+</pre>
+                    
+                        </div>
+                    </div>
+                </div>
+            
+        </body>
+        </html>
+        

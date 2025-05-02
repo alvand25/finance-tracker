@@ -61,3 +61,20 @@ node_modules/
 # Task files
 tasks.json
 tasks/ 
+
+# Google Cloud credentials
+credentials/
+*.json
+
+# OCR debug and test artifacts
+debug_output/
+batch_test_output/
+
+# Python virtual environments
+venv/
+venv_new/node_modules/
+.env
+__pycache__/
+*.pyc
+logs/
+uploads/

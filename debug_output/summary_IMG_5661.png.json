@@ -1,13 +1,19 @@
 {
   "image_path": "samples/images/IMG_5661.png",
-  "store": "unknown",
-  "store_confidence": 0.0,
+  "store": "key_food",
+  "store_confidence": 0.95,
   "handler": "GenericHandler",
-  "item_count": 0,
-  "items_sample": [],
-  "subtotal": null,
-  "tax": null,
+  "item_count": 10,
+  "items_sample": [
+    "MOTHER EARTH ORG C",
+    "1.40 F",
+    "SCALLIONS",
+    "0.99 F",
+    "THAI KITC FISH SAL"
+  ],
+  "subtotal": 33.02,
+  "tax": 2.55,
   "total": null,
-  "overall_confidence": 0.0,
-  "extraction_quality": 0.25
+  "overall_confidence": 0.38000000000000006,
+  "extraction_quality": 0.5900000000000001
 }

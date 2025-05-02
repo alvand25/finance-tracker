@@ -43,6 +43,10 @@ class HandlerRegistry:
         if 'generic' not in self.handlers:
             self.handlers['generic'] = GenericHandler
             
+        # Explicitly register Costco handler
+        from handlers.costco_handler import CostcoReceiptHandler
+        self.handlers['costco'] = CostcoReceiptHandler
+            
         # Try to auto-discover handlers in the handlers directory
         if os.path.isdir(self.handlers_path):
             for filename in os.listdir(self.handlers_path):
@@ -65,6 +69,8 @@ class HandlerRegistry:
                                 handler_key = name.lower()
                                 if handler_key.endswith('handler'):
                                     handler_key = handler_key[:-7]
+                                elif handler_key.endswith('receipthandler'):
+                                    handler_key = handler_key[:-13]
                                 
                                 # Register the handler
                                 self.handlers[handler_key] = obj
@@ -114,24 +120,32 @@ class HandlerRegistry:
             logger.debug("[Registry] No store name provided, using generic handler")
             return GenericHandler()
         
-        logger.debug(f"[Registry] Available Handlers: {list(self.handlers.keys())}")
-        logger.debug(f"[Registry] Looking for handler for store: '{store_name}'")
-        
         # Normalize store name to lowercase for comparison
-        store_name_lower = store_name.lower()
+        store_name_lower = store_name.lower().strip()
+        logger.debug(f"[Registry] Looking for handler for store: '{store_name}' (normalized: '{store_name_lower}')")
+        logger.debug(f"[Registry] Available Handlers: {list(self.handlers.keys())}")
+        logger.debug(f"[Registry] Store Mappings: {self.store_mappings}")
         
-        # Check direct mappings first
+        # First try direct handler key match
+        if store_name_lower in self.handlers:
+            logger.debug(f"[Registry] Direct handler match found: {store_name_lower}")
+            return self.handlers[store_name_lower]()
+        
+        # Check store mappings
         for handler_key, store_variations in self.store_mappings.items():
-            for variation in store_variations:
-                logger.debug(f"[Registry] Checking if '{variation.lower()}' matches '{store_name_lower}'")
-                if variation.lower() in store_name_lower:
+            normalized_variations = [v.lower().strip() for v in store_variations]
+            logger.debug(f"[Registry] Checking variations for {handler_key}: {normalized_variations}")
+            
+            # Check if store name contains any of the variations
+            for variation in normalized_variations:
+                if variation in store_name_lower or store_name_lower in variation:
                     if handler_key in self.handlers:
                         logger.debug(f"[Registry] Selected Handler: {self.handlers[handler_key].__name__} for store '{store_name}'")
                         return self.handlers[handler_key]()
                     else:
                         logger.warning(f"[Registry] Handler key '{handler_key}' not registered for store '{store_name}'")
         
-        # No direct mapping found, try some common vendor names
+        # No direct mapping found, try common vendor names
         common_vendors = {
             "costco": ["costco", "wholesale"],
             "trader_joes": ["trader", "joe"],
@@ -146,7 +160,7 @@ class HandlerRegistry:
             "aldi": ["aldi"]
         }
         
-        logger.debug(f"[Registry] No direct mapping found, checking common vendor keywords")
+        logger.debug(f"[Registry] Checking common vendor keywords")
         
         for handler_key, keywords in common_vendors.items():
             matched_keywords = [keyword for keyword in keywords if keyword in store_name_lower]

@@ -1,13 +1,17 @@
 {
   "image_path": "samples/images/IMG_5657.png",
-  "store": "*K aK",
-  "store_confidence": 0.4,
+  "store": "key_food",
+  "store_confidence": 0.95,
   "handler": "GenericHandler",
-  "item_count": 0,
-  "items_sample": [],
-  "subtotal": null,
+  "item_count": 3,
+  "items_sample": [
+    "CELERY BUNCH",
+    "1.99 F",
+    "0.00"
+  ],
+  "subtotal": 5.97,
   "tax": null,
   "total": null,
-  "overall_confidence": 0.7,
-  "extraction_quality": 0.6
+  "overall_confidence": 0.4600000000000001,
+  "extraction_quality": 0.5800000000000001
 }

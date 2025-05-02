@@ -1,18 +1,50 @@
-é
-\ TMUONKS Nyy 12 -O 0 "ae OO aia
-we “ft? ~-FA2°SO2%RSE oe a re ~
-. ' a w a - NO Ro aA ao. eu ee eo x ww
-\ es se: - Sf Aer MYrYONKn T "€E3 ‘ol  v-
-S Jer = tbh GO. ws -2Zz -=e => in x
-au AarerevuwsT7T0Of- SS = © Se oe
-y~ NT @ oO Seoqtcrtrorea2Z2zaowidaed x = a.
+# Raw OCR Output
+================================================================================
+Key Food
+FRESH
+46-02 Queens Blvd
+Sunnyside, NY 1110
+(718) 706-6563
+0.20 lb @ 6.99 /lb
+WT
+MOTHER EARTH ORG C
+1.40 F
+CARROT“ BUNCH
+Regular Price 2.99" You Saved 0:30
+69
+SCALLIONS
+0.99 F
+THAI KITC FISH SAL
+5.09 F
+35 lb @ 0.69 Alb
+WT
+✓ ONIONS SPANISH
+0.93 F
+1.71 lb @ 1.49/
+WT
+YUKON POTAS
+TAX
+2.55 F
+0.00
+**** BALANCE
+13.65
+EMW CARD - C
+KEY FOOD
+46-02 QUEENS BLVD
+SUNNYSIDE, NY 11104
+Payment Type: CHASE ISA
+Card: *** *******9430*
+Payment And $13.65 Pun
+Cashback Amt: $0.00
+Authorizat04004D
+Sequence#: 386
+Terminal ID
+3
+================================================================================
 
-a / an a a , 2 2 Wu *« «
-yO ro o © ’ ~ cCoegre, x +
-‘ Ba kd oO —_ Oo —_ x < Oo on c c
-he Fe sy N .od ma) bn Ouwn> a -- «€
-~_ on BO LS >> 2h §
-ee 3s « i iS —~H =WwoOA & 6 2
-a Pi © aga ’ Li SZ wy a. 3 oO
 
-OT 3 ce d pre “ és
+# OCR Statistics
+--------------------------------------------------------------------------------
+engine: GoogleVisionOCR
+confidence: 0.9131202772259712
+processing_time: 0.5998332500457764

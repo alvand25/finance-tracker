@@ -1,13 +1,19 @@
 {
   "image_path": "samples/images/IMG_5659.png",
-  "store": "* wo",
-  "store_confidence": 0.4,
+  "store": "trader_joes",
+  "store_confidence": 0.95,
   "handler": "GenericHandler",
-  "item_count": 0,
-  "items_sample": [],
-  "subtotal": null,
+  "item_count": 7,
+  "items_sample": [
+    "SPICY CHAI TEA LATTE MIX",
+    "ORG ELOTE CORN CHIPS",
+    "CREAM CHEESE BRICK",
+    "2 ",
+    "2  1.99"
+  ],
+  "subtotal": 49.830000000000005,
   "tax": null,
   "total": null,
-  "overall_confidence": 0.7,
-  "extraction_quality": 0.6
+  "overall_confidence": 0.42000000000000004,
+  "extraction_quality": 0.585
 }

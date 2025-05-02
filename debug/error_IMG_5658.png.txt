@@ -1,0 +1,24 @@
+Error: 'CostcoReceiptHandler' object has no attribute 'logger'
+
+Traceback (most recent call last):
+  File "/Users/alvanddaghoghi/Desktop/github/finance-tracker/handlers/base_handler.py", line 139, in process_receipt
+    metadata = self.extract_metadata(text)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/alvanddaghoghi/Desktop/github/finance-tracker/handlers/costco_handler.py", line 138, in extract_metadata
+    date_time = self._extract_date_time(ocr_text)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/alvanddaghoghi/Desktop/github/finance-tracker/handlers/costco_handler.py", line 216, in _extract_date_time
+    result['time'] = f"{hour:02d}:{minute}"
+                     ^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Unknown format code 'd' for object of type 'str'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_processor.py", line 162, in process_image
+    results = handler.process_receipt(ocr_text, image_path)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/alvanddaghoghi/Desktop/github/finance-tracker/handlers/base_handler.py", line 168, in process_receipt
+    self.logger.error(f"Error processing receipt: {str(e)}")
+    ^^^^^^^^^^^
+AttributeError: 'CostcoReceiptHandler' object has no attribute 'logger'

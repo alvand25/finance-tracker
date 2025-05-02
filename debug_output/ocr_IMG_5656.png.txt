@@ -1,34 +1,44 @@
-3t e a
-LL *
-o an * Fano
-, ao so *
-\ TrmoO a > x a Oo
-= @& \ NWN OC wr x xwTrowm
-7 * LO oe _
-‘ * ~ * oO
-xa” x a * ee
-* LU xk o ea we NO ro
-zat 5 Faw GS ost
-ae x 2 a x EO co @ 3s
-ba | -_w—w x Ck . 3IaQ...°-*% wm eo & £
-F uo oO *x e. & Oo= tum «& = @
-4) >= r x 2 * a © > ax uw oo moc
-| — — oO x O x*x wo — Qo x =r ses -
-Ld me—- w c x Ox wm on ee Wi — * 2.
-i. = 2K x =— mare x DU — > a.
-tay | a> wo x | K - ao x © — & GC
-atey c=! oO Ww * 5. Me Trex = es
-| .o fav uu xD  & * ao « © u 2 a— es
-ledaeg eo ~o = =) c - Us -A* tC Om c-<«
-au" @a fe x*oOomaet-erATE#S.,. YT FBS
-— om 1WwW x = * 55283292090 e wens 2-2
-@ ~ WT «8 oO ran ae: =< x DRDOFrAaGVCOe BEAMS a
-Oo 23 -— Ome * & ow oO ¥e EO EH @s3
-rr ocr x * § I Huw «x > wo eeo
-w Cw ra fToctetnan =x zum £= a>
-! rg x *« zr>aZzz z=N & ~~ > =
-a z S2egeeyS-t we Tee
-= x ce we
-*¥ MOA GHKEAN & Nt ae
-x BOoQuw ows x ow, ou c
-* STeCHMeKe KEL] wx - © ee «ae a
+# Raw OCR Output
+================================================================================
+Key Food
+FRESH
+46-02 Queens Blvd.
+Sunnyside, NY 11104
+(718) 706-6563
+CILANTRO MACHO
+2.49 F
+BASIL
+2.50 F
+TAX
+0.00
+**** BALANCE
+4.99
+****
+MasterCard Card - CONTACTLESS
+ACCOUNT NUMBER: ************2835
+APPROVAL CODE: 81146P
+SEQUENCE NUMBER: 3310
+TERMINAL ID:
+TOTAL AMOUNT: $4.99 Purchase
+RESPONSE CODE: APPROVED
+04/11/25 04:49pm 110 3
+MasterCard
+4.99
+CHANGE
+0.00
+TOTAL NUMBER OF ITEMS SOLD
+04/11/25 04:49pm 1448 3 376
+Join the Savings Club for
+Additional Dollar Savings.
+Thank You for shopping with usl
+Your cashier was
+Facebook.com/FreshnsaveSunnyside
+*** Twitter.com/Freshnsave ***
+================================================================================
+
+
+# OCR Statistics
+--------------------------------------------------------------------------------
+engine: GoogleVisionOCR
+confidence: 0.9792500280198597
+processing_time: 0.5332400798797607

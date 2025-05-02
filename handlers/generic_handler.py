@@ -1,11 +1,9 @@
 import re
 import logging
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime
 
 from handlers.base_handler import BaseReceiptHandler
-
-logger = logging.getLogger(__name__)
 
 class GenericHandler(BaseReceiptHandler):
     """
@@ -19,309 +17,269 @@ class GenericHandler(BaseReceiptHandler):
     def __init__(self):
         """Initialize the generic handler."""
         super().__init__()
-        logger.debug("Generic handler initialized")
+        self.logger = logging.getLogger(__name__)
+        self.logger.debug("Generic handler initialized")
         
-    def extract_items(self, ocr_text: str, image_path: Optional[str] = None) -> List[Dict[str, Any]]:
-        """
-        Extract line items from the receipt OCR text.
+    def extract_items(self, text: str, image_path: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Extract item descriptions and prices from receipt text.
         
         Args:
-            ocr_text: The OCR text from the receipt
-            image_path: Optional path to the receipt image
+            text (str): The OCR text from the receipt
+            image_path (Optional[str]): Path to receipt image for debugging
             
         Returns:
-            List of item dictionaries
+            List[Dict[str, Any]]: List of dictionaries containing:
+                - description: str (Item description)
+                - price: float (Item price)
+                - quantity: float (Optional quantity)
+                - unit_price: float (Optional price per unit)
         """
-        logger.info("Extracting items using generic handler")
-        
-        if not ocr_text:
-            logger.warning("Empty OCR text provided")
-            return []
-            
-        # Split into lines
-        lines = ocr_text.strip().split('\n')
-        logger.debug(f"[GenericHandler] Processing {len(lines)} lines of OCR text")
-        
-        # Patterns for matching items
-        item_patterns = [
-            # Description followed by price (no quantity)
-            r'([\w\s\'\"\&\-\,\.\(\)\/]+?)\s+(\d+[\.,]\d{2})$',
-            
-            # Description with quantity and price
-            r'([\w\s\'\"\&\-\,\.\(\)\/]+?)\s+(\d+)\s+(?:@\s+[\$\£\€]?\s*[\d\,\.]+)?\s+([\$\£\€]?\s*\d+[\.,]\d{2})$',
-            
-            # Description with price and optional currency symbol
-            r'([\w\s\'\"\&\-\,\.\(\)\/]+?)\s+([\$\£\€]?\s*\d+[\.,]\d{2})$',
-            
-            # Description followed by quantity and price
-            r'([\w\s\'\"\&\-\,\.\(\)\/]+?)\s+(\d+)\s*[xX]?\s*([\$\£\€]?\s*\d+[\.,]\d{2})$'
-        ]
-        
-        # Keywords to skip
-        skip_keywords = [
-            'total', 'subtotal', 'tax', 'sum', 'amount', 'balance', 'credit',
-            'debit', 'change', 'cash', 'payment', 'paid', 'discount', 'due',
-            'account', 'customer', 'store', 'receipt', 'invoice', 'date',
-            'welcome', 'thank you', 'thanks', 'phone', 'tel', 'fax', 'address',
-            'website', 'url', 'http', 'www', 'email', 'e-mail'
-        ]
-        
-        # Extract items
         items = []
-        seen_descriptions = set()
+        seen_items = set()  # Track seen items to avoid duplicates
         
-        for line_num, line in enumerate(lines):
-            line = line.strip()
+        # Skip lines containing these keywords
+        skip_keywords = [
+            'total', 'subtotal', 'tax', 'balance', 'change', 'payment',
+            'card', 'cash', 'credit', 'debit', 'mastercard', 'visa',
+            'american express', 'discover', 'auth', 'approved', 'member',
+            'transaction', 'store', 'tel', 'phone', 'date', 'time',
+            'cashier', 'register', 'receipt', 'duplicate', 'copy',
+            'thank you', 'thanks', 'welcome', 'wifi', 'rewards',
+            'points', 'save', 'discount', 'coupon', 'void', 'refund',
+            'return', 'exchange', 'website', 'survey', 'feedback',
+            'promotion', 'promo', 'offer', 'deal', 'sale', 'special'
+        ]
+        
+        # Price patterns
+        price_patterns = [
+            # Basic price pattern with description
+            r'(?P<description>.*?)\s+(?P<price>\d+\.\d{2})\s*(?:F|T|N|$)',
             
-            # Skip short lines or likely non-item lines
-            if len(line) < 5:
-                logger.debug(f"[GenericHandler] Line {line_num+1}: Skipping short line: '{line}'")
+            # Price per unit pattern
+            r'(?P<quantity>\d*\.?\d+)\s*(?:lb|kg|oz|g|ea)\s*@\s*(?P<unit_price>\d+\.\d{2})\s*/(?:lb|kg|oz|g|ea).*?(?P<price>\d+\.\d{2})',
+            
+            # SKU/item number pattern
+            r'(?P<sku>\d{4,})\s+(?P<description>[A-Za-z].*?)\s+(?P<price>\d+\.\d{2})',
+            
+            # Simple price pattern
+            r'^\$?(?P<price>\d+\.\d{2})\s*(?:F|T|N|$)',
+            
+            # Price with quantity pattern
+            r'(?P<quantity>\d+)\s*@\s*\$?(?P<unit_price>\d+\.\d{2}).*?(?P<price>\d+\.\d{2})',
+            
+            # Trader Joe's style pattern
+            r'(?P<description>[A-Z][A-Z0-9\s]+[A-Z0-9])\n\$(?P<price>\d+\.\d{2})',
+            
+            # Price with optional tax/discount indicator
+            r'(?P<description>.*?)\s+\$(?P<price>\d+\.\d{2})\s*(?:F|T|N|$)',
+        ]
+        
+        lines = text.split('\n')
+        prev_line = ''
+        
+        for i, line in enumerate(lines):
+            line = line.strip()
+            if not line:
                 continue
-                
-            if any(keyword in line.lower() for keyword in skip_keywords):
-                logger.debug(f"[GenericHandler] Line {line_num+1}: Skipping line with skip keyword: '{line}'")
+            
+            # Skip lines with common non-item keywords
+            if any(keyword.lower() in line.lower() for keyword in skip_keywords):
                 continue
-                
-            logger.debug(f"[GenericHandler] Line {line_num+1}: Checking line: '{line}'")
             
             # Try each pattern
-            pattern_matched = False
-            for pattern_idx, pattern in enumerate(item_patterns):
+            for pattern in price_patterns:
                 match = re.search(pattern, line)
+                if not match:
+                    # For multi-line patterns, try with previous line
+                    if prev_line:
+                        match = re.search(pattern, prev_line + '\n' + line)
+                
                 if match:
-                    pattern_matched = True
-                    logger.debug(f"[GenericHandler] Line {line_num+1}: Matched pattern {pattern_idx+1}")
-                    groups = match.groups()
+                    item_dict = {}
                     
-                    # Extract description and price
-                    description = groups[0].strip()
-                    
-                    # Skip if description is short or contains skip keywords
-                    if len(description) < 3:
-                        logger.debug(f"[GenericHandler] Line {line_num+1}: Skipping item with short description: '{description}'")
-                        continue
-                        
-                    if any(keyword in description.lower() for keyword in skip_keywords):
-                        logger.debug(f"[GenericHandler] Line {line_num+1}: Skipping item with keyword in description: '{description}'")
-                        continue
-                        
-                    # Skip if it's likely a header
-                    if re.search(r'^(item|qty|description|price|amount)$', description.lower()):
-                        logger.debug(f"[GenericHandler] Line {line_num+1}: Skipping header line: '{description}'")
+                    # Get price
+                    try:
+                        price = float(match.group('price'))
+                        if price <= 0 or price > 10000:  # Skip invalid prices
+                            continue
+                        item_dict['price'] = price
+                    except (ValueError, IndexError):
                         continue
                     
-                    # Extract price from the last group
-                    price_str = groups[-1].strip()
-                    # Remove currency symbols and thousand separators
-                    price_str = re.sub(r'[^\d\.,]', '', price_str)
-                    # Replace comma with dot if used as decimal separator
-                    if ',' in price_str and '.' not in price_str:
-                        price_str = price_str.replace(',', '.')
+                    # Get description
+                    try:
+                        description = match.group('description')
+                        if description:
+                            # Clean up description
+                            description = re.sub(r'\s+', ' ', description.strip())
+                            description = re.sub(r'[^\w\s\-\.]', '', description)
+                            if len(description) < 2:  # Skip very short descriptions
+                                continue
+                            item_dict['description'] = description
+                        elif prev_line and not any(keyword.lower() in prev_line.lower() for keyword in skip_keywords):
+                            # Use previous line as description if current line is just a price
+                            description = re.sub(r'\s+', ' ', prev_line.strip())
+                            description = re.sub(r'[^\w\s\-\.]', '', description)
+                            if len(description) >= 2:
+                                item_dict['description'] = description
+                    except IndexError:
+                        if prev_line and not any(keyword.lower() in prev_line.lower() for keyword in skip_keywords):
+                            # Use previous line as description
+                            description = re.sub(r'\s+', ' ', prev_line.strip())
+                            description = re.sub(r'[^\w\s\-\.]', '', description)
+                            if len(description) >= 2:
+                                item_dict['description'] = description
+                    
+                    # Get quantity and unit price if available
+                    try:
+                        quantity = match.group('quantity')
+                        if quantity:
+                            item_dict['quantity'] = float(quantity)
+                    except (IndexError, ValueError):
+                        pass
                     
                     try:
-                        price = float(price_str)
-                        logger.debug(f"[GenericHandler] Line {line_num+1}: Extracted price: {price}")
-                    except ValueError:
-                        logger.debug(f"[GenericHandler] Line {line_num+1}: Failed to parse price: '{price_str}'")
-                        continue
+                        unit_price = match.group('unit_price')
+                        if unit_price:
+                            item_dict['unit_price'] = float(unit_price)
+                    except (IndexError, ValueError):
+                        pass
                     
-                    # Extract quantity if available (groups length varies by pattern)
-                    quantity = 1
-                    if len(groups) >= 3 and groups[1].isdigit():
-                        quantity = int(groups[1])
-                        logger.debug(f"[GenericHandler] Line {line_num+1}: Extracted quantity: {quantity}")
-                    
-                    # Avoid duplicates (normalized by lowercase description)
-                    normalized_desc = description.lower()
-                    if normalized_desc in seen_descriptions:
-                        logger.debug(f"[GenericHandler] Line {line_num+1}: Skipping duplicate item: '{description}'")
-                        continue
-                    seen_descriptions.add(normalized_desc)
-                    
-                    # Add the item
-                    item = {
-                        'description': description,
-                        'price': price,
-                        'quantity': quantity,
-                        'confidence': 0.7  # Medium confidence for generic extraction
-                    }
-                    
-                    logger.debug(f"[GenericHandler] Line {line_num+1}: Added item: {item}")
-                    items.append(item)
-                    break  # Stop pattern matching for this line once we have a match
+                    # Only add item if we have both price and description
+                    if 'price' in item_dict and 'description' in item_dict:
+                        item_key = f"{item_dict['description']}_{item_dict['price']}"
+                        if item_key not in seen_items:
+                            seen_items.add(item_key)
+                            items.append(item_dict)
+                            self.logger.debug(f"Extracted item: {item_dict}")
+                    break
             
-            if not pattern_matched:
-                logger.debug(f"[GenericHandler] Line {line_num+1}: No pattern matched for line: '{line}'")
+            prev_line = line
         
-        logger.info(f"[GenericHandler] Extracted {len(items)} items with generic handler")
-        
-        # Add fallback log if no items were found
-        if len(items) == 0:
-            logger.warning("[GenericHandler] No items were extracted. Checking for potential price-looking lines...")
-            price_looking_lines = []
-            for line_num, line in enumerate(lines):
-                if re.search(r'\$?\d+\.\d{2}', line) or re.search(r'\d+\.\d{2}$', line) or re.search(r'\d+\,\d{2}$', line):
-                    logger.debug(f"[GenericHandler] Potential price line: '{line}'")
-                    price_looking_lines.append(line)
-            
-            if price_looking_lines:
-                logger.debug(f"[GenericHandler] Found {len(price_looking_lines)} lines that appear to contain prices but didn't match patterns")
-                logger.debug(f"[GenericHandler] Sample price-looking lines: {price_looking_lines[:5]}")
-            else:
-                logger.debug("[GenericHandler] No price-looking lines were found in the OCR text")
-                
+        self.logger.info(f"Extracted {len(items)} items")
+        self._last_extracted_items = items
         return items
     
-    def extract_totals(self, ocr_text: str, image_path: Optional[str] = None) -> Dict[str, Any]:
-        """
-        Extract total amounts from the receipt OCR text.
+    def extract_totals(self, text: str, image_path: Optional[str] = None) -> Tuple[Optional[float], Optional[float], Optional[float]]:
+        """Extract subtotal, tax, and total from receipt text.
         
         Args:
-            ocr_text: The OCR text from the receipt
-            image_path: Optional path to the receipt image
+            text: The OCR text from the receipt
+            image_path: Optional path to receipt image for debugging
             
         Returns:
-            Dictionary with totals information
+            Tuple of (subtotal, tax, total), each being a float or None if not found
         """
-        logger.info("Extracting totals using generic handler")
-        
-        if not ocr_text:
-            logger.warning("Empty OCR text provided")
-            return {}
-            
-        # Initialize results
-        results = {
-            'subtotal': None,
-            'tax': None,
-            'total': None,
-            'confidence': 0.6  # Base confidence
-        }
-        
-        # Split into lines
-        lines = ocr_text.strip().split('\n')
-        logger.debug(f"[GenericHandler] Analyzing {len(lines)} lines for totals")
-        
-        # Patterns for matching totals
-        subtotal_patterns = [
-            r'sub[\s\-]*total\s*(?:[\$\£\€]?\s*)([\d\,\.]+)',
-            r'subtotal\s*(?:[\$\£\€]?\s*)([\d\,\.]+)',
-            r'sub\s*total\s*(?:[\$\£\€]?\s*)([\d\,\.]+)',
-            r'goods\s*(?:[\$\£\€]?\s*)([\d\,\.]+)'
+        # First pass - find discounts
+        discounts = []
+        discount_patterns = [
+            r"You saved (?:[\$\s]*)(\d+\.\d{2})",
+            r"Savings (?:[\$\s]*)(\d+\.\d{2})",
+            r"Discount (?:[\$\s]*)(\d+\.\d{2})",
+            r"Member savings (?:[\$\s]*)(\d+\.\d{2})",
+            r"(?:[\$\s]*)(\d+\.\d{2}) off",
+            r"Regular price (?:[\$\s]*)(\d+\.\d{2}).*?(?:[\$\s]*)(\d+\.\d{2})",
+            r"Price reduction (?:[\$\s]*)(\d+\.\d{2})"
         ]
         
+        seen_discounts = set()  # Track discounts to avoid duplicates
+        for pattern in discount_patterns:
+            matches = re.finditer(pattern, text, re.IGNORECASE)
+            for match in matches:
+                if "Regular price" in match.group(0):
+                    # For "Regular price X.XX -> Y.XX" patterns, discount is the difference
+                    regular_price = float(match.group(1))
+                    sale_price = float(match.group(2))
+                    discount = regular_price - sale_price
+                else:
+                    discount = float(match.group(1))
+                    
+                # Convert to string with 2 decimal places to avoid float comparison issues
+                discount_str = f"{discount:.2f}"
+                if discount_str not in seen_discounts:
+                    seen_discounts.add(discount_str)
+                    discounts.append(discount)
+        
+        total_discounts = sum(discounts)
+        self.logger.debug(f"Found discounts: {discounts}, total={total_discounts}")
+        
+        # Calculate subtotal from items if available
+        subtotal = None
+        if hasattr(self, '_last_extracted_items') and self._last_extracted_items:
+            try:
+                subtotal = sum(item['price'] for item in self._last_extracted_items)
+                self.logger.debug(f"Calculated subtotal from {len(self._last_extracted_items)} items: {subtotal}")
+            except (KeyError, TypeError) as e:
+                self.logger.warning(f"Error calculating subtotal from items: {e}")
+                subtotal = None
+        
+        # Second pass - find totals
+        tax = None
+        total = None
+        
+        # Look for tax amount
         tax_patterns = [
-            r'tax\s*(?:[\$\£\€]?\s*)([\d\,\.]+)',
-            r'vat\s*(?:[\$\£\€]?\s*)([\d\,\.]+)',
-            r'gst\s*(?:[\$\£\€]?\s*)([\d\,\.]+)',
-            r'hst\s*(?:[\$\£\€]?\s*)([\d\,\.]+)',
-            r'sales\s*tax\s*(?:[\$\£\€]?\s*)([\d\,\.]+)'
+            r"(?:Tax|TAX|Sales Tax|SALES TAX)[\s:]*(?:[\$\s]*)(\d+\.\d{2})",
+            r"(?:Tax|TAX|Sales Tax|SALES TAX)[\s:]*(?:[\$\s]*)(\d+)",
         ]
         
+        for pattern in tax_patterns:
+            match = re.search(pattern, text)
+            if match:
+                try:
+                    tax = float(match.group(1))
+                    if tax <= 0 or tax > 1000:  # Basic validation
+                        tax = None
+                    break
+                except (ValueError, TypeError):
+                    continue
+        
+        # Look for total amount in last 5 lines
         total_patterns = [
-            r'total\s*(?:[\$\£\€]?\s*)([\d\,\.]+)',
-            r'amount\s*(?:[\$\£\€]?\s*)([\d\,\.]+)',
-            r'due\s*(?:[\$\£\€]?\s*)([\d\,\.]+)',
-            r'balance\s*(?:[\$\£\€]?\s*)([\d\,\.]+)',
-            r'sum\s*(?:[\$\£\€]?\s*)([\d\,\.]+)'
+            r"(?:Total|TOTAL|Balance|BALANCE|Amount Due|AMOUNT DUE)[\s:]*(?:[\$\s]*)(\d+\.\d{2})",
+            r"(?:Total|TOTAL|Balance|BALANCE|Amount Due|AMOUNT DUE)[\s:]*(?:[\$\s]*)(\d+)",
+            r"(?:[\$\s]*)(\d+\.\d{2})\s*$"  # Standalone amount at end of line
         ]
         
-        # Helper function to extract value using patterns
-        def extract_value(patterns, text_lines, pattern_name):
-            logger.debug(f"[GenericHandler] Searching for {pattern_name} using {len(patterns)} patterns")
-            for line_num, line in enumerate(text_lines):
-                line_lower = line.lower()
-                logger.debug(f"[GenericHandler] Checking {pattern_name} in line {line_num+1}: '{line}'")
-                for pattern_idx, pattern in enumerate(patterns):
-                    match = re.search(pattern, line_lower)
-                    if match:
-                        logger.debug(f"[GenericHandler] Found {pattern_name} match with pattern {pattern_idx+1}: '{pattern}'")
-                        try:
-                            value_str = match.group(1).strip()
-                            logger.debug(f"[GenericHandler] Extracted {pattern_name} raw value: '{value_str}'")
-                            
-                            # Remove currency symbols and thousand separators
-                            value_str = re.sub(r'[^\d\.,]', '', value_str)
-                            # Replace comma with dot if used as decimal separator
-                            if ',' in value_str and '.' not in value_str:
-                                value_str = value_str.replace(',', '.')
-                                
-                            value = float(value_str)
-                            logger.debug(f"[GenericHandler] Parsed {pattern_name} value: {value}")
-                            return value
-                        except (ValueError, IndexError) as e:
-                            logger.debug(f"[GenericHandler] Failed to parse {pattern_name} value: {str(e)}")
-                            continue
-            logger.debug(f"[GenericHandler] No {pattern_name} found")
-            return None
+        # Get last 5 lines
+        lines = text.splitlines()[-5:]
+        for line in lines:
+            for pattern in total_patterns:
+                match = re.search(pattern, line)
+                if match:
+                    try:
+                        total = float(match.group(1))
+                        if total <= 0 or total > 10000:  # Basic validation
+                            total = None
+                        break
+                    except (ValueError, TypeError):
+                        continue
+            if total is not None:
+                break
         
-        # Extract totals
-        results['subtotal'] = extract_value(subtotal_patterns, lines, "subtotal")
-        results['tax'] = extract_value(tax_patterns, lines, "tax")
-        results['total'] = extract_value(total_patterns, lines, "total")
-        
-        # Calculate missing values if possible
-        if results['subtotal'] and results['tax'] and not results['total']:
-            results['total'] = round(results['subtotal'] + results['tax'], 2)
-            logger.debug(f"[GenericHandler] Calculated total: {results['total']}")
-        elif results['subtotal'] and results['total'] and not results['tax']:
-            results['tax'] = round(results['total'] - results['subtotal'], 2)
-            # Ensure tax is not negative or unreasonably large
-            if results['tax'] < 0 or results['tax'] > results['total'] * 0.25:
-                logger.debug(f"[GenericHandler] Calculated tax {results['tax']} seems invalid, discarding")
-                results['tax'] = None
-            else:
-                logger.debug(f"[GenericHandler] Calculated tax: {results['tax']}")
-        elif results['tax'] and results['total'] and not results['subtotal']:
-            results['subtotal'] = round(results['total'] - results['tax'], 2)
-            # Ensure subtotal is positive
-            if results['subtotal'] <= 0:
-                logger.debug(f"[GenericHandler] Calculated subtotal {results['subtotal']} is non-positive, discarding")
-                results['subtotal'] = None
-            else:
-                logger.debug(f"[GenericHandler] Calculated subtotal: {results['subtotal']}")
-        
-        # Add fallback for total detection
-        if results['total'] is None:
-            logger.debug("[GenericHandler] No total found, looking for lines with currency symbols or decimal values")
-            potential_totals = []
+        # Validate totals
+        if subtotal is not None:
+            # Adjust subtotal by discounts
+            adjusted_subtotal = subtotal - total_discounts
             
-            for line_num, line in enumerate(lines):
-                # Look for currency symbols or decimal values in format X.XX
-                if re.search(r'[$€£]\s*\d+\.\d{2}', line) or re.search(r'\d+\.\d{2}$', line):
-                    logger.debug(f"[GenericHandler] Potential total line found: '{line}'")
-                    potential_totals.append(line)
+            # Validate tax (should be between 0-20% of adjusted subtotal)
+            if tax is not None:
+                if tax < 0 or tax > (adjusted_subtotal * 0.20):
+                    tax = None
             
-            if potential_totals:
-                logger.debug(f"[GenericHandler] Found {len(potential_totals)} lines with potential total values")
-                logger.debug(f"[GenericHandler] Sample potential total lines: {potential_totals[:3]}")
+            # Validate total with 5% tolerance when discounts present, 2% otherwise
+            if total is not None:
+                expected_total = adjusted_subtotal
+                if tax is not None:
+                    expected_total += tax
+                    
+                tolerance = 0.05 if total_discounts > 0 else 0.02
+                if abs(total - expected_total) / expected_total > tolerance:
+                    # Only clear total if it's significantly off
+                    if total < (expected_total * 0.5) or total > (expected_total * 1.5):
+                        total = None
         
-        # Extract date
-        results['date'] = self._extract_date(ocr_text)
-        
-        # Extract currency
-        results['currency'] = self._extract_currency(ocr_text)
-        
-        # Extract payment method
-        results['payment_method'] = self._extract_payment_method(ocr_text)
-        
-        # Update confidence based on what we found
-        confidence_factors = {
-            'subtotal': 0.2 if results['subtotal'] else 0.0,
-            'tax': 0.2 if results['tax'] else 0.0,
-            'total': 0.3 if results['total'] else 0.0,
-            'date': 0.1 if results['date'] else 0.0,
-            'payment_method': 0.1 if results['payment_method'] else 0.0,
-            'base': 0.1
-        }
-        
-        # Calculate weighted confidence
-        confidence_sum = sum(confidence_factors.values())
-        results['confidence'] = min(confidence_sum, 0.9)  # Cap at 0.9 for generic handler
-        
-        logger.info(f"[GenericHandler] Extracted totals with confidence {results['confidence']:.2f}: " +
-                  f"subtotal={results['subtotal']}, tax={results['tax']}, total={results['total']}")
-        
-        return results
+        return subtotal, tax, total
     
     def extract_metadata(self, ocr_text: str, image_path: Optional[str] = None) -> Dict[str, Any]:
         """
@@ -334,10 +292,10 @@ class GenericHandler(BaseReceiptHandler):
         Returns:
             Dictionary with metadata
         """
-        logger.info("Extracting metadata using generic handler")
+        self.logger.info("Extracting metadata using generic handler")
         
         if not ocr_text:
-            logger.warning("Empty OCR text provided")
+            self.logger.warning("Empty OCR text provided")
             return {}
             
         metadata = {
@@ -379,7 +337,7 @@ class GenericHandler(BaseReceiptHandler):
         # Calculate confidence
         metadata['confidence'] = sum(confidence_factors.values())
         
-        logger.info(f"Extracted metadata with confidence {metadata['confidence']:.2f}")
+        self.logger.info(f"Extracted metadata with confidence {metadata['confidence']:.2f}")
         return metadata
     
     def _extract_date(self, ocr_text: str) -> Optional[datetime]:

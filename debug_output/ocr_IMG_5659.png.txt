@@ -1,28 +1,52 @@
-* wo
-. ese *
-2io ; a Var 0 cond
-now oy : SR Se —
-oo a ‘ 5 *
-Sw al | we | —= ae =
-PO _ & i ao 3 o
-' ‘ —- je of —_
-poo) 23 3
-™ 1 ‘
-ta > : { = # adied =
-ao —_t ' << —
-: or { : 6st toe pa
-Si, x= =» { : = D
-r> ane S = = he: | 6©QBS 2B
-+ ™ -* Pq we , i arr 215 "
-a a Ov =< mw 4 ; Ss ne7 =.
-| S=35 = =< rent > \ <tc) << <c
-rR Ss & row Ss is =*S ce
-A <q ~~ m+ th Had -— CSie =
-Q a + Lid t ou
-> = oq$§ ' cq 3
-ef 5° = miei £28: 2 8 ,
-e 8 Gc SSi # Sy-2
-se - BSS2 BSG: © 2852
-Oo &. Zs an Led
-ASS. 9 =
-- ™cOo =
+# Raw OCR Output
+================================================================================
+0
+E
+дв
+command
+option
+CEL
+نان
+TRADER JOE'S
+142 E. 14th St.
+New York, NY
+10003
+Store #0540 - 212-529-4612
+OPEN 8:00AM TO 9:00PM DAILY
+SALE TRANSACTION
+SPICY CHAI TEA LATTE MIX
+$4.99
+ORG ELOTE CORN CHIPS
+$2.99
+CREAM CHEESE BRICK
+$3.98
+2 @ $1.99
+Items in Transaction 4.
+Balance to pay
+$11.96
+MasterCard
+$11.96
+PAYMENT CARD PURCHASE TRANSACTION
+Mastercard
+CUSTOMER COPY
+*****2453
+Type: CONTACTLESS
+Auth Code:
+37233P
+MID: *******27013
+TID:
+****6000
+TOTAL PURCHASE
+$11.96
+No Cardholder Verification
+Please retain for your records
+G. Keely
+DATE
+================================================================================
+
+
+# OCR Statistics
+--------------------------------------------------------------------------------
+engine: GoogleVisionOCR
+confidence: 0.9470262483852666
+processing_time: 0.49002695083618164

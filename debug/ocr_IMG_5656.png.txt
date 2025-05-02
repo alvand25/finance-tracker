@@ -1,0 +1,44 @@
+# Raw OCR Output
+================================================================================
+Key Food
+FRESH
+46-02 Queens Blvd.
+Sunnyside, NY 11104
+(718) 706-6563
+CILANTRO MACHO
+2.49 F
+BASIL
+2.50 F
+TAX
+0.00
+**** BALANCE
+4.99
+****
+MasterCard Card - CONTACTLESS
+ACCOUNT NUMBER: ************2835
+APPROVAL CODE: 81146P
+SEQUENCE NUMBER: 3310
+TERMINAL ID:
+TOTAL AMOUNT: $4.99 Purchase
+RESPONSE CODE: APPROVED
+04/11/25 04:49pm 110 3
+MasterCard
+4.99
+CHANGE
+0.00
+TOTAL NUMBER OF ITEMS SOLD
+04/11/25 04:49pm 1448 3 376
+Join the Savings Club for
+Additional Dollar Savings.
+Thank You for shopping with usl
+Your cashier was
+Facebook.com/FreshnsaveSunnyside
+*** Twitter.com/Freshnsave ***
+================================================================================
+
+
+# OCR Statistics
+--------------------------------------------------------------------------------
+engine: GoogleVisionOCR
+confidence: 0.9792500280198597
+processing_time: 0.5733380317687988

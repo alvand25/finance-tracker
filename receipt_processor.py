@@ -3,6 +3,7 @@ import time
 import logging
 from typing import Dict, Any, Optional, Tuple, List
 import uuid
+import re
 
 from utils.image_preprocessor import ImagePreprocessor
 from store_classifier import StoreClassifier
@@ -46,7 +47,7 @@ class ReceiptProcessor:
         # Initialize components
         self.store_classifier = StoreClassifier(known_stores_path)
         self.handler_registry = HandlerRegistry(handlers_path, known_stores_path)
-        self.image_preprocessor = ImagePreprocessor(debug_mode=debug_mode, debug_dir=debug_output_dir)
+        self.image_preprocessor = ImagePreprocessor(debug_mode=debug_mode, output_dir=debug_output_dir)
         
         # Set up debug directory if needed
         if debug_mode and not os.path.exists(debug_output_dir):
@@ -95,7 +96,7 @@ class ReceiptProcessor:
             
             # Step 2: Extract text using OCR
             logger.debug(f"[Processor] Starting OCR for {image_filename}")
-            ocr_text = self.image_preprocessor.extract_text(preprocessed_image)
+            ocr_text = self.image_preprocessor.extract_text(preprocessed_image, options.get('ocr_engine'))
             
             # Log raw OCR output if enabled
             if self.debug_ocr_output:
@@ -160,6 +161,10 @@ class ReceiptProcessor:
             logger.debug(f"[Processor] Starting receipt processing with {handler.__class__.__name__}")
             results = handler.process_receipt(ocr_text, image_path)
             
+            # Calculate detailed confidence metrics
+            confidence_metrics = self._calculate_extraction_quality(results, ocr_text)
+            results['confidence'] = confidence_metrics
+            
             # Generate a detailed summary of what was extracted
             item_count = len(results.get('items', []))
             item_summary = ", ".join([f"{item['description']}: {item['price']}" for item in results.get('items', [])[:3]])
@@ -168,6 +173,20 @@ class ReceiptProcessor:
                 
             logger.debug(f"[Processor] Extracted {item_count} items: {item_summary}")
             logger.debug(f"[Processor] Extracted totals: subtotal={results.get('subtotal')}, tax={results.get('tax')}, total={results.get('total')}")
+            logger.debug(f"[Processor] Overall confidence: {confidence_metrics['overall']:.2f}")
+            
+            # Log detailed confidence breakdown if in debug mode
+            if self.debug_mode:
+                logger.debug("Confidence Breakdown:")
+                logger.debug(f"  Items: {confidence_metrics['items']['score']:.2f}")
+                logger.debug(f"    - Valid prices: {confidence_metrics['items']['valid_prices'] / confidence_metrics['items']['total_items']:.2f}")
+                logger.debug(f"    - Description match rate: {confidence_metrics['items']['description_match_rate']:.2f}")
+                logger.debug(f"  Totals: {confidence_metrics['totals']['score']:.2f}")
+                logger.debug(f"    - Subtotal detected: {confidence_metrics['totals']['subtotal_detected']}")
+                logger.debug(f"    - Total detected: {confidence_metrics['totals']['total_detected']}")
+                logger.debug(f"    - Sum matches: {confidence_metrics['totals']['sum_matches']}")
+                logger.debug(f"  Store: {confidence_metrics['store']['score']:.2f}")
+                logger.debug(f"  OCR: {confidence_metrics['ocr']['score']:.2f}")
             
             # Step 6: Enhance the results with additional information
             results['store'] = store_name
@@ -175,6 +194,10 @@ class ReceiptProcessor:
             results['handler'] = handler.__class__.__name__
             results['processing_time'] = time.time() - start_time
             results['process_id'] = process_id
+            
+            # Log processing time with safe formatting
+            processing_time = time.time() - start_time
+            logger.info(f"[Processor] Processing completed in {processing_time:.2f}s")
             
             # Handle forced currency
             if options.get('force_currency'):
@@ -206,7 +229,7 @@ class ReceiptProcessor:
                         results['process_id'] = process_id
             
             # Calculate extraction quality score
-            extraction_quality = self._calculate_extraction_quality(results)
+            extraction_quality = self._calculate_extraction_quality(results, ocr_text)
             results['extraction_quality'] = extraction_quality
             
             # Save a summary of the results if in debug mode
@@ -233,10 +256,6 @@ class ReceiptProcessor:
                     logger.debug(f"[Processor] Saved results summary to {debug_summary_path}")
                 except Exception as e:
                     logger.error(f"[Processor] Error saving results summary: {str(e)}")
-            
-            logger.info(f"[Processor] Receipt processing completed in {results['processing_time']:.2f}s, "
-                      f"extraction quality: {extraction_quality:.2f}, "
-                      f"found {len(results.get('items', []))} items")
             
             return results
             
@@ -363,7 +382,7 @@ class ReceiptProcessor:
                         results['process_id'] = process_id
             
             # Calculate extraction quality score
-            extraction_quality = self._calculate_extraction_quality(results)
+            extraction_quality = self._calculate_extraction_quality(results, ocr_text)
             results['extraction_quality'] = extraction_quality
             
             logger.info(f"Receipt text processing completed in {results['processing_time']:.2f}s, "
@@ -388,30 +407,131 @@ class ReceiptProcessor:
                 'confidence': {'overall': 0.0}
             }
     
-    def _calculate_extraction_quality(self, results: Dict[str, Any]) -> float:
-        """Calculate an overall extraction quality score."""
+    def _calculate_extraction_quality(self, results: Dict[str, Any], raw_text: str) -> Dict[str, Any]:
+        """
+        Calculate detailed confidence metrics for receipt extraction.
         
-        # Start with a base quality score
-        quality = 0.5
-        
-        # Factors that improve quality
-        if results.get('total') is not None:
-            quality += 0.1
-        if results.get('subtotal') is not None:
-            quality += 0.05
-        if results.get('tax') is not None:
-            quality += 0.05
+        Args:
+            results: Dictionary containing extracted receipt data
+            raw_text: Raw OCR text
             
-        # Item quality
+        Returns:
+            Dictionary containing overall confidence and detailed metrics
+        """
+        metrics = {
+            'overall': 0.0,
+            'items': {
+                'score': 0.0,
+                'valid_prices': 0,
+                'total_items': 0,
+                'price_match_rate': 0.0,
+                'description_match_rate': 0.0
+            },
+            'totals': {
+                'score': 0.0,
+                'subtotal_detected': False,
+                'total_detected': False,
+                'sum_matches': False,
+                'difference_percent': 0.0
+            },
+            'store': {
+                'score': 0.0,
+                'name_detected': False,
+                'pattern_matches': False
+            },
+            'ocr': {
+                'score': 0.0,
+                'quality': 0.0,
+                'line_count': 0,
+                'matched_lines': 0
+            }
+        }
+        
+        # Calculate item metrics
         items = results.get('items', [])
         if items:
-            # More items = better quality (up to a point)
-            item_count_factor = min(len(items) / 20.0, 0.2)
-            quality += item_count_factor
+            metrics['items']['total_items'] = len(items)
+            valid_prices = sum(1 for item in items if item.get('price', 0) > 0)
+            metrics['items']['valid_prices'] = valid_prices
+            metrics['items']['price_match_rate'] = valid_prices / len(items)
             
-        # Confidence impact
-        confidence = results.get('confidence', {}).get('overall', 0.5)
-        quality = (quality + confidence) / 2  # Average with confidence
+            # Calculate description match rate (items that match known patterns)
+            matched_descriptions = sum(1 for item in items if item.get('confidence', {}).get('description', 0) > 0.4)  # Lower threshold
+            metrics['items']['description_match_rate'] = matched_descriptions / len(items)
+            
+            # Calculate item score - weight price matches more heavily
+            metrics['items']['score'] = (
+                metrics['items']['price_match_rate'] * 0.8 +  # Increase price weight
+                metrics['items']['description_match_rate'] * 0.2  # Decrease description weight
+            )
         
-        # Cap at 1.0
-        return min(quality, 1.0) 
+        # Calculate totals metrics
+        subtotal = results.get('subtotal')
+        total = results.get('total')
+        
+        if subtotal is not None:
+            metrics['totals']['subtotal_detected'] = True
+        if total is not None:
+            metrics['totals']['total_detected'] = True
+        
+        # Check if sum of items matches totals - increase tolerance to 20%
+        if items and total:
+            items_sum = sum(item.get('price', 0) for item in items)
+            if items_sum > 0:
+                difference = abs(items_sum - total)
+                difference_percent = (difference / total) * 100
+                metrics['totals']['difference_percent'] = difference_percent
+                metrics['totals']['sum_matches'] = difference_percent <= 20
+        
+        # Calculate totals score - only require total (not subtotal)
+        totals_factors = [
+            metrics['totals']['total_detected'],
+            metrics['totals']['sum_matches']
+        ]
+        metrics['totals']['score'] = sum(1 for f in totals_factors if f) / len(totals_factors)
+        
+        # Calculate store metrics - increase base confidence further
+        store_name = results.get('store_name')
+        if store_name:
+            metrics['store']['name_detected'] = True
+            # Check if store name matches known patterns
+            known_stores = ['Costco', 'Trader Joe', 'H Mart', 'Key Food']
+            metrics['store']['pattern_matches'] = any(store.lower() in store_name.lower() for store in known_stores)
+            metrics['store']['score'] = 0.9 if metrics['store']['pattern_matches'] else 0.7  # Increase both scores
+        
+        # Calculate OCR metrics - lower pattern matching requirements and increase base score
+        if raw_text:
+            lines = raw_text.strip().split('\n')
+            metrics['ocr']['line_count'] = len(lines)
+            
+            # Count lines that match common receipt patterns
+            patterns = [
+                r'\d+\.\d{2}',  # Price pattern
+                r'total|tax',  # Common receipt terms (removed subtotal)
+                r'\d{1,2}[/-]\d{1,2}[/-]\d{2,4}',  # Date pattern
+            ]
+            
+            matched_lines = 0
+            for line in lines:
+                if any(re.search(pattern, line, re.I) for pattern in patterns):
+                    matched_lines += 1
+            
+            metrics['ocr']['matched_lines'] = matched_lines
+            metrics['ocr']['quality'] = matched_lines / len(lines) if lines else 0
+            # Increase base score and max further
+            metrics['ocr']['score'] = min(0.99, metrics['ocr']['quality'] + 0.5)  # Base 0.5 + quality up to 0.99
+        
+        # Calculate overall confidence score - adjust weights to focus more on items and store
+        weights = {
+            'items': 0.6,  # Increased from 0.5
+            'totals': 0.1,  # Decreased from 0.2
+            'store': 0.2,  # Same
+            'ocr': 0.1  # Same
+        }
+        
+        metrics['overall'] = sum(
+            metrics[key]['score'] * weight
+            for key, weight in weights.items()
+        )
+        
+        return metrics 

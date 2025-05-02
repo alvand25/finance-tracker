@@ -1,30 +1,39 @@
-*K aK
-i * xne
-. on oS Oo ao
-- . re
-ag x o z
-> *K K a .
-| Ps * x £ =
-— a) bd *K | = *
-Ney -w re) Kx YS * —J 2 mK -
-~— 2 oo) > x WV) x Quem « P
-~s > x Wx > *
-i — = x= «Ke OK ON Oe oO-- xX
-a m= wo a mane *x* em * 08 A arn *
-— io Zo x O*K*KN MO $jWa wT *
-_ = vb mm - x OQ -- _—a £ *
-fe es ~2 ™N Lu K Be -- oO ie a «
-mee | a x oO x OF MmW -- us - O * iit
-4 au us U = *x* Ou wi «@ - ut LO * ow
-ee unze 1 — 3€ ~j * gQQr-FEPO- k&k cz
-! ase wuce real y §2PoDBV_ABZAN & HE
-‘| 5 EF oa e co x ye OF BO-*eHT
-c *
-/ rsa” s * x © Iu uf wo x” OC
-y an a * FOE TCOECEAN *
-. ff | S * ~yFSZSsSsz=z =N x
-| a x *ee2OWwr OK x
-: w kK gQgePeedrdxzeta— x
-ra xe CAF eEeE YH NO x&
-x>p>OawwWouwws x
-TEenrFe- EO X
+# Raw OCR Output
+================================================================================
+KeyFood
+FRESH
+46-02 Queen# Blvd.
+Sunnyside, NY 11104
+(718) 706-6563
+CELERY BUNCH
+1.99 F
+Regular Price 2.69 You Saved 0.70.
+TAX
+**** BALANCE
+VISA Card - CONTACTLESS
+ACCOUNT NUMBER: *****
+*7107
+APPROVAL CODE: 07289D
+SEQUENCE NUMBER: 3211
+TERMINAL ID:
+TOTAL AMOUNT: $1.99 Purchase
+RESPONSE CODE: APPROVED
+04/11/25 12:50pm 431 3
+VISA
+CHANGE
+0.00
+1.99
+****
+0.00
+1
+TOTAL NUMBER OF ITEMS SOLD =
+By Shopping at Kew Food you saved:
+on 11 Great Buy Items. 0¾×70
+================================================================================
+
+
+# OCR Statistics
+--------------------------------------------------------------------------------
+engine: GoogleVisionOCR
+confidence: 0.9381833473841349
+processing_time: 0.5813660621643066

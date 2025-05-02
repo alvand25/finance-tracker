@@ -1,13 +1,19 @@
 {
   "image_path": "samples/images/IMG_5660.png",
-  "store": "unknown",
-  "store_confidence": 0.0,
+  "store": "h_mart",
+  "store_confidence": 0.95,
   "handler": "GenericHandler",
-  "item_count": 0,
-  "items_sample": [],
-  "subtotal": null,
+  "item_count": 15,
+  "items_sample": [
+    "JIN RAMEN MILD BOX",
+    "MINI CUCUMBERS",
+    "8.99 F",
+    "1.49 F",
+    "LATTE"
+  ],
+  "subtotal": 149.6,
   "tax": null,
-  "total": null,
-  "overall_confidence": 0.7,
-  "extraction_quality": 0.6
+  "total": 61.54,
+  "overall_confidence": 0.7000000000000002,
+  "extraction_quality": 0.7750000000000001
 }

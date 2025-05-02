@@ -8,11 +8,13 @@ vendor-specific logic for extracting information from receipts.
 from .base_handler import BaseReceiptHandler
 from .generic_handler import GenericHandler
 from .costco_handler import CostcoReceiptHandler
+from .h_mart_handler import HMartHandler
 
 __all__ = [
     'BaseReceiptHandler',
     'GenericHandler',
-    'CostcoReceiptHandler'
+    'CostcoReceiptHandler',
+    'HMartHandler'
 ]
 
 # The following will be populated by handler discovery:

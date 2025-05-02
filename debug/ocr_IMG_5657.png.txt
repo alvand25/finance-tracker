@@ -1,0 +1,39 @@
+# Raw OCR Output
+================================================================================
+KeyFood
+FRESH
+46-02 Queen# Blvd.
+Sunnyside, NY 11104
+(718) 706-6563
+CELERY BUNCH
+1.99 F
+Regular Price 2.69 You Saved 0.70.
+TAX
+**** BALANCE
+VISA Card - CONTACTLESS
+ACCOUNT NUMBER: *****
+*7107
+APPROVAL CODE: 07289D
+SEQUENCE NUMBER: 3211
+TERMINAL ID:
+TOTAL AMOUNT: $1.99 Purchase
+RESPONSE CODE: APPROVED
+04/11/25 12:50pm 431 3
+VISA
+CHANGE
+0.00
+1.99
+****
+0.00
+1
+TOTAL NUMBER OF ITEMS SOLD =
+By Shopping at Kew Food you saved:
+on 11 Great Buy Items. 0¾×70
+================================================================================
+
+
+# OCR Statistics
+--------------------------------------------------------------------------------
+engine: GoogleVisionOCR
+confidence: 0.9381833473841349
+processing_time: 0.6842670440673828

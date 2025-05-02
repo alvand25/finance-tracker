@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Upload Receipt</h1>
+        <p class="mt-2 text-gray-600">Upload a receipt image to process and analyze.</p>
+    </div>
+
+    <div class="max-w-2xl mx-auto">
+        <form id="uploadForm" action="{{ url_for('upload_receipt') }}" method="post" enctype="multipart/form-data" class="space-y-6">
+            <!-- Drag and Drop Area -->
+            <div id="dropZone" class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-indigo-500 transition-colors cursor-pointer">
+                <input type="file" name="receipt" id="fileInput" accept=".jpg,.jpeg,.png,.pdf" class="hidden">
+                <div class="space-y-2">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <div class="text-sm text-gray-600">
+                        <label for="fileInput" class="relative cursor-pointer rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                            <span>Upload a file</span>
+                        </label>
+                        <p class="pl-1">or drag and drop</p>
+                    </div>
+                    <p class="text-xs text-gray-500">PNG, JPG, JPEG up to 10MB</p>
+                </div>
+            </div>
+
+            <!-- Selected File Info -->
+            <div id="fileInfo" class="hidden bg-gray-50 rounded-lg p-4">
+                <div class="flex items-center">
+                    <svg class="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <span id="fileName" class="ml-2 text-sm text-gray-600"></span>
+                    <button type="button" id="removeFile" class="ml-auto text-sm text-red-600 hover:text-red-800">
+                        Remove
+                    </button>
+                </div>
+            </div>
+
+            <!-- Upload Button -->
+            <div class="flex justify-end">
+                <button type="submit" id="uploadButton" disabled
+                        class="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Upload Receipt
+                </button>
+            </div>
+        </form>
+
+        <!-- Processing Overlay -->
+        <div id="processingOverlay" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
+            <div class="bg-white p-8 rounded-lg shadow-xl flex flex-col items-center">
+                <div class="animate-spin rounded-full h-12 w-12 border-4 border-indigo-500 border-t-transparent"></div>
+                <p class="mt-4 text-gray-700">Processing receipt...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const fileInfo = document.getElementById('fileInfo');
+    const fileName = document.getElementById('fileName');
+    const removeFile = document.getElementById('removeFile');
+    const uploadButton = document.getElementById('uploadButton');
+    const uploadForm = document.getElementById('uploadForm');
+    const processingOverlay = document.getElementById('processingOverlay');
+
+    // Handle drag and drop
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+    });
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, unhighlight, false);
+    });
+
+    dropZone.addEventListener('drop', handleDrop, false);
+
+    // Handle click upload
+    dropZone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', handleFileSelect);
+    removeFile.addEventListener('click', clearFile);
+
+    // Handle form submission
+    uploadForm.addEventListener('submit', handleSubmit);
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    function highlight(e) {
+        dropZone.classList.add('border-indigo-500');
+    }
+
+    function unhighlight(e) {
+        dropZone.classList.remove('border-indigo-500');
+    }
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleFiles(files);
+    }
+
+    function handleFileSelect(e) {
+        const files = e.target.files;
+        handleFiles(files);
+    }
+
+    function handleFiles(files) {
+        if (files.length > 0) {
+            const file = files[0];
+            if (validateFile(file)) {
+                showFileInfo(file);
+                uploadButton.disabled = false;
+            }
+        }
+    }
+
+    function validateFile(file) {
+        const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+        const maxSize = 10 * 1024 * 1024; // 10MB
+
+        if (!validTypes.includes(file.type)) {
+            alert('Please upload a valid image file (JPG, PNG, or PDF)');
+            return false;
+        }
+
+        if (file.size > maxSize) {
+            alert('File size must be less than 10MB');
+            return false;
+        }
+
+        return true;
+    }
+
+    function showFileInfo(file) {
+        fileName.textContent = file.name;
+        fileInfo.classList.remove('hidden');
+    }
+
+    function clearFile() {
+        fileInput.value = '';
+        fileInfo.classList.add('hidden');
+        uploadButton.disabled = true;
+    }
+
+    function handleSubmit(e) {
+        processingOverlay.classList.remove('hidden');
+    }
+});
+</script>
+{% endblock %} 

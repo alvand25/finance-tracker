@@ -1,0 +1,7 @@
+Error: unsupported format string passed to dict.__format__
+
+Traceback (most recent call last):
+  File "/Users/alvanddaghoghi/Desktop/github/finance-tracker/receipt_processor.py", line 259, in process_image
+    logger.info(f"[Processor] Receipt processing completed in {results['processing_time']:.2f}s, "
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: unsupported format string passed to dict.__format__

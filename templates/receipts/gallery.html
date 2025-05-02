@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1>Receipt Gallery</h1>
+            <div class="btn-group" role="group">
+                <a href="{{ url_for('upload_page') }}" class="btn btn-primary">Upload New Receipt</a>
+                <button type="button" class="btn btn-outline-secondary" id="toggleVerified">Show Only Verified</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Store Filter -->
+    <div class="row mb-4">
+        <div class="col">
+            <div class="btn-group store-filters" role="group">
+                <button type="button" class="btn btn-outline-primary active" data-store="all">All Stores</button>
+                {% for store in stores %}
+                <button type="button" class="btn btn-outline-primary" data-store="{{ store }}">{{ store }}</button>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Grid -->
+    <div class="row" id="receiptGrid">
+        {% for receipt in receipts %}
+        <div class="col-md-4 mb-4 receipt-card" 
+             data-store="{{ receipt.store.name if receipt.store is mapping else receipt.store }}"
+             data-verified="{{ receipt.verified|default(false)|string|lower }}">
+            <div class="card h-100">
+                {% if receipt.thumbnail_exists %}
+                <img src="{{ receipt.thumbnail_path }}" class="card-img-top" alt="Receipt thumbnail">
+                {% else %}
+                <div class="card-img-top bg-light text-center py-5">
+                    <i class="fas fa-receipt fa-3x text-muted"></i>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0">{{ receipt.store.name if receipt.store is mapping else receipt.store }}</h5>
+                        <div>
+                            {% if receipt.verified %}
+                            <span class="badge bg-success">✓ Verified</span>
+                            {% endif %}
+                            {% if receipt.processed_with_fallback %}
+                            <span class="badge bg-warning">Fallback OCR</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <p class="card-text">
+                        <small class="text-muted">Processed: {{ receipt.processed_time }}</small><br>
+                        <small class="text-muted">Items: {{ receipt.items|length }}</small><br>
+                        <small class="text-muted">Total: ${{ "%.2f"|format(receipt.totals.total) }}</small>
+                    </p>
+                    <div class="mt-3">
+                        <a href="{{ url_for('receipt_detail', receipt_id=receipt.receipt_id) }}" class="btn btn-primary btn-sm">View Details</a>
+                        <div class="btn-group float-end">
+                            <a href="{{ url_for('receipt_json', receipt_id=receipt.receipt_id) }}" class="btn btn-outline-secondary btn-sm">JSON</a>
+                            <a href="{{ url_for('receipt_csv', receipt_id=receipt.receipt_id) }}" class="btn btn-outline-secondary btn-sm">CSV</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Store filtering
+    const storeButtons = document.querySelectorAll('.store-filters button');
+    storeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Update button states
+            storeButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            
+            // Filter receipts
+            const store = button.dataset.store;
+            const cards = document.querySelectorAll('.receipt-card');
+            cards.forEach(card => {
+                if (store === 'all' || card.dataset.store === store) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Verified toggle
+    const toggleVerified = document.getElementById('toggleVerified');
+    let showingOnlyVerified = false;
+    
+    toggleVerified.addEventListener('click', () => {
+        showingOnlyVerified = !showingOnlyVerified;
+        toggleVerified.classList.toggle('active');
+        toggleVerified.textContent = showingOnlyVerified ? 'Show All' : 'Show Only Verified';
+        
+        const cards = document.querySelectorAll('.receipt-card');
+        cards.forEach(card => {
+            if (!showingOnlyVerified || card.dataset.verified === 'true') {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
+{% endblock %} 

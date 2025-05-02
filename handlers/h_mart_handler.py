@@ -1,111 +1,174 @@
 """
-Handler for H Mart receipts.
+Handler for processing H-Mart receipts.
 """
 
 import re
-import logging
-from typing import List, Tuple, Optional
 from decimal import Decimal
-
-from .base_handler import BaseReceiptHandler
+from typing import List, Dict, Any, Tuple
 from models.receipt_item import ReceiptItem
-from models.item import Item
-from models.totals import Totals
 
-logger = logging.getLogger(__name__)
-
-class HMartHandler(BaseReceiptHandler):
-    """Handler for processing H Mart receipts."""
+class HMartHandler:
+    """Handler for processing H-Mart receipts."""
+    
+    STORE_NAME = "H-Mart"
+    CONFIDENCE_THRESHOLD = 0.75
+    
+    # Regular expressions for H-Mart receipt patterns
+    ITEM_PATTERN = r"^([A-Z0-9 -]+)\s+(\d*\.?\d+)\s*(?:@\s*(\d+\.?\d*))?$"
+    TOTAL_PATTERN = r"^TOTAL\s+\$?\s*(\d+\.?\d+)$"
+    SUBTOTAL_PATTERN = r"^SUB\s*TOTAL\s+\$?\s*(\d+\.?\d+)$"
+    TAX_PATTERN = r"^TAX\s+\$?\s*(\d+\.?\d+)$"
     
     def __init__(self):
-        """Initialize H Mart handler with store aliases."""
-        self.store_aliases = ["H MART", "HMART", "H-MART"]
-        
-    def extract_items(self, text: str) -> List[Item]:
-        """Extract items from H Mart receipt text.
+        """Initialize the H-Mart receipt handler."""
+        self.confidence_scores = {
+            'store_match': 0.0,
+            'item_extraction': 0.0,
+            'total_verification': 0.0,
+            'overall': 0.0
+        }
+    
+    def can_handle(self, text: str) -> bool:
+        """
+        Check if this handler can process the given receipt text.
         
         Args:
-            text: The receipt text to parse
+            text: Raw OCR text from the receipt
             
         Returns:
-            List of Item objects containing the extracted item information
+            bool: True if this handler can process the receipt
+        """
+        # Look for H-Mart specific patterns
+        h_mart_indicators = [
+            "H-MART",
+            "H MART",
+            "HMART",
+        ]
+        
+        text_upper = text.upper()
+        for indicator in h_mart_indicators:
+            if indicator in text_upper:
+                self.confidence_scores['store_match'] = 1.0
+                return True
+        
+        # Check for characteristic H-Mart receipt patterns
+        pattern_matches = 0
+        total_patterns = 3
+        
+        if re.search(self.TOTAL_PATTERN, text, re.MULTILINE):
+            pattern_matches += 1
+        if re.search(self.SUBTOTAL_PATTERN, text, re.MULTILINE):
+            pattern_matches += 1
+        if re.search(self.TAX_PATTERN, text, re.MULTILINE):
+            pattern_matches += 1
+            
+        confidence = pattern_matches / total_patterns
+        self.confidence_scores['store_match'] = confidence
+        
+        return confidence >= 0.5
+    
+    def extract_items(self, text: str) -> Tuple[List[ReceiptItem], Dict[str, Any]]:
+        """
+        Extract items from the receipt text.
+        
+        Args:
+            text: Raw OCR text from the receipt
+            
+        Returns:
+            Tuple containing:
+            - List of ReceiptItem objects
+            - Dictionary with additional receipt information (totals, tax, etc.)
         """
         items = []
-        lines = text.split('\n')
+        metadata = {
+            'subtotal': Decimal('0'),
+            'tax': Decimal('0'),
+            'total': Decimal('0'),
+            'store': self.STORE_NAME,
+            'confidence_scores': self.confidence_scores
+        }
         
-        # Regular expression for matching item lines
-        # Format: ITEM_NAME     QTY [lb] @ PRICE    TOTAL
-        # or:     ITEM_NAME     PRICE              TOTAL
-        item_pattern = re.compile(
-            r'^([A-Z\s]+)\s+(?:(\d+(?:\.\d+)?)\s*(?:lb)?\s*@\s*(\d+\.\d+)|(\d+\.\d+))\s+(\d+\.\d+)\s*$'
-        )
+        lines = text.split('\n')
+        item_count = 0
+        valid_items = 0
         
         for line in lines:
-            line = line.strip()
-            match = item_pattern.match(line)
-            
-            if match:
-                name = match.group(1).strip()
-                
-                # Check if it's a quantity-based item or single item
-                if match.group(2) and match.group(3):  # Has quantity and unit price
-                    quantity = Decimal(match.group(2))
-                    unit_price = Decimal(match.group(3))
-                else:  # Single item with just price
-                    quantity = Decimal("1")
-                    unit_price = Decimal(match.group(4))
+            # Try to match item pattern
+            item_match = re.match(self.ITEM_PATTERN, line.strip())
+            if item_match:
+                item_count += 1
+                try:
+                    description = item_match.group(1).strip()
+                    price = Decimal(item_match.group(2))
+                    quantity = 1.0
+                    unit_price = None
                     
-                total_price = Decimal(match.group(5))
-                
-                items.append(Item(
-                    name=name,
-                    quantity=quantity,
-                    unit_price=unit_price,
-                    total_price=total_price
-                ))
-                
-        return items
-        
-    def extract_total(self, text: str) -> Totals:
-        """Extract totals from H Mart receipt text.
-        
-        Args:
-            text: The receipt text to parse
+                    if item_match.group(3):  # Unit price is present
+                        unit_price = Decimal(item_match.group(3))
+                        quantity = float(price / unit_price)
+                        price = unit_price * Decimal(str(quantity))
+                    
+                    confidence = {
+                        'description': 0.9 if len(description) > 2 else 0.7,
+                        'price': 0.95 if price > 0 else 0.5,
+                        'quantity': 0.9 if quantity > 0 else 0.5,
+                        'overall': 0.0  # Will be calculated below
+                    }
+                    
+                    # Calculate overall confidence for this item
+                    confidence['overall'] = sum(
+                        score for score in confidence.values() if isinstance(score, float)
+                    ) / (len(confidence) - 1)  # -1 to exclude the overall key
+                    
+                    item = ReceiptItem(
+                        description=description,
+                        price=price,
+                        quantity=quantity,
+                        unit_price=unit_price,
+                        confidence=confidence
+                    )
+                    items.append(item)
+                    valid_items += 1
+                except (ValueError, TypeError) as e:
+                    print(f"Error processing item: {line.strip()} - {str(e)}")
+                    continue
             
-        Returns:
-            Totals object containing the extracted totals information
-        """
-        subtotal = Decimal("0")
-        tax = Decimal("0")
-        total = Decimal("0")
-        
-        lines = text.split('\n')
-        
-        # Regular expressions for matching total lines
-        subtotal_pattern = re.compile(r'SUBTOTAL\s+(\d+\.\d+)')
-        tax_pattern = re.compile(r'TAX\s+(\d+\.\d+)')
-        total_pattern = re.compile(r'TOTAL\s+(\d+\.\d+)')
-        
-        for line in lines:
-            line = line.strip()
-            
-            # Try to match each type of total
-            subtotal_match = subtotal_pattern.search(line)
-            if subtotal_match:
-                subtotal = Decimal(subtotal_match.group(1))
-                continue
-                
-            tax_match = tax_pattern.search(line)
-            if tax_match:
-                tax = Decimal(tax_match.group(1))
-                continue
-                
-            total_match = total_pattern.search(line)
+            # Try to match total patterns
+            total_match = re.match(self.TOTAL_PATTERN, line.strip())
             if total_match:
-                total = Decimal(total_match.group(1))
-                
-        return Totals(
-            subtotal=subtotal,
-            tax=tax,
-            total=total
-        ) 
+                try:
+                    metadata['total'] = Decimal(total_match.group(1))
+                except (ValueError, TypeError):
+                    continue
+            
+            subtotal_match = re.match(self.SUBTOTAL_PATTERN, line.strip())
+            if subtotal_match:
+                try:
+                    metadata['subtotal'] = Decimal(subtotal_match.group(1))
+                except (ValueError, TypeError):
+                    continue
+            
+            tax_match = re.match(self.TAX_PATTERN, line.strip())
+            if tax_match:
+                try:
+                    metadata['tax'] = Decimal(tax_match.group(1))
+                except (ValueError, TypeError):
+                    continue
+        
+        # Calculate confidence scores
+        if item_count > 0:
+            self.confidence_scores['item_extraction'] = valid_items / item_count
+        
+        # Verify totals
+        calculated_total = sum(item.price for item in items)
+        if metadata['total'] > 0:
+            total_diff = abs(calculated_total - metadata['total'])
+            self.confidence_scores['total_verification'] = 1.0 if total_diff < Decimal('0.01') else 0.5
+        
+        # Calculate overall confidence
+        self.confidence_scores['overall'] = sum(
+            score for score in self.confidence_scores.values() if isinstance(score, float)
+        ) / len([score for score in self.confidence_scores.values() if isinstance(score, float)])
+        
+        metadata['confidence_scores'] = self.confidence_scores
+        return items, metadata 

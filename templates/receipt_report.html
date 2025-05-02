@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Receipt Processing Report</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .confidence-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        .confidence-meter {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .confidence-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #dc3545 0%, #ffc107 50%, #28a745 100%);
+            transition: width 0.3s ease;
+        }
+        .confidence-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .metric-card {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .metric-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .metric-value {
+            font-size: 1.2em;
+            color: #0066cc;
+        }
+        .items-section {
+            margin: 20px 0;
+        }
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        .items-table th, .items-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .items-table th {
+            background: #f8f9fa;
+        }
+        .ocr-text {
+            font-family: monospace;
+            white-space: pre-wrap;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .highlight {
+            background: #e6f3ff;
+            padding: 2px;
+            border-radius: 3px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        .status-success { background: #d4edda; color: #155724; }
+        .status-warning { background: #fff3cd; color: #856404; }
+        .status-error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Receipt Processing Report</h1>
+            <p>Processed: {{ timestamp }}</p>
+            {% if store_name %}
+            <p>Store: {{ store_name }}</p>
+            {% endif %}
+        </div>
+
+        <div class="confidence-section">
+            <h2>Confidence Analysis</h2>
+            
+            <!-- Overall Confidence -->
+            <div class="metric-card">
+                <div class="metric-title">Overall Confidence</div>
+                <div class="confidence-meter">
+                    <div class="confidence-bar" style="width: {{ confidence.overall * 100 }}%"></div>
+                </div>
+                <div class="confidence-label">{{ "%.1f"|format(confidence.overall * 100) }}%</div>
+            </div>
+
+            <!-- Detailed Metrics Grid -->
+            <div class="metrics-grid">
+                <!-- Items Metrics -->
+                <div class="metric-card">
+                    <div class="metric-title">Items Extraction</div>
+                    <div class="metric-value">{{ "%.1f"|format(confidence.items.score * 100) }}%</div>
+                    <ul>
+                        <li>Valid Prices: {{ confidence.items.valid_prices }}/{{ confidence.items.total_items }}</li>
+                        <li>Price Match Rate: {{ "%.1f"|format(confidence.items.price_match_rate * 100) }}%</li>
+                        <li>Description Match Rate: {{ "%.1f"|format(confidence.items.description_match_rate * 100) }}%</li>
+                    </ul>
+                </div>
+
+                <!-- Totals Metrics -->
+                <div class="metric-card">
+                    <div class="metric-title">Totals Verification</div>
+                    <div class="metric-value">{{ "%.1f"|format(confidence.totals.score * 100) }}%</div>
+                    <ul>
+                        <li>Subtotal Detected: {% if confidence.totals.subtotal_detected %}✓{% else %}✗{% endif %}</li>
+                        <li>Total Detected: {% if confidence.totals.total_detected %}✓{% else %}✗{% endif %}</li>
+                        <li>Sum Matches: {% if confidence.totals.sum_matches %}✓{% else %}✗{% endif %}</li>
+                        {% if confidence.totals.difference_percent > 0 %}
+                        <li>Difference: {{ "%.1f"|format(confidence.totals.difference_percent) }}%</li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <!-- Store Classification -->
+                <div class="metric-card">
+                    <div class="metric-title">Store Classification</div>
+                    <div class="metric-value">{{ "%.1f"|format(confidence.store.score * 100) }}%</div>
+                    <ul>
+                        <li>Name Detected: {% if confidence.store.name_detected %}✓{% else %}✗{% endif %}</li>
+                        <li>Pattern Match: {% if confidence.store.pattern_matches %}✓{% else %}✗{% endif %}</li>
+                    </ul>
+                </div>
+
+                <!-- OCR Quality -->
+                <div class="metric-card">
+                    <div class="metric-title">OCR Quality</div>
+                    <div class="metric-value">{{ "%.1f"|format(confidence.ocr.score * 100) }}%</div>
+                    <ul>
+                        <li>Lines: {{ confidence.ocr.line_count }}</li>
+                        <li>Matched Lines: {{ confidence.ocr.matched_lines }}</li>
+                        <li>Quality Score: {{ "%.1f"|format(confidence.ocr.quality * 100) }}%</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Extracted Items -->
+        {% if items %}
+        <div class="items-section">
+            <h2>Extracted Items</h2>
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Confidence</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ item.description }}</td>
+                        <td>{{ item.quantity|default(1) }}</td>
+                        <td>${{ "%.2f"|format(item.price) }}</td>
+                        <td>
+                            <div class="confidence-meter" style="width: 100px; display: inline-block;">
+                                <div class="confidence-bar" style="width: {{ item.confidence.overall * 100 }}%"></div>
+                            </div>
+                            {{ "%.0f"|format(item.confidence.overall * 100) }}%
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        <!-- OCR Text with Highlights -->
+        {% if raw_text %}
+        <div class="ocr-section">
+            <h2>OCR Text</h2>
+            <div class="ocr-text">
+                {% for line in raw_text.split('\n') %}
+                {% if line|trim in matched_lines %}
+                <div class="highlight">{{ line }}</div>
+                {% else %}
+                <div>{{ line }}</div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html> 

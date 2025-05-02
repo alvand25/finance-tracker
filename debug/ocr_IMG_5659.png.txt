@@ -1,0 +1,52 @@
+# Raw OCR Output
+================================================================================
+0
+E
+дв
+command
+option
+CEL
+نان
+TRADER JOE'S
+142 E. 14th St.
+New York, NY
+10003
+Store #0540 - 212-529-4612
+OPEN 8:00AM TO 9:00PM DAILY
+SALE TRANSACTION
+SPICY CHAI TEA LATTE MIX
+$4.99
+ORG ELOTE CORN CHIPS
+$2.99
+CREAM CHEESE BRICK
+$3.98
+2 @ $1.99
+Items in Transaction 4.
+Balance to pay
+$11.96
+MasterCard
+$11.96
+PAYMENT CARD PURCHASE TRANSACTION
+Mastercard
+CUSTOMER COPY
+*****2453
+Type: CONTACTLESS
+Auth Code:
+37233P
+MID: *******27013
+TID:
+****6000
+TOTAL PURCHASE
+$11.96
+No Cardholder Verification
+Please retain for your records
+G. Keely
+DATE
+================================================================================
+
+
+# OCR Statistics
+--------------------------------------------------------------------------------
+engine: GoogleVisionOCR
+confidence: 0.947026245477723
+processing_time: 0.6965610980987549

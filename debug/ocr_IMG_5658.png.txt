@@ -1,0 +1,71 @@
+# Raw OCR Output
+================================================================================
+COSTCO
+WHOLESALE
+Queens #243
+32-50 Vernon Blvd
+Long Island, NY 11106,
+Member 112016559052
+1
+4854948 GAP SHORT
+14.99 F
+1583270 NIKECLUBCREW
+32.99 F
+1841021 GERRY SHORT
+12.99 F
+0000348310 / 1841021
+3:00-
+E
+E
+MMMMM
+E
+818073 KS TORTELLON
+11.29
+E
+1234809 SNAPPLEDIET*
+19.99
+E
+549797 BISCOFF
+7.99
+1853333 COOKIEMOUSSE
+10.99
+3741 ALB ENVY
+8.99
+E
+1748763 KS BRKFSTSND
+16.49
+E
+399989 MADELEINES
+8.49
+1780170 32DTANK3PACK
+12.99 F
+பய
+E 1792879 POM JUICE
+10.39
+E
+E 1335089 BAGELS
+890181 KS WLDSALMON
+E 1312509 MUSH VTY
+TOTAL NUMBER OF ITEMS SOLD - 15
+7.99
+18.99
+9.99
+SUBTOTAL
+TAX
+**** TOTAL
+XXXXXXXXXXXX9433
+Seq# 4646
+AID: A0000000031010
+App#: 09430D
+Visa Resp: APPROVED
+Tran ID#: 509700004646....
+202.55
+0.00
+================================================================================
+
+
+# OCR Statistics
+--------------------------------------------------------------------------------
+engine: GoogleVisionOCR
+confidence: 0.9571408314524956
+processing_time: 0.5380599498748779

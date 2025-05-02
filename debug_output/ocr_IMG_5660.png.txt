@@ -1,29 +1,55 @@
-rd
-— a  —
-oo vw kh Wenn u te uae,
-fey non a GQ’ ov OV OF oN \o wo 10 710 oF”
-Ss . 4 , . ‘ . . . .. ‘ -- © - Lie Phe
-Mm wooo NH - HK wo Or, wo mye hs CS, S
-_ = ae] a ae) . uo “so a
-P= — < @ > a a. eT) a
-Go U-oOo7 > a > ,> > >
-S u > ore) oO n ro] © oO rn
--— - 16 & zux = w — 0 w us @ Ss wo
-—~m>o Zz Lui Os we ow Q a. cz
-i zig ~sgamang 3 ZEeuwsa 3 ra | am
-ec n > (3 9 > o& a mc®awao0o a wo
-£ec ~ oO > a 4 > oy wu >- xc > cy > —
-fCounrdwz x + ~M o& — > wa qc 2.23 4
-- ££ - — | Qo ~R ow -~ ree ~ ~ wm -« a @Q ‘
-3 Seer > =x noma in t2i OF | a moa ~ >
-240 0 Lu ON ROANEFEDAAOHKN —] wi a mo
-3 0 —- 2 HD ZFz -NDMREFEON HDAZANnN IN” O& & °
-NZzoer @ Cf - WNW Oo -<« oOo -<z - Q «. c=
-~o §»~ ? non FNORAN Awe; he Br nuws> aoa as.
-oP mM ig on. <x oO lu a 5 ad q
-27 Ge5 ot oe Be GEL 8% FLV ewe & z
-£T ,, £ Ofte Ze ceotceragortreeze ti ette =
-e E Ck OEornEnama sgagota re x
-a o Fs Po] 5 a { *
-5 3s 6OCS Ss = —= x *
-re] m a a oe 3 3 co 3 3
+# Raw OCR Output
+================================================================================
+H
+MART
+http://www.hmart.com
+48-18 Northern Blvd
+Long Island City, NY, 11101
+TEL (718) 489-8580
+Your Cashier was YUN JUNG JANG
+ROTISSERIE CHICKEN
+5.99 B
+Regular Price 7.99, You saved 2.00
+JIN RAMEN MILD BOX 16.99 F
+Regular Price 22.99, You saved 6.00
+SNOW ICE/COOKI&CRM
+MINI CUCUMBERS
+$8.99 F
+1.49 F
+Regular Price 2.99, You saved 1.50
+MRYM
+LATTE
+2.99
+ICECAFE AMERICANO.
+1.99 B
+MASAMAN CURRY PAST-
+1.99 F
+SRKK GYOZA- BEEF
+5.99 F
+Regular Price 7.99, You saved
+2.00
+☐ BGR SAMANCO CHOCO
+Regular Price 7.99, You saved 3.00
+4.99 F
+1.86 lb @ 2.99 /lb
+WT
+-GRN SEEDLESS GRAPE
+6.66
+Regular Price 3.99, You saved 1.86
+GROCERY
+13.75 F
+PAPER CARRYOUT BAG
+05 B
+PAPER CARRYOUT BAG
+6 B
+TAX
+**** BALANCE
+61.54
+================================================================================
+
+
+# OCR Statistics
+--------------------------------------------------------------------------------
+engine: GoogleVisionOCR
+confidence: 0.9412310252318511
+processing_time: 0.7334539890289307

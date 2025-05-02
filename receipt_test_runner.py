@@ -24,14 +24,16 @@ import sys
 import json
 import argparse
 import shutil
+import importlib
 from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime
 import cv2
-import pytesseract
 from PIL import Image
 import io
 import time
 import traceback
+import logging
+from pathlib import Path
 
 # Add project root to path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -40,6 +42,11 @@ from models.receipt import Receipt
 from utils.receipt_analyzer import ReceiptAnalyzer
 from storage.json_storage import JSONStorage
 from services.receipt_service import ReceiptService
+from utils.image_preprocessor import ImagePreprocessor
+from ocr.google_vision_ocr import GoogleVisionOCR
+from ocr.tesseract_ocr import TesseractOCR
+from config.google_vision_config import GoogleVisionConfig
+from utils.module_utils import stub_missing_module
 
 # Constants
 SAMPLES_DIR = "samples"
@@ -51,6 +58,8 @@ REPORT_DIR = os.path.join(SAMPLES_DIR, "reports")
 # Test vendors to focus on
 VENDORS = ["Costco", "Trader Joe's", "Target", "H Mart", "Key Food"]
 
+logger = logging.getLogger(__name__)
+
 def ensure_dirs():
     """Ensure all required directories exist."""
     for dir_path in [SAMPLES_DIR, IMAGES_DIR, OCR_DIR, EXPECTED_DIR, REPORT_DIR]:
@@ -59,41 +68,79 @@ def ensure_dirs():
             print(f"Created directory: {dir_path}")
 
 
-def extract_ocr_text(image_path: str, save: bool = True) -> str:
-    """
-    Extract raw OCR text from an image.
-    
-    Args:
-        image_path: Path to the image file
-        save: Whether to save the extracted text to a file
+def setup_ocr(use_google_ocr: bool = False) -> Any:
+    """Set up OCR engine."""
+    if use_google_ocr:
+        try:
+            config = GoogleVisionConfig()
+            if config.is_configured:
+                logger.info("Using Google Cloud Vision OCR")
+                config.validate()
+                return GoogleVisionOCR(credentials_path=config.credentials_path)
+            else:
+                logger.warning("Google Cloud Vision not configured")
+        except Exception as e:
+            logger.error(f"Failed to initialize Google Cloud Vision OCR: {str(e)}")
+            
+    # Fall back to Tesseract
+    logger.info("Using Tesseract OCR")
+    try:
+        return TesseractOCR()
+    except Exception as e:
+        logger.error(f"Failed to initialize Tesseract OCR: {str(e)}")
+        return None
+
+
+def process_image(image_path: str, ocr_engine: Any, debug_output_dir: str = 'debug_output') -> Dict[str, Any]:
+    """Process a single receipt image."""
+    try:
+        # Create preprocessor
+        preprocessor = ImagePreprocessor(
+            debug_mode=True,
+            debug_output_dir=debug_output_dir
+        )
         
-    Returns:
-        Extracted text as a string
-    """
-    print(f"Extracting OCR text from: {image_path}")
-    
-    # Read the image file
-    with open(image_path, "rb") as f:
-        image_data = f.read()
-    
-    # Initialize ReceiptAnalyzer
-    analyzer = ReceiptAnalyzer()
-    
-    # Preprocess the image and extract text
-    preprocessed_image = analyzer.preprocess_image(image_data)
-    extracted_text = analyzer.extract_text(preprocessed_image)
-    
-    if save:
-        # Save the extracted text to a file
-        base_name = os.path.basename(image_path).split('.')[0]
-        output_path = os.path.join(OCR_DIR, f"{base_name}.txt")
+        # Preprocess image
+        processed_image = preprocessor.preprocess(image_path)
         
-        with open(output_path, "w") as f:
-            f.write(extracted_text)
+        # Extract text using OCR
+        if ocr_engine is not None:
+            ocr_result = ocr_engine.extract_text(processed_image)
+            text = ocr_result["text"]
+            confidence = ocr_result["confidence"]
+            text_blocks = ocr_result.get("text_blocks", [])
+        else:
+            logger.error("No OCR engine available")
+            return {
+                'error': 'No OCR engine available',
+                'image_path': image_path
+            }
+            
+        # Save OCR text for debugging
+        debug_text_path = os.path.join(debug_output_dir, f'ocr_{os.path.basename(image_path)}.txt')
+        with open(debug_text_path, 'w') as f:
+            f.write(text)
+            
+        # Analyze receipt
+        analyzer = ReceiptAnalyzer(debug_mode=True, debug_output_dir=debug_output_dir)
+        results = analyzer.analyze_receipt(text, image_path)
         
-        print(f"Saved OCR text to: {output_path}")
-    
-    return extracted_text
+        # Add OCR metadata
+        results['ocr_metadata'] = {
+            'engine': 'google_vision' if isinstance(ocr_engine, GoogleVisionOCR) else 'tesseract',
+            'confidence': confidence,
+            'text_blocks': text_blocks,
+            'processing_time': getattr(ocr_engine, 'last_processing_time', 0)
+        }
+        
+        return results
+        
+    except Exception as e:
+        logger.error(f"Error processing {image_path}: {str(e)}")
+        return {
+            'error': str(e),
+            'image_path': image_path
+        }
 
 
 def process_receipt_image(image_path: str, service: ReceiptService) -> Tuple[Receipt, Dict[str, Any]]:
@@ -109,25 +156,9 @@ def process_receipt_image(image_path: str, service: ReceiptService) -> Tuple[Rec
     """
     print(f"Processing receipt image: {image_path}")
     
-    # Initialize analyzer
-    analyzer = ReceiptAnalyzer()
-    
-    # Read the image file
-    with open(image_path, "rb") as f:
-        image_data = f.read()
-    
-    # Process the receipt
     try:
-        # First extract OCR text
-        preprocessed_image = analyzer.preprocess_image(image_data)
-        receipt_text = analyzer.extract_text(preprocessed_image)
-        
-        # Extract store name
-        store_name = analyzer._extract_store_name(receipt_text.split('\n'))
-        print(f"Detected store name: {store_name}")
-        
-        # Process with the receipt service
-        receipt = service.process_receipt({}, image_data=image_data, file_path=image_path)
+        # Process the receipt using the service
+        receipt = service.process_receipt({}, file_path=image_path)
         
         # Prepare results
         results = {
@@ -141,11 +172,12 @@ def process_receipt_image(image_path: str, service: ReceiptService) -> Tuple[Rec
             "total": receipt.total_amount if hasattr(receipt, 'total_amount') else receipt.total,
             "payment_method": receipt.payment_method,
             "items_count": len(receipt.items),
-            "items": receipt.items
+            "items": receipt.items,
+            "ocr_metadata": receipt.ocr_metadata if hasattr(receipt, 'ocr_metadata') else {}
         }
         
         # Apply vendor-specific processing for improved results
-        results = process_vendor_specifics(results, store_name, receipt_text, image_path, analyzer)
+        results = process_vendor_specifics(results, receipt.store_name, receipt.raw_text, image_path, service.analyzer)
         
         return receipt, results
     
@@ -727,6 +759,26 @@ def process_vendor_specifics(results, store_name, ocr_text, image_path, analyzer
     return results
 
 
+def load_handler(module_name: str) -> Any:
+    """
+    Load a handler module, creating a stub if it doesn't exist.
+    
+    Args:
+        module_name: Name of the handler module (without .py)
+        
+    Returns:
+        The imported module
+    """
+    try:
+        module = importlib.import_module(f"handlers.{module_name}")
+    except ModuleNotFoundError:
+        logger.warning(f"Handler module not found: {module_name}")
+        logger.info(f"Creating stub for: handlers.{module_name}")
+        stub_missing_module("handlers", module_name, base_class="BaseHandler")
+        module = importlib.import_module(f"handlers.{module_name}")
+    return module
+
+
 def main():
     """Main entry point for the receipt test runner."""
     # Parse command-line arguments
@@ -840,9 +892,6 @@ def main():
         start_time = time.time()
         
         try:
-            # Extract OCR text
-            ocr_text = extract_ocr_text(image_path)
-            
             # Process the receipt
             receipt, results = process_receipt_image(image_path, service)
             

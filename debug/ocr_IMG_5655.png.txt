@@ -1,0 +1,64 @@
+# Raw OCR Output
+================================================================================
+H
+MART
+http://www.hmart.com
+48-18 Northern Blvd
+>Long Island City, NY, 111012
+TEL (718) 489-8580
+Your Cashier was SYLVIA KIM
+PRODUCE
+3.36 F
+MILK PAN BREAD
+BEAN SPROUTS/12oz
+ORG BEECH MUSHROOM
+MASAMAN CURRY PAST
+GREEN CURRY PASTE
+5.95 F
+1.99 F
+3.99 F
+1
+1.99 F
+1.99 F
+HS PICKLED RADISH
+1.49 F
+1 @ 4/1.99
+LIME
+0.50 F
+1 @ 4/1.99
+LIME
+0.50 F
+MRN BF RIBEYE ROLL
+8.90 F
+Regular Price 9.99, You saved
+99
+RAMA FRESH RICE ST
+99 F
+FZ BF TOP BLADE
+16.79 F
+TAX
+0.00
+會:
+**** BALANCE
+50.44
+MasterCard Credit - H
+ACCOUNT NUMBER: ************2835
+APPROVAL CODE: 08458P
+SEQUENCE NUMBER: 6717
+TOTAL AMOUNT: $50.44
+RESPONSE CODE: APPROVED
+04/11/25 04:26pm 125 6
+MasterCard
+50.44
+CHANGE
+0.00
+TOTAL NUMBER OF ITEMS SOLD
+12-
+================================================================================
+
+
+# OCR Statistics
+--------------------------------------------------------------------------------
+engine: GoogleVisionOCR
+confidence: 0.9418688693711924
+processing_time: 0.5931758880615234

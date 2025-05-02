@@ -1,0 +1,55 @@
+# Raw OCR Output
+================================================================================
+H
+MART
+http://www.hmart.com
+48-18 Northern Blvd
+Long Island City, NY, 11101
+TEL (718) 489-8580
+Your Cashier was YUN JUNG JANG
+ROTISSERIE CHICKEN
+5.99 B
+Regular Price 7.99, You saved 2.00
+JIN RAMEN MILD BOX 16.99 F
+Regular Price 22.99, You saved 6.00
+SNOW ICE/COOKI&CRM
+MINI CUCUMBERS
+$8.99 F
+1.49 F
+Regular Price 2.99, You saved 1.50
+MRYM
+LATTE
+2.99
+ICECAFE AMERICANO.
+1.99 B
+MASAMAN CURRY PAST-
+1.99 F
+SRKK GYOZA- BEEF
+5.99 F
+Regular Price 7.99, You saved
+2.00
+☐ BGR SAMANCO CHOCO
+Regular Price 7.99, You saved 3.00
+4.99 F
+1.86 lb @ 2.99 /lb
+WT
+-GRN SEEDLESS GRAPE
+6.66
+Regular Price 3.99, You saved 1.86
+GROCERY
+13.75 F
+PAPER CARRYOUT BAG
+05 B
+PAPER CARRYOUT BAG
+6 B
+TAX
+**** BALANCE
+61.54
+================================================================================
+
+
+# OCR Statistics
+--------------------------------------------------------------------------------
+engine: GoogleVisionOCR
+confidence: 0.9412310332865328
+processing_time: 0.6037518978118896

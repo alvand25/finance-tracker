@@ -1,13 +1,19 @@
 {
   "image_path": "samples/images/IMG_5658.png",
-  "store": "ae Li",
-  "store_confidence": 0.4,
+  "store": "costco",
+  "store_confidence": 0.95,
   "handler": "GenericHandler",
-  "item_count": 0,
-  "items_sample": [],
-  "subtotal": null,
+  "item_count": 18,
+  "items_sample": [
+    "4854948 GAP SHORT",
+    "14.99 F",
+    "1583270 NIKECLUBCREW",
+    "32.99 F",
+    "1841021 GERRY SHORT"
+  ],
+  "subtotal": 457.7800000000001,
   "tax": null,
   "total": null,
-  "overall_confidence": 0.7,
-  "extraction_quality": 0.6
+  "overall_confidence": 0.42000000000000004,
+  "extraction_quality": 0.585
 }

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List, Any, Optional
 import logging
+import traceback
 
 logger = logging.getLogger(__name__)
 
@@ -111,72 +112,71 @@ class BaseReceiptHandler(ABC):
         
         return validated
     
-    def process_receipt(self, ocr_text: str, image_path: Optional[str] = None) -> Dict[str, Any]:
-        """
-        Process a receipt and extract all relevant information.
+    def process_receipt(self, text: str, image_path: Optional[str] = None) -> Dict[str, Any]:
+        """Process receipt text and extract relevant information.
         
         Args:
-            ocr_text: The OCR text from the receipt
-            image_path: Optional path to the receipt image for additional analysis
+            text (str): The OCR text from the receipt
+            image_path (Optional[str]): Path to the receipt image, for debugging
             
         Returns:
-            Dictionary with all extracted data
+            Dict[str, Any]: Dictionary containing:
+                - items (List[Dict]): List of extracted items with descriptions and prices
+                - subtotal (float): Receipt subtotal
+                - tax (float): Tax amount
+                - total (float): Total amount
+                - confidence (Dict): Confidence scores for different aspects
+                - metadata (Dict): Additional receipt metadata
         """
         try:
-            logger.info(f"Processing receipt with {self.name}")
+            # Extract items first
+            items = self.extract_items(text, image_path)
             
-            # Extract data
-            items = self.extract_items(ocr_text, image_path)
-            totals = self.extract_totals(ocr_text, image_path)
-            metadata = self.extract_metadata(ocr_text, image_path)
+            # Extract totals
+            subtotal, tax, total = self.extract_totals(text, image_path)
             
-            # Combine results
-            results = {
-                'items': items,
-                'subtotal': totals.get('subtotal'),
-                'tax': totals.get('tax'),
-                'total': totals.get('total'),
-                'store': metadata.get('store_name'),
-                'date': metadata.get('date'),
-                'payment_method': metadata.get('payment_method'),
-                'currency': metadata.get('currency', 'USD'),
-                'confidence': {
-                    'items': 0.7 if items else 0.0,
-                    'totals': 0.7 if totals.get('total') else 0.0,
-                    'metadata': 0.7 if metadata.get('store_name') else 0.0
-                }
+            # Extract metadata and calculate confidence
+            metadata = self.extract_metadata(text)
+            confidence = {
+                'items': 0.8 if items else 0.0,
+                'totals': 0.8 if total is not None else 0.0,
+                'metadata': metadata.get('confidence', 0.0),
+                'overall': 0.0  # Will be calculated below
             }
             
             # Calculate overall confidence
-            confidences = [v for v in results['confidence'].values() if v > 0]
-            if confidences:
-                results['confidence']['overall'] = sum(confidences) / len(confidences)
-            else:
-                results['confidence']['overall'] = 0.0
-            
-            # Validate results
-            validated_results = self.validate_results(results)
-            
-            # Log processing results
-            logger.info(
-                f"Receipt processing complete: {len(validated_results.get('items', []))} items, "
-                f"total: {validated_results.get('total')}, "
-                f"confidence: {validated_results.get('confidence', {}).get('overall', 0):.2f}"
+            weights = {'items': 0.4, 'totals': 0.4, 'metadata': 0.2}
+            confidence['overall'] = sum(
+                confidence[key] * weight 
+                for key, weight in weights.items()
             )
             
-            return validated_results
+            # Build result dictionary
+            result = {
+                'items': items,
+                'subtotal': subtotal,
+                'tax': tax,
+                'total': total,
+                'confidence': confidence,
+                'metadata': metadata
+            }
+            
+            self.logger.info(f"Extracted metadata with confidence {confidence['overall']}")
+            return result
             
         except Exception as e:
-            logger.error(f"Error in {self.name}: {str(e)}")
-            import traceback
-            logger.error(traceback.format_exc())
-            
-            # Return error result
+            self.logger.error(f"Error processing receipt: {str(e)}")
+            self.logger.error(traceback.format_exc())
             return {
-                'error': str(e),
                 'items': [],
                 'subtotal': None,
                 'tax': None,
                 'total': None,
-                'confidence': {'overall': 0.0}
+                'confidence': {
+                    'items': 0.0,
+                    'totals': 0.0,
+                    'metadata': 0.0,
+                    'overall': 0.0
+                },
+                'metadata': {}
             } 

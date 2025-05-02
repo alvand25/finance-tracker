@@ -1,7 +1,8 @@
-<div class="receipt-upload-section">
+<!-- Receipt Upload & Confirmation Area -->
+<div class="receipt-upload-section mb-4">
     <h3>Upload Receipt</h3>
     <div class="receipt-drop-area">
-        <input type="file" id="receiptUpload" accept="image/*" style="display: none;">
+        <input type="file" id="receiptUpload" name="receipt" accept="image/*" style="display: none;">
         <button type="button" id="receiptButton" class="btn btn-outline-secondary">
             <i class="bi bi-upload"></i> Upload Receipt
         </button>
@@ -10,6 +11,44 @@
             <button type="button" id="removeReceipt" class="btn btn-sm btn-danger remove-receipt">
                 <i class="bi bi-x"></i>
             </button>
+        </div>
+    </div>
+    
+    <!-- Hidden fields to store receipt data -->
+    <input type="hidden" id="receipt_id" name="receipt_id">
+    <input type="hidden" id="receipt_data" name="receipt_data">
+    
+    <!-- Receipt Analysis Results Section -->
+    <div id="receipt-items-section" class="receipt-items-section mt-3" style="display: none;">
+        <div class="card">
+            <div class="card-header bg-light">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Receipt Analysis</h5>
+                    <span class="badge bg-info" id="receipt-confidence"></span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="receipt-items-container">
+                    <!-- Content will be populated via JavaScript -->
+                </div>
+                
+                <div class="receipt-confirmation mt-3 pt-3 border-top">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="confirm-receipt-data">
+                        <label class="form-check-label" for="confirm-receipt-data">
+                            <strong>Confirm Receipt Data is Correct</strong>
+                        </label>
+                    </div>
+                    <div class="mt-2">
+                        <button type="button" id="apply-receipt-data" class="btn btn-sm btn-primary" disabled>
+                            Apply to Expense
+                        </button>
+                        <button type="button" id="edit-receipt-data" class="btn btn-sm btn-outline-secondary ms-2">
+                            Edit Data
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -23,7 +62,7 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="store-override">Force Store Name</label>
-                    <input type="text" class="form-control" id="store-override" name="store" placeholder="e.g., Costco">
+                    <input type="text" class="form-control" id="store-override" name="store_override" placeholder="e.g., Costco">
                 </div>
             </div>
             <div class="col-md-6">
@@ -38,20 +77,6 @@
                         <option value="AUD">AUD (A$)</option>
                         <option value="JPY">JPY (¥)</option>
                     </select>
-                </div>
-            </div>
-        </div>
-        <div class="row mt-2">
-            <div class="col-md-6">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="disable-deskew" name="disable_deskew">
-                    <label class="form-check-label" for="disable-deskew">Disable Deskew</label>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="disable-enhancements" name="disable_enhancements">
-                    <label class="form-check-label" for="disable-enhancements">Disable Enhancements</label>
                 </div>
             </div>
         </div>
@@ -117,30 +142,284 @@
         document.getElementById('receipt-items-section').style.display = 'none';
     });
     
+    // Handle confirmation checkbox
+    document.getElementById('confirm-receipt-data').addEventListener('change', function() {
+        document.getElementById('apply-receipt-data').disabled = !this.checked;
+    });
+    
+    // Apply receipt data to form
+    document.getElementById('apply-receipt-data').addEventListener('click', function() {
+        try {
+            const receiptData = JSON.parse(document.getElementById('receipt_data').value);
+            
+            // Apply vendor/store name
+            if (receiptData.store_name) {
+                document.getElementById('vendor').value = receiptData.store_name;
+            }
+            
+            // Apply total amount
+            if (receiptData.total_amount) {
+                document.getElementById('total_amount').value = receiptData.total_amount;
+            }
+            
+            // Clear existing items first
+            clearItemsExceptFirst();
+            
+            // Add items from receipt
+            if (receiptData.items && receiptData.items.length > 0) {
+                let itemIndex = 0;
+                
+                receiptData.items.forEach(item => {
+                    if (itemIndex === 0) {
+                        // Update first item (which is always present)
+                        document.getElementById('item_name_0').value = item.description || '';
+                        document.getElementById('item_amount_0').value = item.amount || '';
+                        document.getElementById('item_shared_0').checked = true;
+                    } else {
+                        // Add new item
+                        addItem({
+                            name: item.description || '',
+                            amount: item.amount || '',
+                            shared: true
+                        });
+                    }
+                    itemIndex++;
+                });
+            }
+            
+            // Show success message
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-success mt-3';
+            alertDiv.textContent = 'Receipt data applied successfully!';
+            document.querySelector('.receipt-confirmation').appendChild(alertDiv);
+            
+            // Auto-remove alert after 3 seconds
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+            
+        } catch (error) {
+            console.error('Error applying receipt data:', error);
+            alert('Failed to apply receipt data: ' + error.message);
+        }
+    });
+    
+    // Edit receipt data
+    document.getElementById('edit-receipt-data').addEventListener('click', function() {
+        const receiptData = JSON.parse(document.getElementById('receipt_data').value || '{}');
+        
+        // Create edit modal using Bootstrap if available, or a simple prompt otherwise
+        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+            // Create Bootstrap modal
+            const modalHtml = `
+                <div class="modal fade" id="editReceiptModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Edit Receipt Data</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="edit-store-name" class="form-label">Store Name</label>
+                                    <input type="text" class="form-control" id="edit-store-name" value="${receiptData.store_name || ''}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="edit-total" class="form-label">Total Amount</label>
+                                    <input type="number" step="0.01" class="form-control" id="edit-total" value="${receiptData.total_amount || ''}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Items</label>
+                                    <div id="edit-items-container">
+                                        ${(receiptData.items || []).map((item, idx) => `
+                                            <div class="edit-item-row row mb-2">
+                                                <div class="col-7">
+                                                    <input type="text" class="form-control item-desc" value="${item.description || ''}">
+                                                </div>
+                                                <div class="col-4">
+                                                    <input type="number" step="0.01" class="form-control item-amount" value="${item.amount || ''}">
+                                                </div>
+                                                <div class="col-1">
+                                                    <button type="button" class="btn btn-sm btn-danger remove-item">×</button>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                    <button type="button" id="add-edit-item" class="btn btn-sm btn-outline-secondary mt-2">+ Add Item</button>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" id="save-receipt-edits" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add modal to DOM
+            const modalContainer = document.createElement('div');
+            modalContainer.innerHTML = modalHtml;
+            document.body.appendChild(modalContainer);
+            
+            // Initialize modal
+            const modal = new bootstrap.Modal(document.getElementById('editReceiptModal'));
+            modal.show();
+            
+            // Add item button handler
+            document.getElementById('add-edit-item').addEventListener('click', function() {
+                const itemRow = document.createElement('div');
+                itemRow.className = 'edit-item-row row mb-2';
+                itemRow.innerHTML = `
+                    <div class="col-7">
+                        <input type="text" class="form-control item-desc" value="">
+                    </div>
+                    <div class="col-4">
+                        <input type="number" step="0.01" class="form-control item-amount" value="">
+                    </div>
+                    <div class="col-1">
+                        <button type="button" class="btn btn-sm btn-danger remove-item">×</button>
+                    </div>
+                `;
+                document.getElementById('edit-items-container').appendChild(itemRow);
+                
+                // Add remove handler to new row
+                itemRow.querySelector('.remove-item').addEventListener('click', function() {
+                    itemRow.remove();
+                });
+            });
+            
+            // Remove item button handlers
+            document.querySelectorAll('.remove-item').forEach(button => {
+                button.addEventListener('click', function() {
+                    this.closest('.edit-item-row').remove();
+                });
+            });
+            
+            // Save changes handler
+            document.getElementById('save-receipt-edits').addEventListener('click', function() {
+                // Update receipt data
+                receiptData.store_name = document.getElementById('edit-store-name').value;
+                receiptData.total_amount = parseFloat(document.getElementById('edit-total').value) || 0;
+                
+                // Collect items
+                receiptData.items = [];
+                document.querySelectorAll('.edit-item-row').forEach(row => {
+                    const description = row.querySelector('.item-desc').value;
+                    const amount = parseFloat(row.querySelector('.item-amount').value) || 0;
+                    
+                    if (description && amount > 0) {
+                        receiptData.items.push({
+                            description: description,
+                            amount: amount
+                        });
+                    }
+                });
+                
+                // Update hidden field
+                document.getElementById('receipt_data').value = JSON.stringify(receiptData);
+                
+                // Re-display receipt data
+                displayReceiptItems(receiptData);
+                
+                // Close modal
+                modal.hide();
+                document.getElementById('editReceiptModal').remove();
+            });
+        } else {
+            // Simple fallback without Bootstrap
+            alert('Edit functionality requires Bootstrap. Please update manually in the form.');
+        }
+    });
+
+    function clearItemsExceptFirst() {
+        // Keep the first item row but clear values
+        document.getElementById('item_name_0').value = '';
+        document.getElementById('item_amount_0').value = '';
+        document.getElementById('item_shared_0').checked = false;
+        
+        // Remove all other item rows
+        const container = document.getElementById('items-container');
+        while (container.children.length > 1) {
+            container.removeChild(container.lastChild);
+        }
+    }
+    
+    function addItem(itemData = {}) {
+        let itemCount = document.getElementById('items-container').children.length;
+        
+        // Create new item row
+        const newRow = document.createElement('div');
+        newRow.className = 'row mb-3 item-row';
+        newRow.innerHTML = `
+            <div class="col-md-6">
+                <input type="text" class="form-control" id="item_name_${itemCount}" 
+                       name="item_name_${itemCount}" placeholder="Item name" 
+                       value="${itemData.name || ''}" required>
+            </div>
+            <div class="col-md-3">
+                <input type="number" step="0.01" class="form-control" id="item_amount_${itemCount}" 
+                       name="item_amount_${itemCount}" placeholder="Amount" 
+                       value="${itemData.amount || ''}" required>
+            </div>
+            <div class="col-md-2">
+                <div class="form-check mt-2">
+                    <input type="checkbox" class="form-check-input" id="item_shared_${itemCount}" 
+                           name="item_shared_${itemCount}" ${itemData.shared ? 'checked' : ''}>
+                    <label class="form-check-label" for="item_shared_${itemCount}">Shared</label>
+                </div>
+            </div>
+            <div class="col-md-1">
+                <button type="button" class="btn btn-danger remove-item" onclick="removeItem(this)">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        `;
+        
+        document.getElementById('items-container').appendChild(newRow);
+    }
+    
+    function removeItem(button) {
+        button.closest('.item-row').remove();
+        
+        // Renumber remaining items
+        const rows = document.querySelectorAll('.item-row');
+        rows.forEach((row, index) => {
+            // Skip index 0 because that's handled separately
+            if (index > 0) {
+                const inputs = row.querySelectorAll('input');
+                inputs.forEach(input => {
+                    const nameParts = input.name.split('_');
+                    input.name = `${nameParts[0]}_${nameParts[1]}_${index}`;
+                    input.id = `${nameParts[0]}_${nameParts[1]}_${index}`;
+                });
+                
+                const label = row.querySelector('label');
+                if (label) {
+                    label.htmlFor = `item_shared_${index}`;
+                }
+            }
+        });
+    }
+    
     function uploadReceipt(file) {
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('receipt_image', file);
         
         // Add debug options if enabled
-        if (document.getElementById('debug-mode').checked) {
+        if (document.getElementById('debug-mode') && document.getElementById('debug-mode').checked) {
             formData.append('debug', 'true');
             
-            const storeOverride = document.getElementById('store-override').value;
+            const storeOverride = document.getElementById('store-override') ? 
+                document.getElementById('store-override').value : '';
             if (storeOverride) {
-                formData.append('store', storeOverride);
+                formData.append('store_type_hint', storeOverride);
             }
             
-            const currencyOverride = document.getElementById('currency-override').value;
+            const currencyOverride = document.getElementById('currency-override') ?
+                document.getElementById('currency-override').value : '';
             if (currencyOverride) {
-                formData.append('currency', currencyOverride);
-            }
-            
-            if (document.getElementById('disable-deskew').checked) {
-                formData.append('disable_deskew', 'true');
-            }
-            
-            if (document.getElementById('disable-enhancements').checked) {
-                formData.append('disable_enhancements', 'true');
+                formData.append('force_currency', currencyOverride);
             }
         }
         
@@ -156,41 +435,46 @@
         .then(data => {
             console.log('Receipt upload response:', data);
             
-            if (data.error) {
+            if (!data.success) {
                 document.getElementById('receipt-items-container').innerHTML = `
                     <div class="alert alert-danger">
-                        <strong>Error processing receipt:</strong> ${data.error}
-                    </div>
-                `;
+                        <strong>Error processing receipt:</strong> ${data.error || 'Unknown error'}
+                    </div>`;
+                
+                // If we have partial data, still show it
+                if (data.partial_data) {
+                    const partialData = {
+                        receipt_id: data.receipt_id,
+                        store_name: data.partial_data.store_name,
+                        total_amount: data.partial_data.total_amount,
+                        items: [],
+                        processing_status: data.processing_status || 'partial'
+                    };
+                    
+                    // Store receipt ID and data
+                    document.getElementById('receipt_id').value = data.receipt_id;
+                    document.getElementById('receipt_data').value = JSON.stringify(partialData);
+                    
+                    document.getElementById('receipt-items-container').innerHTML += `
+                        <div class="alert alert-warning mt-3">
+                            <strong>Partial data extracted:</strong>
+                            <ul>
+                                ${data.partial_data.store_name ? `<li>Store: ${data.partial_data.store_name}</li>` : ''}
+                                ${data.partial_data.total_amount ? `<li>Total: ${formatCurrency(data.partial_data.total_amount)}</li>` : ''}
+                                ${data.partial_data.items_count ? `<li>Items: ${data.partial_data.items_count}</li>` : ''}
+                            </ul>
+                            <p>You can edit this information and apply it to the expense form.</p>
+                        </div>`;
+                }
                 return;
             }
             
-            // Store receipt ID in form
-            document.getElementById('receipt_id').value = data.id;
+            // Store receipt ID and data
+            document.getElementById('receipt_id').value = data.receipt_id;
             document.getElementById('receipt_data').value = JSON.stringify(data);
-            
-            // Update form fields with receipt data
-            if (data.store_name) {
-                const vendorField = document.getElementById('vendor');
-                if (!vendorField.value) {
-                    vendorField.value = data.store_name;
-                }
-            }
-            
-            if (data.total_amount) {
-                const amountField = document.getElementById('amount');
-                if (!amountField.value) {
-                    amountField.value = data.total_amount;
-                }
-            }
             
             // Display receipt items
             displayReceiptItems(data);
-            
-            // Display debug info if available
-            if (data.debug) {
-                displayDebugInfo(data.debug);
-            }
         })
         .catch(error => {
             console.error('Error uploading receipt:', error);
@@ -208,9 +492,23 @@
         
         let html = '';
         
-        // Add receipt summary
-        html += `<div class="receipt-summary mb-3">`;
+        // Add confidence score badge
+        const confidenceBadge = document.getElementById('receipt-confidence');
+        if (confidenceBadge) {
+            const confidenceScore = receiptData.confidence_score || 0;
+            let badgeClass = 'bg-danger';
+            
+            if (confidenceScore >= 0.7) {
+                badgeClass = 'bg-success';
+            } else if (confidenceScore >= 0.4) {
+                badgeClass = 'bg-warning';
+            }
+            
+            confidenceBadge.className = `badge ${badgeClass}`;
+            confidenceBadge.textContent = `Confidence: ${(confidenceScore * 100).toFixed(0)}%`;
+        }
         
+        // Add receipt status message if not complete
         if (receiptData.processing_status !== 'completed') {
             html += `
                 <div class="alert alert-warning">
@@ -221,15 +519,15 @@
         }
         
         html += `
-            <div class="card">
+            <div class="card mb-3">
                 <div class="card-header">
-                    <h5 class="mb-0">Receipt Summary</h5>
+                    <h6 class="mb-0">Receipt Summary</h6>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
                             <p><strong>Store:</strong> ${receiptData.store_name || 'Unknown'}</p>
-                            <p><strong>Date:</strong> ${receiptData.transaction_date ? new Date(receiptData.transaction_date).toLocaleDateString() : 'Unknown'}</p>
+                            <p><strong>Date:</strong> ${receiptData.date ? formatDate(receiptData.date) : 'Unknown'}</p>
                         </div>
                         <div class="col-md-6">
                             <p><strong>Subtotal:</strong> ${formatCurrency(receiptData.subtotal_amount, receiptData.currency_type)}</p>
@@ -244,17 +542,17 @@
         // Add items table if items exist
         if (receiptData.items && receiptData.items.length > 0) {
             html += `
-                <div class="card mt-3">
+                <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0">Receipt Items</h5>
+                        <h6 class="mb-0">Receipt Items (${receiptData.items.length})</h6>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-striped mb-0">
+                            <table class="table table-sm table-striped m-0">
                                 <thead>
                                     <tr>
-                                        <th>Description</th>
-                                        <th>Amount</th>
+                                        <th>Item</th>
+                                        <th class="text-end">Amount</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -263,8 +561,8 @@
             receiptData.items.forEach(item => {
                 html += `
                     <tr>
-                        <td>${item.description}</td>
-                        <td>${formatCurrency(item.amount, receiptData.currency_type)}</td>
+                        <td>${item.description || 'Unknown item'}</td>
+                        <td class="text-end">${formatCurrency(item.amount, receiptData.currency_type)}</td>
                     </tr>
                 `;
             });
@@ -278,74 +576,36 @@
             `;
         } else {
             html += `
-                <div class="alert alert-info mt-3">
-                    <strong>No items extracted</strong> from the receipt.
+                <div class="alert alert-info">
+                    <strong>No items detected in receipt.</strong>
+                    <p>You may need to add expense items manually.</p>
                 </div>
             `;
         }
-        
-        html += `</div>`;
         
         container.innerHTML = html;
         itemsSection.style.display = 'block';
     }
     
-    function displayDebugInfo(debugData) {
-        const container = document.getElementById('receipt-items-container');
-        
-        let html = `
-            <div class="debug-info mt-4">
-                <div class="card">
-                    <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0">Debug Information</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6>Processing Options:</h6>
-                                <ul>
-                                    <li>Store Override: ${debugData.store_override || 'None'}</li>
-                                    <li>Currency Override: ${debugData.currency_override || 'None'}</li>
-                                    <li>Deskew Disabled: ${debugData.disable_deskew ? 'Yes' : 'No'}</li>
-                                    <li>Enhancements Disabled: ${debugData.disable_enhancements ? 'Yes' : 'No'}</li>
-                                </ul>
-                            </div>
-                            <div class="col-md-6">
-                                <h6>Processed Images:</h6>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <p>Original:</p>
-                                        <img src="${debugData.original_image_url}" class="img-fluid img-thumbnail" alt="Original Image">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p>Processed:</p>
-                                        <img src="${debugData.processed_image_url}" class="img-fluid img-thumbnail" alt="Processed Image">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        container.innerHTML += html;
-    }
-    
-    function formatCurrency(amount, currency) {
+    function formatCurrency(amount, currency = 'USD') {
         if (amount === null || amount === undefined) return 'N/A';
         
-        const currencySymbol = {
-            'USD': '$',
-            'GBP': '£',
-            'EUR': '€',
-            'CAD': 'C$',
-            'AUD': 'A$',
-            'JPY': '¥'
-        }[currency] || '$';
+        const formatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: currency || 'USD'
+        });
         
-        return `${currencySymbol}${parseFloat(amount).toFixed(2)}`;
+        return formatter.format(amount);
     }
     
-    // ... existing code ...
+    function formatDate(dateString) {
+        if (!dateString) return 'Unknown';
+        
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString();
+        } catch (e) {
+            return dateString;
+        }
+    }
 </script> 

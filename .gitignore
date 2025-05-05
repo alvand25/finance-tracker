@@ -78,3 +78,19 @@ __pycache__/
 *.pyc
 logs/
 uploads/
+
+# Ignore uploads and large files
+uploads/
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.zip
+*.tar
+*.gz
+*.DS_Store
+*.log
+*.sqlite3
+.env
+__pycache__/
+venv/

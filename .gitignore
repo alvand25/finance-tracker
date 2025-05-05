@@ -94,3 +94,8 @@ uploads/
 .env
 __pycache__/
 venv/
+
+results/
+*.zip
+*.jpg
+*.png

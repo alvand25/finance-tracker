@@ -1,30 +1,27 @@
 {% extends "base.html" %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/receipt_modal.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
-    <div class="row">
-        <!-- Receipt Image Column -->
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Receipt Image</h5>
-                    <div>
-                        {% if receipt.verified %}
-                        <span class="badge bg-success">✓ Verified</span>
-                        {% endif %}
-                        {% if receipt.processed_with_fallback %}
-                        <span class="badge bg-warning">Fallback OCR</span>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="card-body">
-                    {% if receipt.image_filename %}
-                    <img src="{{ url_for('receipt_image', receipt_id=receipt.receipt_id) }}" class="img-fluid" alt="Receipt">
-                    {% else %}
-                    <p class="text-muted">No image available</p>
-                    {% endif %}
-                </div>
-                <div class="card-footer">
+<div class="receipt-modal show">
+    <div class="receipt-modal-content show">
+        <div class="receipt-modal-header">
+            <h2 class="receipt-modal-title">Receipt Details</h2>
+            <a href="{{ url_for('receipts') }}" class="receipt-modal-close">&times;</a>
+        </div>
+        
+        <div class="receipt-modal-body">
+            <!-- Receipt Image -->
+            <div class="receipt-image-container">
+                {% if receipt.image_filename %}
+                <img src="{{ url_for('receipt_image', receipt_id=receipt.receipt_id) }}" class="receipt-image" alt="Receipt">
+                {% else %}
+                <p class="text-muted">No image available</p>
+                {% endif %}
+                
+                <div class="receipt-actions mt-4">
                     <form action="{{ url_for('reprocess_receipt', receipt_id=receipt.receipt_id) }}" method="POST" class="d-inline">
                         <button type="submit" class="btn btn-warning">Reprocess</button>
                     </form>
@@ -32,77 +29,91 @@
                     <a href="{{ url_for('receipt_csv', receipt_id=receipt.receipt_id) }}" class="btn btn-secondary">Download CSV</a>
                 </div>
             </div>
-        </div>
 
-        <!-- Receipt Data Column -->
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Receipt Details</h5>
-                </div>
-                <div class="card-body">
-                    <form id="receiptForm">
-                        <!-- Store Information -->
-                        <div class="mb-3">
+            <!-- Receipt Details -->
+            <div class="receipt-details">
+                <form id="receiptForm">
+                    <!-- Status Badges -->
+                    <div class="receipt-section">
+                        <div class="flex gap-2">
+                            {% if receipt.verified %}
+                            <span class="badge bg-success">✓ Verified</span>
+                            {% endif %}
+                            {% if receipt.processed_with_fallback %}
+                            <span class="badge bg-warning">Fallback OCR</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Store Information -->
+                    <div class="receipt-section">
+                        <h3 class="receipt-section-title">Store Information</h3>
+                        <div class="form-group">
                             <label class="form-label">Store Name</label>
                             <input type="text" class="form-control" name="store.name" 
                                    value="{{ receipt.store.name if receipt.store is mapping else receipt.store }}"
                                    data-original="{{ receipt.store.name if receipt.store is mapping else receipt.store }}">
                         </div>
+                    </div>
 
-                        <!-- Items -->
-                        <div class="mb-3">
-                            <label class="form-label">Items</label>
-                            <div id="itemsList">
-                                {% for item in receipt.items %}
-                                <div class="item-row mb-2">
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <input type="text" class="form-control" name="items[{{ loop.index0 }}].description" 
-                                                   value="{{ item.description }}" data-original="{{ item.description }}">
-                                        </div>
-                                        <div class="col-3">
-                                            <input type="number" step="0.01" class="form-control" name="items[{{ loop.index0 }}].price" 
-                                                   value="{{ item.price }}" data-original="{{ item.price }}">
-                                        </div>
-                                        <div class="col-2">
-                                            <input type="number" step="1" class="form-control" name="items[{{ loop.index0 }}].quantity" 
-                                                   value="{{ item.quantity|default(1) }}" data-original="{{ item.quantity|default(1) }}">
-                                        </div>
-                                        <div class="col-1">
-                                            <button type="button" class="btn btn-danger btn-sm remove-item">×</button>
-                                        </div>
+                    <!-- Items -->
+                    <div class="receipt-section">
+                        <h3 class="receipt-section-title">Items</h3>
+                        <div id="itemsList">
+                            {% for item in receipt.items %}
+                            <div class="item-row mb-2">
+                                <div class="grid grid-cols-12 gap-2">
+                                    <div class="col-span-6">
+                                        <input type="text" class="form-control" name="items[{{ loop.index0 }}].description" 
+                                               value="{{ item.description }}" data-original="{{ item.description }}"
+                                               placeholder="Item description">
+                                    </div>
+                                    <div class="col-span-3">
+                                        <input type="number" step="0.01" class="form-control" name="items[{{ loop.index0 }}].price" 
+                                               value="{{ item.price }}" data-original="{{ item.price }}"
+                                               placeholder="Price">
+                                    </div>
+                                    <div class="col-span-2">
+                                        <input type="number" step="1" class="form-control" name="items[{{ loop.index0 }}].quantity" 
+                                               value="{{ item.quantity|default(1) }}" data-original="{{ item.quantity|default(1) }}"
+                                               placeholder="Qty">
+                                    </div>
+                                    <div class="col-span-1">
+                                        <button type="button" class="btn btn-danger btn-sm remove-item">&times;</button>
                                     </div>
                                 </div>
-                                {% endfor %}
                             </div>
-                            <button type="button" class="btn btn-secondary btn-sm" id="addItem">Add Item</button>
+                            {% endfor %}
                         </div>
+                        <button type="button" class="btn btn-secondary btn-sm mt-2" id="addItem">Add Item</button>
+                    </div>
 
-                        <!-- Totals -->
-                        <div class="mb-3">
-                            <label class="form-label">Totals</label>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label class="form-label">Subtotal</label>
-                                    <input type="number" step="0.01" class="form-control" name="totals.subtotal" 
-                                           value="{{ receipt.totals.subtotal }}" data-original="{{ receipt.totals.subtotal }}">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Tax</label>
-                                    <input type="number" step="0.01" class="form-control" name="totals.tax" 
-                                           value="{{ receipt.totals.tax }}" data-original="{{ receipt.totals.tax }}">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Total</label>
-                                    <input type="number" step="0.01" class="form-control" name="totals.total" 
-                                           value="{{ receipt.totals.total }}" data-original="{{ receipt.totals.total }}">
-                                </div>
+                    <!-- Totals -->
+                    <div class="receipt-section">
+                        <h3 class="receipt-section-title">Totals</h3>
+                        <div class="receipt-totals">
+                            <div class="total-item">
+                                <label class="total-label">Subtotal</label>
+                                <input type="number" step="0.01" class="form-control" name="totals.subtotal" 
+                                       value="{{ receipt.totals.subtotal }}" data-original="{{ receipt.totals.subtotal }}">
+                            </div>
+                            <div class="total-item">
+                                <label class="total-label">Tax</label>
+                                <input type="number" step="0.01" class="form-control" name="totals.tax" 
+                                       value="{{ receipt.totals.tax }}" data-original="{{ receipt.totals.tax }}">
+                            </div>
+                            <div class="total-item">
+                                <label class="total-label">Total</label>
+                                <input type="number" step="0.01" class="form-control" name="totals.total" 
+                                       value="{{ receipt.totals.total }}" data-original="{{ receipt.totals.total }}">
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Verification -->
-                        <div class="mb-3">
+                    <!-- Verification -->
+                    <div class="receipt-section">
+                        <h3 class="receipt-section-title">Verification</h3>
+                        <div class="form-group">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="verifiedCheck" name="verified" 
                                        {% if receipt.verified %}checked{% endif %}>
@@ -110,55 +121,53 @@
                                     Mark as Verified
                                 </label>
                             </div>
-                            <div class="mt-2">
-                                <label class="form-label">Verification Notes</label>
-                                <textarea class="form-control" name="verification_notes" rows="2">{{ receipt.verification_notes }}</textarea>
-                            </div>
                         </div>
-
-                        <!-- Error/Warning Display -->
-                        {% if receipt.warnings or receipt.errors %}
-                        <div class="mb-3">
-                            <div class="alert alert-warning">
-                                <h6>Processing Warnings/Errors:</h6>
-                                <ul class="mb-0">
-                                    {% for warning in receipt.warnings|default([]) %}
-                                    <li>{{ warning }}</li>
-                                    {% endfor %}
-                                    {% for error in receipt.errors|default([]) %}
-                                    <li class="text-danger">{{ error }}</li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
+                        <div class="form-group">
+                            <label class="form-label">Verification Notes</label>
+                            <textarea class="form-control" name="verification_notes" rows="2">{{ receipt.verification_notes }}</textarea>
                         </div>
-                        {% endif %}
+                    </div>
 
-                        <!-- Confidence Metrics -->
-                        {% if receipt.confidence_metrics %}
-                        <div class="mb-3">
-                            <h6>Confidence Metrics:</h6>
-                            <div class="row">
-                                {% for metric, value in receipt.confidence_metrics.items() %}
-                                <div class="col-md-4 mb-2">
-                                    <small>{{ metric }}:</small>
-                                    <div class="progress">
-                                        <div class="progress-bar {% if value < 0.7 %}bg-warning{% endif %}" 
-                                             role="progressbar" style="width: {{ value * 100 }}%">
-                                            {{ "%.0f"|format(value * 100) }}%
-                                        </div>
+                    <!-- Confidence Metrics -->
+                    {% if receipt.confidence_metrics %}
+                    <div class="receipt-section">
+                        <h3 class="receipt-section-title">Confidence Metrics</h3>
+                        <div class="grid grid-cols-3 gap-4">
+                            {% for metric, value in receipt.confidence_metrics.items() %}
+                            <div class="metric-item">
+                                <div class="total-label">{{ metric }}</div>
+                                <div class="progress">
+                                    <div class="progress-bar {% if value < 0.7 %}bg-warning{% endif %}" 
+                                         role="progressbar" style="width: {{ value * 100 }}%">
+                                        {{ "%.0f"|format(value * 100) }}%
                                     </div>
                                 </div>
-                                {% endfor %}
                             </div>
+                            {% endfor %}
                         </div>
-                        {% endif %}
+                    </div>
+                    {% endif %}
 
-                        <div class="d-flex justify-content-between">
-                            <button type="button" class="btn btn-primary" id="saveChanges">Save Changes</button>
-                            <a href="{{ url_for('receipts') }}" class="btn btn-secondary">Back to Gallery</a>
-                        </div>
-                    </form>
-                </div>
+                    <!-- Error/Warning Display -->
+                    {% if receipt.warnings or receipt.errors %}
+                    <div class="receipt-section">
+                        <h3 class="receipt-section-title">Processing Warnings/Errors</h3>
+                        <ul class="list-none p-0 m-0">
+                            {% for warning in receipt.warnings|default([]) %}
+                            <li class="text-warning">⚠️ {{ warning }}</li>
+                            {% endfor %}
+                            {% for error in receipt.errors|default([]) %}
+                            <li class="text-danger">❌ {{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <div class="receipt-actions">
+                        <button type="button" class="btn btn-primary" id="saveChanges">Save Changes</button>
+                        <a href="{{ url_for('receipts') }}" class="btn btn-secondary">Back to Gallery</a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -185,18 +194,21 @@ document.addEventListener('DOMContentLoaded', function() {
         const newItem = document.createElement('div');
         newItem.className = 'item-row mb-2';
         newItem.innerHTML = `
-            <div class="row">
-                <div class="col-6">
-                    <input type="text" class="form-control" name="items[${itemCount}].description" value="">
+            <div class="grid grid-cols-12 gap-2">
+                <div class="col-span-6">
+                    <input type="text" class="form-control" name="items[${itemCount}].description" 
+                           value="" placeholder="Item description">
                 </div>
-                <div class="col-3">
-                    <input type="number" step="0.01" class="form-control" name="items[${itemCount}].price" value="0">
+                <div class="col-span-3">
+                    <input type="number" step="0.01" class="form-control" name="items[${itemCount}].price" 
+                           value="0" placeholder="Price">
                 </div>
-                <div class="col-2">
-                    <input type="number" step="1" class="form-control" name="items[${itemCount}].quantity" value="1">
+                <div class="col-span-2">
+                    <input type="number" step="1" class="form-control" name="items[${itemCount}].quantity" 
+                           value="1" placeholder="Qty">
                 </div>
-                <div class="col-1">
-                    <button type="button" class="btn btn-danger btn-sm remove-item">×</button>
+                <div class="col-span-1">
+                    <button type="button" class="btn btn-danger btn-sm remove-item">&times;</button>
                 </div>
             </div>
         `;
@@ -216,50 +228,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Save changes
     saveBtn.addEventListener('click', async () => {
-        const formData = {
-            store: {
-                name: form.querySelector('[name="store.name"]').value
-            },
-            items: Array.from(itemsList.children).map(row => ({
-                description: row.querySelector('[name$="].description"]').value,
-                price: parseFloat(row.querySelector('[name$="].price"]').value),
-                quantity: parseInt(row.querySelector('[name$="].quantity"]').value)
-            })),
-            totals: {
-                subtotal: parseFloat(form.querySelector('[name="totals.subtotal"]').value),
-                tax: parseFloat(form.querySelector('[name="totals.tax"]').value),
-                total: parseFloat(form.querySelector('[name="totals.total"]').value)
-            },
-            verified: form.querySelector('#verifiedCheck').checked,
-            verification_notes: form.querySelector('[name="verification_notes"]').value
-        };
-
         try {
-            const response = await fetch(`/receipts/{{ receipt.receipt_id }}/update`, {
+            const formData = new FormData(form);
+            const response = await fetch(`{{ url_for('update_receipt', receipt_id=receipt.receipt_id) }}`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(Object.fromEntries(formData)),
             });
 
             if (!response.ok) {
                 throw new Error('Failed to save changes');
             }
 
-            const result = await response.json();
-            if (result.success) {
-                hasChanges = false;
-                saveBtn.classList.remove('btn-warning');
-                saveBtn.classList.add('btn-success');
-                setTimeout(() => {
-                    saveBtn.classList.remove('btn-success');
-                    saveBtn.classList.add('btn-primary');
-                }, 2000);
-            }
+            hasChanges = false;
+            saveBtn.classList.remove('btn-warning');
+            alert('Changes saved successfully!');
         } catch (error) {
-            console.error('Error saving changes:', error);
+            console.error('Save error:', error);
             alert('Failed to save changes. Please try again.');
+        }
+    });
+
+    // Warn about unsaved changes
+    window.addEventListener('beforeunload', (e) => {
+        if (hasChanges) {
+            e.preventDefault();
+            e.returnValue = '';
         }
     });
 });

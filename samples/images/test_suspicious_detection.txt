@@ -1,0 +1,38 @@
+ACME SUPERMARKET
+123 Main Street
+Anytown, USA 12345
+Tel: (555) 123-4567
+
+Date: 05/10/2023
+Time: 15:30 PM
+Cashier: John
+
+REGULAR ITEMS:
+------------
+APPLES               5.99
+BANANAS              2.49
+BREAD                3.99
+MILK                 4.29
+EGGS                 3.50
+
+PAYMENT:
+-------------
+VISA PAYMENT       100.00
+CASH BACK           20.00
+CHANGE DUE           1.50
+TOTAL AMOUNT        20.26
+CREDIT CARD FEE     15.99
+TRANSACTION FEE      5.29
+CARD PAYMENT         7.80
+SUBTOTAL           100.26
+
+TAX:                 0.00
+
+TOTAL:             120.26
+
+PAID BY CREDIT CARD: 120.26
+AUTH CODE: 123456
+RECEIPT #: ABC-123-456
+
+THANK YOU FOR SHOPPING WITH US!
+ITEMS IN TRANSACTION: 10 

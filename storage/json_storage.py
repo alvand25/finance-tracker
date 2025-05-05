@@ -252,9 +252,8 @@ class JSONStorage(StorageBase):
                 except Exception as e:
                     logging.warning(f"Error processing expense: {str(e)}")
                     continue
-                
-            return BalanceSheet(month=month, expenses=expenses)
             
+            return BalanceSheet(month=month, expenses=expenses)
         except Exception as e:
             logging.error(f"Error getting balance sheet for {month}: {str(e)}")
             return BalanceSheet(month=month, expenses=[])

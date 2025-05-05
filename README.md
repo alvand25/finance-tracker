@@ -82,10 +82,56 @@ You can also use the application via a command-line interface:
 python cli.py
 ```
 
-### Running Tests
+### Testing & Validation
 
+#### Manual Testing 
+
+To manually verify the UI functionality:
 ```
-python -m unittest discover tests
+flask run
+```
+Visit: http://localhost:5003/expense/new
+
+Use the checklist in `tests/manual_checklist.md` to validate all workflows:
+- Receipt-based expense entry
+- Manual expense entry
+- Shared/personal item handling
+- CSV export functionality
+- Mobile API integration
+
+#### Automated Testing
+
+To run the automated test suite:
+```
+pytest tests/
+```
+
+To run Phase 6-specific tests only:
+```
+pytest tests/test_phase6.py
+```
+
+For testing the mobile API endpoints:
+```
+python tests/test_receipt_api.py
+```
+
+#### Test Coverage
+
+To generate a test coverage report:
+```
+pytest --cov=. tests/
+```
+
+#### API Testing
+
+The mobile API endpoints can be tested with curl:
+```bash
+# Test receipt upload
+curl -X POST -F "file=@path/to/receipt.jpg" http://localhost:5003/api/upload-receipt
+
+# Test HEIC support (iOS images)
+curl -X POST -F "file=@path/to/receipt.heic" http://localhost:5003/api/upload-receipt
 ```
 
 ## Project Structure
@@ -592,3 +638,31 @@ python scripts/test_vision_setup.py
 ## License
 
 [MIT License](LICENSE)
+
+## Live Calculation Logic
+
+The finance tracker now features real-time calculation logic to provide immediate feedback on expense submissions and balance changes:
+
+### Key Features
+
+- **Real-time Balance Preview**: As you add or modify expense items, the balance preview updates automatically to show how the new expense will affect the overall monthly balance.
+
+- **Dynamic "Who Owes Who" Calculation**: The application dynamically calculates and displays who owes whom based on the current state of expenses and new additions.
+
+- **AJAX Form Submission**: Expense forms are submitted asynchronously, allowing the UI to update without page reloads.
+
+- **Post-Submission Summary**: After submitting an expense, a modal displays with the updated month summary, showing the new balance and contribution totals.
+
+### How It Works
+
+1. When adding a new expense, select items as either shared or personal
+2. The balance preview updates in real-time as you make changes
+3. Upon submission, the data is saved to the server without a page reload
+4. The application fetches the updated month data and displays it in a summary modal
+
+### Technical Implementation
+
+- Uses JavaScript fetch API for asynchronous data retrieval and submission
+- Real-time calculations performed on the client-side for immediate feedback
+- Server-side validation and calculation for data consistency
+- Bootstrap modal and UI components for a smooth user experience

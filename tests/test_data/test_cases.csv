@@ -1,0 +1,13 @@
+test_id,store_name,receipt_file,expected_total,expected_tax,expected_subtotal,expected_item_count,min_confidence,expected_handler
+TJ001,TRADER JOE'S,trader_joes_receipt1.txt,24.31,1.87,22.44,5,0.7,TraderJoesHandler
+TJ002,TRADER JOE'S,trader_joes_receipt2.txt,15.98,1.32,14.66,3,0.7,TraderJoesHandler
+KF001,KEY FOOD,key_food_receipt1.txt,25.96,2.00,23.96,5,0.7,KeyFoodHandler
+KF002,KEY FOOD,key_food_receipt2.txt,8.64,0.66,7.98,2,0.7,KeyFoodHandler
+WM001,WALMART,walmart_receipt1.txt,24.85,1.91,22.94,5,0.7,WalmartHandler
+WM002,WALMART,walmart_receipt2.txt,33.00,3.00,30.00,2,0.7,WalmartHandler
+CS001,COSTCO,costco_receipt1.txt,156.78,12.89,143.89,8,0.7,CostcoReceiptHandler
+CS002,COSTCO,costco_receipt2.txt,89.99,7.42,82.57,4,0.7,CostcoReceiptHandler
+TJ003,TRADER JOE'S,trader_joes_receipt3.txt,0.00,0.00,0.00,0,0.0,TraderJoesHandler
+KF003,KEY FOOD,key_food_receipt3.txt,0.00,0.00,0.00,0,0.0,KeyFoodHandler
+WM003,WALMART,walmart_receipt3.txt,0.00,0.00,0.00,0,0.0,WalmartHandler
+CS003,COSTCO,costco_receipt3.txt,0.00,0.00,0.00,0,0.0,CostcoReceiptHandler 

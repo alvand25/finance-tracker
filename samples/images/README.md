@@ -1,4 +1,4 @@
-# Sample Images
+how to change keyboard from # Sample Images
 
 This directory contains sample receipt images for testing the OCR and receipt processing functionality.
 

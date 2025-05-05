@@ -6,7 +6,11 @@ import logging
 from typing import Dict, List, Type, Optional, Any
 
 from handlers.base_handler import BaseReceiptHandler
-from handlers.generic_handler import GenericHandler
+from handlers.generic_handler import GenericReceiptHandler
+from handlers.costco_handler import CostcoReceiptHandler
+from handlers.trader_joes_handler import TraderJoesReceiptHandler
+from handlers.key_food_handler import KeyFoodReceiptHandler
+from handlers.walmart_handler import WalmartReceiptHandler
 
 logger = logging.getLogger(__name__)
 
@@ -24,8 +28,22 @@ class HandlerRegistry:
             handlers_path: Path to the directory containing handler modules
             known_stores_path: Path to the JSON file mapping store names to handler keys
         """
-        self.handlers: Dict[str, Type[BaseReceiptHandler]] = {}
-        self.store_mappings: Dict[str, List[str]] = {}
+        self._handlers: Dict[str, Type[BaseReceiptHandler]] = {
+            'trader_joes': TraderJoesReceiptHandler,
+            'key_food': KeyFoodReceiptHandler,
+            'walmart': WalmartReceiptHandler,
+            'costco': CostcoReceiptHandler,
+            'generic': GenericReceiptHandler
+        }
+        
+        # Initialize handler instances
+        self._handler_instances: Dict[str, BaseReceiptHandler] = {}
+        for name, handler_class in self._handlers.items():
+            try:
+                self._handler_instances[name] = handler_class()
+            except Exception as e:
+                logger.error(f"Failed to initialize handler {name}: {e}")
+        
         self.handlers_path = handlers_path
         self.known_stores_path = known_stores_path
         
@@ -35,18 +53,10 @@ class HandlerRegistry:
         # Load store mappings
         self._load_store_mappings()
         
-        logger.info(f"Handler registry initialized with {len(self.handlers)} handlers and {len(self.store_mappings)} store mappings")
+        logger.info(f"Handler registry initialized with {len(self._handlers)} handlers and {len(self.store_mappings)} store mappings")
     
     def _register_builtin_handlers(self) -> None:
         """Register built-in handlers."""
-        # Ensure we have a generic handler
-        if 'generic' not in self.handlers:
-            self.handlers['generic'] = GenericHandler
-            
-        # Explicitly register Costco handler
-        from handlers.costco_handler import CostcoReceiptHandler
-        self.handlers['costco'] = CostcoReceiptHandler
-            
         # Try to auto-discover handlers in the handlers directory
         if os.path.isdir(self.handlers_path):
             for filename in os.listdir(self.handlers_path):
@@ -73,7 +83,7 @@ class HandlerRegistry:
                                     handler_key = handler_key[:-13]
                                 
                                 # Register the handler
-                                self.handlers[handler_key] = obj
+                                self._handlers[handler_key] = obj
                                 logger.debug(f"Registered handler: {handler_key} -> {obj.__name__}")
                     except Exception as e:
                         logger.error(f"Error loading handler from {filename}: {str(e)}")
@@ -106,135 +116,140 @@ class HandlerRegistry:
             # Fallback to empty mappings
             self.store_mappings = {}
     
-    def get_handler_for_store(self, store_name: str) -> BaseReceiptHandler:
-        """
-        Get the appropriate handler for a store name.
+    def get_handler(self, text: str) -> Optional[BaseReceiptHandler]:
+        """Get the most appropriate handler for the receipt text."""
+        best_handler = None
+        best_confidence = 0.0
         
-        Args:
-            store_name: The store name to look up
-            
-        Returns:
-            An instance of the appropriate handler
-        """
-        if not store_name:
-            logger.debug("[Registry] No store name provided, using generic handler")
-            return GenericHandler()
-        
-        # Normalize store name to lowercase for comparison
-        store_name_lower = store_name.lower().strip()
-        logger.debug(f"[Registry] Looking for handler for store: '{store_name}' (normalized: '{store_name_lower}')")
-        logger.debug(f"[Registry] Available Handlers: {list(self.handlers.keys())}")
-        logger.debug(f"[Registry] Store Mappings: {self.store_mappings}")
-        
-        # First try direct handler key match
-        if store_name_lower in self.handlers:
-            logger.debug(f"[Registry] Direct handler match found: {store_name_lower}")
-            return self.handlers[store_name_lower]()
-        
-        # Check store mappings
-        for handler_key, store_variations in self.store_mappings.items():
-            normalized_variations = [v.lower().strip() for v in store_variations]
-            logger.debug(f"[Registry] Checking variations for {handler_key}: {normalized_variations}")
-            
-            # Check if store name contains any of the variations
-            for variation in normalized_variations:
-                if variation in store_name_lower or store_name_lower in variation:
-                    if handler_key in self.handlers:
-                        logger.debug(f"[Registry] Selected Handler: {self.handlers[handler_key].__name__} for store '{store_name}'")
-                        return self.handlers[handler_key]()
-                    else:
-                        logger.warning(f"[Registry] Handler key '{handler_key}' not registered for store '{store_name}'")
-        
-        # No direct mapping found, try common vendor names
-        common_vendors = {
-            "costco": ["costco", "wholesale"],
-            "trader_joes": ["trader", "joe"],
-            "h_mart": ["h mart", "h-mart", "hmart"],
-            "key_food": ["key food", "keyfood"],
-            "walmart": ["walmart"],
-            "target": ["target"],
-            "kroger": ["kroger"],
-            "safeway": ["safeway"],
-            "publix": ["publix"],
-            "whole_foods": ["whole foods"],
-            "aldi": ["aldi"]
-        }
-        
-        logger.debug(f"[Registry] Checking common vendor keywords")
-        
-        for handler_key, keywords in common_vendors.items():
-            matched_keywords = [keyword for keyword in keywords if keyword in store_name_lower]
-            if matched_keywords:
-                logger.debug(f"[Registry] Found match in common vendors: {matched_keywords} for handler '{handler_key}'")
-                if handler_key in self.handlers:
-                    logger.debug(f"[Registry] Selected Handler: {self.handlers[handler_key].__name__}")
-                    return self.handlers[handler_key]()
-        
-        # Fallback to generic handler
-        logger.debug(f"[Registry] No specific handler found for store '{store_name}', using generic handler")
-        return GenericHandler()
-    
-    def add_store_mapping(self, handler_key: str, store_name: str) -> bool:
-        """
-        Add a new store name mapping to a handler.
-        
-        Args:
-            handler_key: The handler key to map to
-            store_name: The store name to add
-            
-        Returns:
-            True if successful, False otherwise
-        """
-        if handler_key not in self.handlers:
-            logger.error(f"Cannot add mapping: Handler key '{handler_key}' not registered")
-            return False
-        
-        if handler_key not in self.store_mappings:
-            self.store_mappings[handler_key] = []
-            
-        # Add the store name if it's not already in the list
-        if store_name not in self.store_mappings[handler_key]:
-            self.store_mappings[handler_key].append(store_name)
-            
-            # Save the updated mappings
+        for name, handler in self._handler_instances.items():
             try:
-                with open(self.known_stores_path, 'w') as f:
-                    json.dump(self.store_mappings, f, indent=2)
-                logger.info(f"Added mapping: {store_name} -> {handler_key}")
-                return True
+                confidence = handler.can_handle_receipt(text)
+                if confidence > best_confidence:
+                    best_confidence = confidence
+                    best_handler = handler
             except Exception as e:
-                logger.error(f"Error saving store mappings: {str(e)}")
-                return False
+                logger.error(f"Error checking handler {name}: {e}")
         
-        return True  # Already exists
-    
-    def list_registered_handlers(self) -> Dict[str, List[str]]:
-        """
-        Get a dictionary of registered handlers and their store mappings.
-        
-        Returns:
-            Dictionary with handler keys and associated store names
-        """
-        result = {}
-        for handler_key in self.handlers:
-            result[handler_key] = self.store_mappings.get(handler_key, [])
-        return result
-    
-    def register_custom_handler(self, handler_key: str, handler_class: Type[BaseReceiptHandler]) -> bool:
-        """
-        Register a custom handler class.
-        
-        Args:
-            handler_key: The key to register the handler under
-            handler_class: The handler class to register
+        if best_handler and best_confidence >= 0.7:
+            return best_handler
             
-        Returns:
-            True if successful, False otherwise
-        """
-        if not issubclass(handler_class, BaseReceiptHandler):
-            logger.error(f"Cannot register handler: {handler_class.__name__} is not a subclass of BaseReceiptHandler")
-            return False
+        # Fall back to generic handler if no specific handler is confident enough
+        return self._handler_instances['generic']
+    
+    def get_handler_by_name(self, name: str) -> Optional[BaseReceiptHandler]:
+        """Get a handler by its registered name."""
+        return self._handler_instances.get(name)
+    
+    def get_available_handlers(self) -> List[str]:
+        """Get a list of available handler names."""
+        return list(self._handlers.keys())
+    
+    def register_handler(self, name: str, handler_class: Type[BaseReceiptHandler]) -> None:
+        """Register a new handler."""
+        if name in self._handlers:
+            logger.warning(f"Overwriting existing handler: {name}")
             
-        self.handlers[handler_key] = handler_class
-        logger.info(f"Registered custom handler: {handler_key} -> {handler_class.__name__}")
-        return True 
+        try:
+            handler_instance = handler_class()
+            self._handlers[name] = handler_class
+            self._handler_instances[name] = handler_instance
+            logger.info(f"Successfully registered handler: {name}")
+        except Exception as e:
+            logger.error(f"Failed to register handler {name}: {e}")
+            raise
+
+# Global registry instance
+_registry = HandlerRegistry()
+
+def get_handler(text: str) -> Optional[BaseReceiptHandler]:
+    """Get the most appropriate handler for the receipt text."""
+    return _registry.get_handler(text)
+
+def get_handler_by_name(name: str) -> Optional[BaseReceiptHandler]:
+    """Get a handler by its registered name."""
+    return _registry.get_handler_by_name(name)
+
+def get_available_handlers() -> List[str]:
+    """Get a list of available handler names."""
+    return _registry.get_available_handlers()
+
+def register_handler(name: str, handler_class: Type[BaseReceiptHandler]) -> None:
+    """Register a new handler."""
+    _registry.register_handler(name, handler_class)
+
+# List of available handlers in order of preference
+HANDLERS: List[Type[BaseReceiptHandler]] = [
+    CostcoReceiptHandler,
+    TraderJoesReceiptHandler,
+    KeyFoodReceiptHandler,
+    WalmartReceiptHandler,
+    GenericReceiptHandler  # Always keep generic handler last as fallback
+]
+
+def get_handler_for_store(store_name: str) -> BaseReceiptHandler:
+    """
+    Get the appropriate handler for a store name.
+    
+    Args:
+        store_name: The store name to look up
+        
+    Returns:
+        An instance of the appropriate handler
+    """
+    if not store_name:
+        logger.debug("[Registry] No store name provided, using generic handler")
+        return GenericReceiptHandler()
+    
+    # Normalize store name to lowercase for comparison
+    store_name_lower = store_name.lower().strip()
+    logger.debug(f"[Registry] Looking for handler for store: '{store_name}' (normalized: '{store_name_lower}')")
+    logger.debug(f"[Registry] Available Handlers: {list(HANDLERS)}")
+    logger.debug(f"[Registry] Store Mappings: {HANDLERS}")
+    
+    # First try direct handler key match
+    if store_name_lower in HANDLERS:
+        logger.debug(f"[Registry] Direct handler match found: {store_name_lower}")
+        return HANDLERS[store_name_lower]()
+    
+    # Check store mappings
+    for handler_key, store_variations in HANDLERS.items():
+        normalized_variations = [v.lower().strip() for v in store_variations]
+        logger.debug(f"[Registry] Checking variations for {handler_key}: {normalized_variations}")
+        
+        # Check if store name contains any of the variations
+        for variation in normalized_variations:
+            if variation in store_name_lower or store_name_lower in variation:
+                if handler_key in HANDLERS:
+                    logger.debug(f"[Registry] Selected Handler: {HANDLERS[handler_key].__name__} for store '{store_name}'")
+                    return HANDLERS[handler_key]()
+                else:
+                    logger.warning(f"[Registry] Handler key '{handler_key}' not registered for store '{store_name}'")
+    
+    # No direct mapping found, try common vendor names
+    common_vendors = {
+        "costco": ["costco", "wholesale"],
+        "trader_joes": ["trader", "joe"],
+        "h_mart": ["h mart", "h-mart", "hmart"],
+        "key_food": ["key food", "keyfood"],
+        "walmart": ["walmart"],
+        "target": ["target"],
+        "kroger": ["kroger"],
+        "safeway": ["safeway"],
+        "publix": ["publix"],
+        "whole_foods": ["whole foods"],
+        "aldi": ["aldi"]
+    }
+    
+    logger.debug(f"[Registry] Checking common vendor keywords")
+    
+    for handler_key, keywords in common_vendors.items():
+        matched_keywords = [keyword for keyword in keywords if keyword in store_name_lower]
+        if matched_keywords:
+            logger.debug(f"[Registry] Found match in common vendors: {matched_keywords} for handler '{handler_key}'")
+            if handler_key in HANDLERS:
+                logger.debug(f"[Registry] Selected Handler: {HANDLERS[handler_key].__name__}")
+                return HANDLERS[handler_key]()
+    
+    # Fallback to generic handler
+    logger.debug(f"[Registry] No specific handler found for store '{store_name}', using generic handler")
+    return GenericReceiptHandler() 

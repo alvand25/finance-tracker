@@ -3,226 +3,324 @@
 import io
 import os
 import logging
+import datetime
 import time
-from typing import Dict, Any, List, Optional, Union
+from typing import Dict, List, Any, Optional, Tuple
 from google.cloud import vision
-from google.api_core import retry
-from PIL import Image
+from google.cloud.vision_v1 import types
+
+from .base_ocr import BaseOCR, OCRResult, OCRError, OCREngineType
+from .google_vision_config import GoogleVisionConfig
 
 logger = logging.getLogger(__name__)
 
-class GoogleVisionOCR:
-    """OCR engine using Google Cloud Vision API."""
+class GoogleVisionOCR(BaseOCR):
+    """Google Cloud Vision OCR implementation with enhanced fallback handling."""
     
-    def __init__(self, 
-                 credentials_path: str,
-                 timeout: int = 30,
-                 max_retries: int = 3,
-                 batch_size: int = 10):
+    def __init__(self, credentials_path: Optional[str] = None, fallback_engine: Optional[BaseOCR] = None,
+                 max_retries: int = 3, timeout: float = 30.0):
         """
-        Initialize Google Cloud Vision OCR.
+        Initialize Google Vision OCR.
         
         Args:
-            credentials_path: Path to service account credentials JSON
-            timeout: API request timeout in seconds
-            max_retries: Maximum number of retries for failed requests
-            batch_size: Number of images to process in parallel
+            credentials_path: Optional path to credentials file
+            fallback_engine: Optional fallback OCR engine
+            max_retries: Maximum number of retries for API calls
+            timeout: Timeout for API calls in seconds
         """
-        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_path
-        self.client = vision.ImageAnnotatorClient()
-        self.timeout = timeout
+        super().__init__(fallback_engine)
+        self.engine_type = OCREngineType.GOOGLE_VISION
         self.max_retries = max_retries
-        self.batch_size = batch_size
-        self.last_processing_time = 0
+        self.timeout = timeout
+        self.last_processing_time = 0.0
         
-        # Configure retry strategy
-        self.retry_strategy = retry.Retry(
-            initial=1.0,  # Initial delay in seconds
-            maximum=10.0,  # Maximum delay between retries
-            multiplier=2.0,  # Multiplier for exponential backoff
-            predicate=retry.if_exception_type(
-                ConnectionError,
-                TimeoutError,
-                Exception  # Add specific exceptions as needed
-            )
-        )
-
-        # Validate API access on initialization
-        self.validate_api_access()
-        
-    def validate_api_access(self) -> None:
-        """
-        Validate that the Google Cloud Vision API is enabled and accessible.
-        Raises an exception if the API is disabled or inaccessible.
-        """
-        try:
-            # Create a minimal test image (1x1 pixel)
-            test_image = Image.new('RGB', (1, 1), color='white')
-            img_byte_arr = io.BytesIO()
-            test_image.save(img_byte_arr, format='PNG')
-            content = img_byte_arr.getvalue()
+        if credentials_path:
+            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_path
             
-            # Create Vision API image
-            vision_image = vision.Image(content=content)
-            
-            # Attempt a minimal API call
-            self.client.document_text_detection(
-                image=vision_image,
-                timeout=5  # Short timeout for validation
-            )
-            
-            logger.info("Successfully validated Google Cloud Vision API access")
-            
-        except Exception as e:
-            error_msg = str(e)
-            if "SERVICE_DISABLED" in error_msg:
-                # Extract project ID from error message
-                import re
-                project_match = re.search(r'project=(\d+)', error_msg)
-                project_id = project_match.group(1) if project_match else "unknown"
-                
-                raise RuntimeError(
-                    f"Google Cloud Vision API is disabled for project {project_id}. "
-                    f"Please enable it at: https://console.developers.google.com/apis/api/"
-                    f"vision.googleapis.com/overview?project={project_id}"
-                )
-            else:
-                raise RuntimeError(f"Failed to validate Google Cloud Vision API access: {error_msg}")
-        
-    @retry.Retry(predicate=retry.if_exception_type(Exception))
-    def _extract_text_with_retry(self, image: vision.Image) -> vision.TextAnnotation:
-        """Extract text from image with retry logic."""
-        try:
-            start_time = time.time()
-            response = self.client.document_text_detection(
-                image=image,
-                timeout=self.timeout
-            )
-            self.last_processing_time = time.time() - start_time
-            return response.full_text_annotation
-        except Exception as e:
-            logger.error(f"Error in OCR request: {str(e)}")
-            raise
-            
-    def extract_text(self, image: Union[str, Image.Image]) -> Dict[str, Any]:
-        """
-        Extract text from an image using Google Cloud Vision.
-        
-        Args:
-            image: Path to image file or PIL Image object
-            
-        Returns:
-            Dictionary containing:
-                - text: Extracted text
-                - confidence: Overall confidence score
-                - text_blocks: List of text blocks with positions
-                - processing_time: Time taken for OCR
-        """
-        try:
-            # Handle both file paths and PIL Image objects
-            if isinstance(image, str):
-                # Load image from file path
-                with open(image, 'rb') as image_file:
-                    content = image_file.read()
-            else:
-                # Convert PIL Image to bytes
-                img_byte_arr = io.BytesIO()
-                image.save(img_byte_arr, format=image.format or 'PNG')
-                content = img_byte_arr.getvalue()
-            
-            # Create Vision API image
-            vision_image = vision.Image(content=content)
-            
-            # Extract text with retry
-            annotation = self._extract_text_with_retry(vision_image)
-            
-            # Process text blocks
-            text_blocks = []
-            total_confidence = 0
-            block_count = 0
-            
-            for page in annotation.pages:
-                for block in page.blocks:
-                    block_text = ''
-                    block_confidence = block.confidence
-                    
-                    for paragraph in block.paragraphs:
-                        for word in paragraph.words:
-                            word_text = ''.join([
-                                symbol.text for symbol in word.symbols
-                            ])
-                            block_text += word_text + ' '
-                            
-                    text_blocks.append({
-                        'text': block_text.strip(),
-                        'confidence': block_confidence,
-                        'bounding_box': {
-                            'left': block.bounding_box.vertices[0].x,
-                            'top': block.bounding_box.vertices[0].y,
-                            'right': block.bounding_box.vertices[2].x,
-                            'bottom': block.bounding_box.vertices[2].y
-                        }
-                    })
-                    
-                    total_confidence += block_confidence
-                    block_count += 1
-                    
-            # Calculate overall confidence
-            avg_confidence = total_confidence / block_count if block_count > 0 else 0
-            
-            return {
-                'text': annotation.text,
-                'confidence': avg_confidence,
-                'text_blocks': text_blocks,
-                'processing_time': self.last_processing_time
-            }
-            
-        except Exception as e:
-            logger.error(f"Error extracting text from image: {str(e)}")
-            return {
-                'text': '',
-                'confidence': 0,
-                'text_blocks': [],
-                'error': str(e)
-            }
-            
-    def batch_process_images(self, image_paths: List[str]) -> List[Dict[str, Any]]:
-        """
-        Process multiple images in batches.
-        
-        Args:
-            image_paths: List of image file paths
-            
-        Returns:
-            List of OCR results for each image
-        """
-        results = []
-        
-        # Process images in batches
-        for i in range(0, len(image_paths), self.batch_size):
-            batch = image_paths[i:i + self.batch_size]
-            logger.info(f"Processing batch {i//self.batch_size + 1}")
-            
-            for image_path in batch:
+        self.config = GoogleVisionConfig()
+        self._client = None
+        self._last_error = None
+    
+    @property
+    def client(self) -> vision.ImageAnnotatorClient:
+        """Get Vision client with retry logic."""
+        if not self._client:
+            for attempt in range(self.max_retries):
                 try:
-                    result = self.extract_text(image_path)
-                    result['image_path'] = image_path
-                    results.append(result)
+                    self._client = self.config.client
+                    break
                 except Exception as e:
-                    logger.error(f"Error processing {image_path}: {str(e)}")
-                    results.append({
-                        'image_path': image_path,
-                        'error': str(e)
-                    })
-                    
-        return results
+                    logger.warning(f"Attempt {attempt + 1}/{self.max_retries} to initialize client failed: {str(e)}")
+                    if attempt == self.max_retries - 1:
+                        raise OCRError(
+                            f"Failed to initialize Google Vision client after {self.max_retries} attempts: {str(e)}",
+                            self.engine_type,
+                            {'error_type': 'initialization', 'last_error': str(e)}
+                        )
+                    time.sleep(1)  # Wait before retrying
+        return self._client
+    
+    def try_with_fallback(self, method_name: str, *args, **kwargs) -> Any:
+        """Enhanced fallback mechanism with better error handling."""
+        start_time = time.time()
+        try:
+            # Try primary engine first
+            method = getattr(self, f"_{method_name}")
+            result = method(*args, **kwargs)
+            self.last_processing_time = time.time() - start_time
+            return result
+        except Exception as e:
+            logger.error(f"Primary engine failed: {str(e)}")
+            self._last_error = str(e)
+            
+            # If we have a fallback engine, try it
+            if self.fallback_engine:
+                logger.info("Attempting fallback OCR")
+                try:
+                    fallback_method = getattr(self.fallback_engine, method_name)
+                    result = fallback_method(*args, **kwargs)
+                    self.last_processing_time = time.time() - start_time
+                    logger.info("Fallback OCR successful")
+                    return result
+                except Exception as fallback_e:
+                    logger.error(f"Fallback engine also failed: {str(fallback_e)}")
+                    raise OCRError(
+                        f"Both primary and fallback engines failed. Primary: {str(e)}, Fallback: {str(fallback_e)}",
+                        self.engine_type,
+                        {
+                            'primary_error': str(e),
+                            'fallback_error': str(fallback_e),
+                            'processing_time': time.time() - start_time
+                        }
+                    )
+            else:
+                logger.error("No fallback engine available")
+                raise OCRError(
+                    f"OCR failed and no fallback available: {str(e)}",
+                    self.engine_type,
+                    {'error': str(e), 'processing_time': time.time() - start_time}
+                )
+    
+    def validate_api_access(self) -> bool:
+        """
+        Test API access by running a simple detection.
         
-    def get_debug_info(self) -> Dict[str, Any]:
-        """Get debug information about the OCR engine."""
+        Returns:
+            bool: Whether API access is working
+        """
+        try:
+            # Create a small test image
+            content = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\nIDATx\x9cc\x00\x00\x00\x02\x00\x01\xe5\x27\xde\xfc\x00\x00\x00\x00IEND\xaeB`\x82'
+            image = types.Image(content=content)
+            
+            # Try to detect text
+            self.client.text_detection(image=image)
+            return True
+            
+        except Exception as e:
+            logger.error(f"API access validation failed: {str(e)}")
+            return False
+    
+    def _process_image(self, image_path: str, **kwargs) -> List[OCRResult]:
+        """Internal implementation of process_image with enhanced error handling."""
+        try:
+            # Read image file with timeout
+            with io.open(image_path, 'rb') as image_file:
+                content = image_file.read()
+                
+            image = vision.Image(content=content)
+            
+            # Detect text with retry logic
+            for attempt in range(self.max_retries):
+                try:
+                    response = self.client.text_detection(
+                        image=image,
+                        timeout=self.timeout
+                    )
+                    if response.error.message:
+                        raise OCRError(
+                            f'Error detecting text: {response.error.message}',
+                            self.engine_type,
+                            {'api_error': response.error.message}
+                        )
+                    break
+                except Exception as e:
+                    if attempt == self.max_retries - 1:
+                        raise
+                    logger.warning(f"Attempt {attempt + 1}/{self.max_retries} failed: {str(e)}")
+                    time.sleep(1)
+                
+            texts = response.text_annotations
+            if not texts:
+                return []
+                
+            results = []
+            # Process individual words/blocks with enhanced confidence calculation
+            for text in texts[1:]:  # Skip first element (full text)
+                vertices = text.bounding_poly.vertices
+                box = {
+                    'left': min(v.x for v in vertices),
+                    'top': min(v.y for v in vertices),
+                    'right': max(v.x for v in vertices),
+                    'bottom': max(v.y for v in vertices)
+                }
+                
+                # Calculate confidence based on multiple factors
+                base_confidence = text.confidence or 0.0
+                size_factor = min(1.0, (box['right'] - box['left']) * (box['bottom'] - box['top']) / 1000)
+                position_factor = 1.0 - (box['top'] / 2000)  # Assume 2000px max height
+                confidence = (base_confidence * 0.6 + size_factor * 0.2 + position_factor * 0.2)
+                
+                results.append(OCRResult(
+                    text=text.description,
+                    confidence=confidence,
+                    bounding_box=box,
+                    engine=self.engine_type
+                ))
+                
+            return results
+            
+        except OCRError:
+            raise
+        except Exception as e:
+            raise OCRError(
+                f"Failed to process image: {str(e)}",
+                self.engine_type,
+                {'error_type': 'processing'}
+            )
+    
+    def process_image(self, image_path: str, **kwargs) -> List[OCRResult]:
+        """Process image with fallback support."""
+        return self.try_with_fallback('process_image', image_path, **kwargs)
+    
+    def _extract_text(self, image_path: str) -> str:
+        """Internal implementation of extract_text."""
+        try:
+            results = self._process_image(image_path)
+            if not results:
+                return ""
+                
+            # Sort results by vertical position and then horizontal position
+            sorted_results = sorted(results, key=lambda r: (
+                r.bounding_box['top'],
+                r.bounding_box['left']
+            ))
+            
+            # Combine text with newlines for significant vertical gaps
+            text_blocks = []
+            last_bottom = 0
+            line_buffer = []
+            
+            for result in sorted_results:
+                # Calculate vertical gap
+                vertical_gap = result.bounding_box['top'] - last_bottom if last_bottom > 0 else 0
+                
+                # Start a new line if there's a significant vertical gap
+                if vertical_gap > 20:  # Threshold for new line
+                    if line_buffer:
+                        text_blocks.append(' '.join(line_buffer))
+                        line_buffer = []
+                    text_blocks.append('')  # Add blank line for large gaps
+                
+                # Add text to current line
+                line_buffer.append(result.text)
+                last_bottom = result.bounding_box['bottom']
+            
+            # Add any remaining text
+            if line_buffer:
+                text_blocks.append(' '.join(line_buffer))
+            
+            # Join all blocks with newlines
+            return '\n'.join(text_blocks)
+            
+        except Exception as e:
+            logger.error(f"Error extracting text: {str(e)}")
+            if self.fallback_engine:
+                logger.info("Attempting fallback text extraction")
+                return self.fallback_engine.extract_text(image_path)
+            raise OCRError(
+                f"Failed to extract text: {str(e)}",
+                self.engine_type,
+                {'error_type': 'text_extraction', 'error': str(e)}
+            )
+    
+    def extract_text(self, image_path: str) -> str:
+        """Extract text from image with fallback support."""
+        return self.try_with_fallback('extract_text', image_path)
+    
+    def _extract_receipt_data(self, image_path: str) -> Dict[str, Any]:
+        """Internal implementation of receipt data extraction."""
+        try:
+            # Get text with bounding boxes
+            results = self._process_image(image_path)
+            if not results:
+                raise OCRError(
+                    "No text detected in image",
+                    self.engine_type,
+                    {'error_type': 'no_text_detected'}
+                )
+            
+            # Sort results by position
+            sorted_results = sorted(results, key=lambda r: (
+                r.bounding_box['top'],
+                r.bounding_box['left']
+            ))
+            
+            # Extract header (first few lines)
+            header_results = [r for r in sorted_results if r.bounding_box['top'] < 200]
+            header_text = ' '.join(r.text for r in header_results)
+            
+            # Extract items (middle section)
+            items_results = [r for r in sorted_results if 200 <= r.bounding_box['top'] <= 800]
+            items_text = '\n'.join(r.text for r in items_results)
+            
+            # Extract footer (last few lines)
+            footer_results = [r for r in sorted_results if r.bounding_box['top'] > 800]
+            footer_text = ' '.join(r.text for r in footer_results)
+            
+            # Calculate overall confidence
+            confidences = [r.confidence for r in results if r.confidence is not None]
+            avg_confidence = sum(confidences) / len(confidences) if confidences else 0.0
+            
+            return {
+                'header': header_text,
+                'items': items_text,
+                'footer': footer_text,
+                'confidence': avg_confidence,
+                'engine': self.engine_type.value,
+                'processing_time': self.last_processing_time,
+                'text_blocks': len(results),
+                'raw_text': self._extract_text(image_path)
+            }
+            
+        except Exception as e:
+            logger.error(f"Error extracting receipt data: {str(e)}")
+            if self.fallback_engine:
+                logger.info("Attempting fallback receipt data extraction")
+                return self.fallback_engine.extract_receipt_data(image_path)
+            raise OCRError(
+                f"Failed to extract receipt data: {str(e)}",
+                self.engine_type,
+                {'error_type': 'receipt_extraction', 'error': str(e)}
+            )
+    
+    def extract_receipt_data(self, image_path: str) -> Dict[str, Any]:
+        """Extract receipt data with fallback support."""
+        return self.try_with_fallback('extract_receipt_data', image_path)
+    
+    def get_last_error(self) -> Optional[str]:
+        """Get the last error message."""
+        return self._last_error
+    
+    def get_engine_status(self) -> Dict[str, Any]:
+        """Get current engine status."""
         return {
-            'engine': 'google_vision',
-            'timeout': self.timeout,
+            'engine_type': self.engine_type.value,
+            'is_initialized': self._client is not None,
+            'has_fallback': self.fallback_engine is not None,
+            'last_error': self._last_error,
+            'last_processing_time': self.last_processing_time,
+            'api_accessible': self.validate_api_access(),
             'max_retries': self.max_retries,
-            'batch_size': self.batch_size,
-            'last_processing_time': self.last_processing_time
+            'timeout': self.timeout
         } 

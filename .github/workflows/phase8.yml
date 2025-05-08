@@ -1,0 +1,57 @@
+name: Phase 8 QA Pipeline
+
+on:
+  push:
+    branches: [main, ci-upgrades]
+  pull_request:
+    branches: [main, ci-upgrades]
+  schedule:
+    - cron: '0 2 * * *'  # 2am UTC nightly
+
+jobs:
+  phase8-ci:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9, '3.10', '3.11']
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          # Make sure scripts are executable
+          chmod +x *.py
+
+      - name: Generate snapshot
+        run: |
+          mkdir -p regression_snapshots
+          python test_runner.py --snapshot-path regression_snapshots/test_ci_${{ matrix.python-version }}.json
+        continue-on-error: true
+
+      - name: Run Phase 8 CI Runner
+        run: |
+          python phase8_ci_runner.py \
+            --snapshot regression_snapshots/test_ci_${{ matrix.python-version }}.json \
+            --author "ci-bot" \
+            --reason "Matrix run on Python ${{ matrix.python-version }}" \
+            --promote-if-clean
+
+      - name: Upload reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: phase8-reports-${{ matrix.python-version }}
+          path: |
+            ci_reports/
+            analytics_results/
+            regression_reports/
+            regression_snapshots/ 

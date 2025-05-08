@@ -46,7 +46,7 @@ jobs:
             --promote-if-clean
 
       - name: Upload reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: phase8-artifacts-${{ matrix.python-version }}
           path: |

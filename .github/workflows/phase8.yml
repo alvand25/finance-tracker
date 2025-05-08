@@ -47,11 +47,9 @@ jobs:
 
       - name: Upload reports
         uses: actions/upload-artifact@v3
-        if: always()
         with:
-          name: phase8-reports-${{ matrix.python-version }}
+          name: phase8-artifacts
           path: |
             ci_reports/
             analytics_results/
-            regression_reports/
-            regression_snapshots/ 
+            insights/

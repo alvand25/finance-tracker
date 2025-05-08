@@ -1,7 +1,5 @@
 # Finance Tracker
 
-![Phase 8 CI](https://github.com/alvanddaghoghi/receipt-processor/actions/workflows/phase8.yml/badge.svg)
-
 A personal finance tracking application with a focus on shared expenses between two people.
 
 ## Features
@@ -549,7 +547,7 @@ The application supports two OCR engines:
    - Requires Google Cloud credentials
    - Set up:
      1. Create a Google Cloud project
-     2. Enable the Vision API
+     2. Enable the Cloud Vision API
      3. Create a service account and download credentials
      4. Set environment variables:
         ```bash
@@ -668,55 +666,3 @@ The finance tracker now features real-time calculation logic to provide immediat
 - Real-time calculations performed on the client-side for immediate feedback
 - Server-side validation and calculation for data consistency
 - Bootstrap modal and UI components for a smooth user experience
-
-## QA / Validation
-
-### Phase 8 QA Pipeline
-
-The Phase 8 QA pipeline provides comprehensive testing and validation for the receipt processing system:
-
-```bash
-# Run the Phase 8 QA pipeline manually
-python phase8_ci_runner.py --snapshot regression_snapshots/manual_run.json --author "your-name" --reason "manual test"
-```
-
-This script orchestrates the end-to-end QA process:
-- Test suite and snapshot generation
-- Regression comparison against baseline snapshots
-- Pattern debt analysis for regex pattern health
-- Confidence vs match rate analytics for handler evaluation
-
-#### CI Integration
-
-Our GitHub Actions workflow runs the same pipeline on:
-- Every push to main and ci-upgrades branches
-- Every pull request to main
-- Nightly at 2am UTC
-
-All HTML and CSV reports are uploaded as CI artifacts for review.
-
-#### Advanced Usage
-
-```bash
-# Run with explicit options
-python phase8_ci_runner.py \
-  --snapshot snapshots/test_20240507.json \
-  --author "username" \
-  --reason "Daily validation run" \
-  --promote-if-clean \
-  --min-receipts 5
-```
-
-Options:
-- `--snapshot`: Path to an existing snapshot (or will be generated)
-- `--author`: Required when using `--promote-if-clean`
-- `--reason`: Required when using `--promote-if-clean`
-- `--promote-if-clean`: Automatically promote snapshot to baseline if no regressions
-- `--force`: Continue even if some steps fail
-- `--min-receipts`: Minimum receipts for insights (default: 3)
-
-#### Output Artifacts
-
-- `ci_reports/regression_report*.html`: Regression analysis reports
-- `ci_reports/pattern_debt*.html|csv`: Pattern debt analysis
-- `ci_reports/insights*.html|csv`: Confidence vs match rate analytics
